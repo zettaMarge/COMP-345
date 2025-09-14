@@ -1,10 +1,56 @@
 #include <string> 
 #include <iostream>
+#include <vector>
+
 using namespace std;
+
+class ICommand
+{
+public:
+    string name;
+    ICommand(const std::string& n) : name(n) {}
+    virtual void Execute() {}
+    virtual ~ICommand() = default;
+};
+
+class IState
+{
+public:
+    string name;
+    virtual void OnEnter() = 0;
+    virtual void OnExit() = 0;
+    virtual vector<ICommand*> GetAvailableCommands() const = 0;
+    virtual vector<IState*> GetAvailableStateTransitions() const = 0;
+
+    IState* CanTransitionTo(string stateName) {
+        for (IState* availableState : GetAvailableStateTransitions())
+        {
+            if (availableState->name == stateName) {
+                return availableState;
+            }
+        }
+        return nullptr;
+    }
+};
 
 class GameEngine
 {
-	IState currentState;
+public: static GameEngine* instance;
+	IState* currentState;
+
+	public: 
+	int main() {
+		string input;
+		while (true) {
+			cout << "> ";
+			getline(cin, input);
+			if (input == "exit") break;
+			if (!ProcessInput(input)) {
+				cout << "Invalid command or state transition." << endl;
+			}
+		}
+		return 0;
+	}
 
 	bool ProcessInput(string input) {
 		// Process the input and determine if it matches any command or state transition
@@ -18,18 +64,18 @@ class GameEngine
 	}
 
 	bool TryCommand(string commandName) const {
-		for (ICommand command : currentState.AvailableCommands)
+		for (ICommand* command : currentState->GetAvailableCommands())
 		{
-			if (command.name == commandName) {
-				command.Execute();
+			if (command->name == commandName) {
+				command->Execute();
 				return true;
 			}
 		}
 		return false;
 	}
 
-	bool TryTransitionToState(string newState) {
-		if (currentState.CanTransitionTo(newState)) {
+	bool TryTransitionToState(string newStateName) {
+		if (IState* newState = currentState->CanTransitionTo(newStateName)) {
 			// Logic to change the current state
 			currentState = newState; // This line is illustrative; actual implementation may vary
 			return true;
@@ -37,136 +83,193 @@ class GameEngine
 		return false;
 	}
 
-}
+};
 
-class ICommand
+GameEngine* GameEngine::instance = nullptr;
+
+class StartState : public IState
 {
-	string name;
-	virtual void Execute() = 0;
-}
+public:
+    std::string name = "StartState";
+    std::vector<IState*> availableStateTransitions;
+    std::vector<ICommand*> availableCommands;
 
-class IState
+    StartState() {
+        // Populate availableStateTransitions and availableCommands as needed
+    }
+
+    void OnEnter() override {
+        std::cout << "Welcome to the game! Type 'help' for a list of commands." << std::endl;
+    }
+    void OnExit() override {
+        std::cout << "Exiting Start State." << std::endl;
+    }
+    std::vector<IState*> GetAvailableStateTransitions() const override {
+        return availableStateTransitions;
+    }
+    std::vector<ICommand*> GetAvailableCommands() const override {
+        return availableCommands;
+    }
+};
+
+class MapLoadedState : public IState
 {
-	string name;
-	virtual IState AvailableStateTransitions[] = 0;
-	virtual ICommand AvailableCommands[] = 0;
+public:
+	std::string name = "loadmap";
+	std::vector<IState*> availableStateTransitions;
+	std::vector<ICommand*> availableCommands;
 
-	virtual void OnEnter() = 0;
-	virtual void OnExit() = 0;
-
-	bool CanTransitionTo(string stateName) {
-		for (IState availableState : AvailableStateTransitions)
-		{
-			if (availableState.name == stateName) {
-				return true;
-			}
-		}
-		return false;
+	MapLoadedState() {
+		// Populate availableStateTransitions and availableCommands as needed
 	}
-}
 
-class StartState : IState
-{
-	string name = "StartState";
-	IState AvailableStateTransitions[] = { MapLoadedState };
-	ICommand AvailableCommands[] = { new HelpCommand() };
-	void OnEnter() override {
-		cout << "Welcome to the game! Type 'help' for a list of commands." << endl;
-	}
-	void OnExit() override {
-		cout << "Exiting Start State." << endl;
-	}
-}
-
-class MapLoadedState : IState
-{
-	string name = "loadmap";
-	IState AvailableStateTransitions[] = { MapLoadedState, MapValidatedState };
-	ICommand AvailableCommands[] = { new LookCommand(), new MoveCommand() };
 	void OnEnter() override {
 		cout << "Loading map..." << endl;
 	}
 	void OnExit() override {
 		cout << "Exiting Map Loaded State." << endl;
 	}
-}
+	std::vector<IState*> GetAvailableStateTransitions() const override {
+		return availableStateTransitions;
+	}
 
-class MapValidatedState : IState
+	std::vector<ICommand*> GetAvailableCommands() const override {
+		return availableCommands;
+	}
+};
+
+class MapValidatedState : public IState
 {
-	string name = "validatemap";
-	IState AvailableStateTransitions[] = { new InventoryState() };
-	ICommand AvailableCommands[] = { new LookCommand(), new MoveCommand(), new ValidateMapCommand() };
+public:
+	std::string name = "validatemap";
+	std::vector<IState*> availableStateTransitions;
+	std::vector<ICommand*> availableCommands;
+
+	MapValidatedState() {
+		// Populate availableStateTransitions and availableCommands as needed
+	}
+
 	void OnEnter() override {
 		cout << "Validating map..." << endl;
 	}
 	void OnExit() override {
 		cout << "Exiting Map Validated State." << endl;
 	}
-}
+	std::vector<IState*> GetAvailableStateTransitions() const override {
+		return availableStateTransitions;
+	}
 
-class PlayersAddedState : IState
+	std::vector<ICommand*> GetAvailableCommands() const override {
+		return availableCommands;
+	}
+};
+
+class PlayersAddedState : public IState
 {
-	string name = "addplayer";
-	IState AvailableStateTransitions[] = { PlayersAddedState };
-	ICommand AvailableCommands[] = { new LookCommand(), new MoveCommand(), new AddPlayerCommand() };
+public:
+	std::string name = "addplayer";
+	std::vector<IState*> availableStateTransitions;
+	std::vector<ICommand*> availableCommands;
+
+	PlayersAddedState() {
+		// Populate availableStateTransitions and availableCommands as needed
+	}
+
 	void OnEnter() override {
 		cout << "Adding players..." << endl;
 	}
 	void OnExit() override {
 		cout << "Exiting Players Added State." << endl;
 	}
-}
+	std::vector<IState*> GetAvailableStateTransitions() const override {
+		return availableStateTransitions;
+	}
 
-class AssignReinforcementState : IState
+	std::vector<ICommand*> GetAvailableCommands() const override {
+		return availableCommands;
+	}
+};
+
+class AssignReinforcementState : public IState
 {
-	string name = "assigncountries";
-	IState AvailableStateTransitions[] = { IssueOrdersState };
-	ICommand AvailableCommands[] = { new LookCommand(), new MoveCommand(), new AssignReinforcementCommand() };
+public:
+	std::string name = "assigncountries";
+	std::vector<IState*> availableStateTransitions;
+	std::vector<ICommand*> availableCommands;
+
+	AssignReinforcementState() {
+		// Populate availableStateTransitions and availableCommands as needed
+	}
+
 	void OnEnter() override {
 		cout << "Assigning reinforcements..." << endl;
 	}
 	void OnExit() override {
 		cout << "Exiting Assign Reinforcement State." << endl;
 	}
-}
+	std::vector<IState*> GetAvailableStateTransitions() const override {
+		return availableStateTransitions;
+	}
 
-class IssueOrdersState : IState
+	std::vector<ICommand*> GetAvailableCommands() const override {
+		return availableCommands;
+	}
+};
+
+class IssueOrdersState : public IState
 {
-	string name = "issueorder";
-	IState AvailableStateTransitions[] = { ExecuteOrdersState, IssueOrdersState };
-	ICommand AvailableCommands[] = { new LookCommand(), new MoveCommand(), new IssueOrderCommand() };
+public:
+	std::string name = "issueorder";
+	std::vector<IState*> availableStateTransitions;
+	std::vector<ICommand*> availableCommands;
+
+	IssueOrdersState() {
+		// Populate availableStateTransitions and availableCommands as needed
+	}
+
 	void OnEnter() override {
 		cout << "Issuing orders..." << endl;
 	}
 	void OnExit() override {
 		cout << "Exiting Issue Orders State." << endl;
 	}
-}
+	std::vector<IState*> GetAvailableStateTransitions() const override {
+		return availableStateTransitions;
+	}
 
-class ExecuteOrdersState : IState
+	std::vector<ICommand*> GetAvailableCommands() const override {
+		return availableCommands;
+	}
+};
+
+class ExecuteOrdersState : public IState
 {
-	string name = "endissueorders";
-	IState AvailableStateTransitions[] = { AssignReinforcementState, ExecuteOrdersState, WinState };
-	ICommand AvailableCommands[] = { new LookCommand(), new MoveCommand(), new ExecuteOrderCommand() };
+public:
+	std::string name = "endissueorders";
+	std::vector<IState*> availableStateTransitions;
+	std::vector<ICommand*> availableCommands;
+
+	ExecuteOrdersState() {
+		// Populate availableStateTransitions and availableCommands as needed
+	}
+
 	void OnEnter() override {
 		cout << "Executing orders..." << endl;
 	}
 	void OnExit() override {
 		cout << "Exiting Execute Orders State." << endl;
 	}
-}
-
-class WinState : IState
-{
-	string name = "win";
-	IState AvailableStateTransitions[] = { StartState };
-	ICommand AvailableCommands[] = { new LookCommand(), new MoveCommand(), new WinCommand() };
-	void OnEnter() override {
-		cout << "Congratulations! You've won the game!" << endl;
+	std::vector<IState*> GetAvailableStateTransitions() const override {
+		return availableStateTransitions;
 	}
-	void OnExit() override {
-		cout << "Exiting Win State." << endl;
-	}
-}
 
+	std::vector<ICommand*> GetAvailableCommands() const override {
+		return availableCommands;
+	}
+};
+
+int main() {
+    GameEngine::instance = new GameEngine();
+    return GameEngine::instance->main();
+}
 
