@@ -33,10 +33,35 @@ public:
     }
 };
 
+class StartState : public IState
+{
+public:
+	std::string name = "StartState";
+	std::vector<IState*> availableStateTransitions;
+	std::vector<ICommand*> availableCommands;
+
+	StartState() {
+		// Populate availableStateTransitions and availableCommands as needed
+	}
+
+	void OnEnter() override {
+		std::cout << "Welcome to the game! Type 'help' for a list of commands." << std::endl;
+	}
+	void OnExit() override {
+		std::cout << "Exiting Start State." << std::endl;
+	}
+	std::vector<IState*> GetAvailableStateTransitions() const override {
+		return availableStateTransitions;
+	}
+	std::vector<ICommand*> GetAvailableCommands() const override {
+		return availableCommands;
+	}
+};
+
 class GameEngine
 {
 public: static GameEngine* instance;
-	IState* currentState;
+	IState* currentState = new StartState();
 
 	public: 
 	int main() {
@@ -87,30 +112,7 @@ public: static GameEngine* instance;
 
 GameEngine* GameEngine::instance = nullptr;
 
-class StartState : public IState
-{
-public:
-    std::string name = "StartState";
-    std::vector<IState*> availableStateTransitions;
-    std::vector<ICommand*> availableCommands;
 
-    StartState() {
-        // Populate availableStateTransitions and availableCommands as needed
-    }
-
-    void OnEnter() override {
-        std::cout << "Welcome to the game! Type 'help' for a list of commands." << std::endl;
-    }
-    void OnExit() override {
-        std::cout << "Exiting Start State." << std::endl;
-    }
-    std::vector<IState*> GetAvailableStateTransitions() const override {
-        return availableStateTransitions;
-    }
-    std::vector<ICommand*> GetAvailableCommands() const override {
-        return availableCommands;
-    }
-};
 
 class MapLoadedState : public IState
 {
