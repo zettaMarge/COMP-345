@@ -4,6 +4,15 @@
 
 using namespace std;
 
+class MapLoadedState; // Forward declaration
+class MapValidatedState; // Forward declaration
+class PlayersAddedState; // Forward declaration
+class AssignReinforcementState; // Forward declaration
+class IssueOrdersState; // Forward declaration
+class ExecuteOrdersState; // Forward declaration
+class WinState; // Forward declaration
+class StartState; // Forward declaration
+
 class ICommand
 {
 public:
@@ -12,6 +21,106 @@ public:
     virtual void Execute() {}
     virtual ~ICommand() = default;
 };
+
+class LoadMapCommand : public ICommand
+{
+	public:
+	LoadMapCommand() : ICommand("loadmap") {}
+	void Execute() override {
+		cout << "Executing LoadMapCommand" << endl;
+	}
+};
+
+class ValidateMapCommand : public ICommand
+{
+	public:
+	ValidateMapCommand() : ICommand("validatemap") {}
+	void Execute() override {
+		cout << "Executing ValidateMapCommand" << endl;
+	}
+};
+
+class AddPlayerCommand : public ICommand
+{
+	public:
+	AddPlayerCommand() : ICommand("addplayer") {}
+	void Execute() override {
+		cout << "Executing AddPlayerCommand" << endl;
+	}
+};
+
+class AssignCountriesCommand : public ICommand
+{
+	public:
+	AssignCountriesCommand() : ICommand("assigncountries") {}
+	void Execute() override {
+		cout << "Executing AssignCountriesCommand" << endl;
+	}
+};
+
+class IssueOrderCommand : public ICommand
+{
+	public:
+	IssueOrderCommand() : ICommand("issueorder") {}
+	void Execute() override {
+		cout << "Executing IssueOrderCommand" << endl;
+	}
+};
+class EndIssueOrdersCommand : public ICommand
+{
+	public:
+	EndIssueOrdersCommand() : ICommand("endissueorders") {}
+	void Execute() override {
+		cout << "Executing EndIssueOrdersCommand" << endl;
+	}
+};
+
+class ExecuteOrdersCommand : public ICommand
+{
+	public:
+	ExecuteOrdersCommand() : ICommand("executeorders") {}
+	void Execute() override {
+		cout << "Executing ExecuteOrdersCommand" << endl;
+	}
+};
+
+class EndExecuteOrdersCommand : public ICommand
+{
+	public:
+	EndExecuteOrdersCommand() : ICommand("endexecuteorders") {}
+	void Execute() override {
+		cout << "Executing EndExecuteOrdersCommand" << endl;
+	}
+};
+
+class WinCommand : public ICommand
+{
+	public:
+	WinCommand() : ICommand("win") {}
+	void Execute() override {
+		cout << "Executing WinCommand" << endl;
+	}
+};
+
+class EndCommand : public ICommand
+{
+	public:
+	EndCommand() : ICommand("end") {}
+	void Execute() override {
+		cout << "Executing EndCommand" << endl;
+	}
+};
+
+class PlayCommand : public ICommand
+{
+	public:
+	PlayCommand() : ICommand("play") {}
+	void Execute() override {
+		cout << "Executing PlayCommand" << endl;
+	}
+};
+
+
 
 class IState
 {
@@ -33,15 +142,39 @@ public:
     }
 };
 
+class WinState : public IState
+{
+public:
+	std::string name = "win";
+	std::vector<IState*> availableStateTransitions = { new StartState };
+	std::vector<ICommand*> availableCommands = { new PlayCommand, new EndCommand };
+	WinState() {
+		// Populate availableStateTransitions and availableCommands as needed
+	}
+	void OnEnter() override {
+		cout << "You win!" << endl;
+	}
+	void OnExit() override {
+		cout << "Exiting Win State." << endl;
+	}
+	std::vector<IState*> GetAvailableStateTransitions() const override {
+		return availableStateTransitions;
+	}
+	std::vector<ICommand*> GetAvailableCommands() const override {
+		return availableCommands;
+	}
+};
+
 class StartState : public IState
 {
 public:
 	std::string name = "StartState";
 	std::vector<IState*> availableStateTransitions;
-	std::vector<ICommand*> availableCommands;
+	std::vector<ICommand*> availableCommands = { new LoadMapCommand };
 
 	StartState() {
-		// Populate availableStateTransitions and availableCommands as needed
+		availableStateTransitions.push_back(new MapLoadedState());
+		// Populate availableCommands as needed
 	}
 
 	void OnEnter() override {
@@ -119,10 +252,12 @@ class MapLoadedState : public IState
 public:
 	std::string name = "loadmap";
 	std::vector<IState*> availableStateTransitions;
-	std::vector<ICommand*> availableCommands;
+	std::vector<ICommand*> availableCommands = { new ValidateMapCommand()};
+
 
 	MapLoadedState() {
-		// Populate availableStateTransitions and availableCommands as needed
+	    availableStateTransitions.push_back(new MapValidatedState());
+	    // Populate availableStateTransitions and availableCommands as needed
 	}
 
 	void OnEnter() override {
@@ -144,8 +279,8 @@ class MapValidatedState : public IState
 {
 public:
 	std::string name = "validatemap";
-	std::vector<IState*> availableStateTransitions;
-	std::vector<ICommand*> availableCommands;
+	std::vector<IState*> availableStateTransitions = {new PlayersAddedState};
+	std::vector<ICommand*> availableCommands = {new AddPlayerCommand};
 
 	MapValidatedState() {
 		// Populate availableStateTransitions and availableCommands as needed
@@ -170,8 +305,8 @@ class PlayersAddedState : public IState
 {
 public:
 	std::string name = "addplayer";
-	std::vector<IState*> availableStateTransitions;
-	std::vector<ICommand*> availableCommands;
+	std::vector<IState*> availableStateTransitions = {new AssignReinforcementState};
+	std::vector<ICommand*> availableCommands = {new AddPlayerCommand, new AssignCountriesCommand};
 
 	PlayersAddedState() {
 		// Populate availableStateTransitions and availableCommands as needed
@@ -196,8 +331,8 @@ class AssignReinforcementState : public IState
 {
 public:
 	std::string name = "assigncountries";
-	std::vector<IState*> availableStateTransitions;
-	std::vector<ICommand*> availableCommands;
+	std::vector<IState*> availableStateTransitions = {new IssueOrdersState};
+	std::vector<ICommand*> availableCommands = { new IssueOrderCommand };
 
 	AssignReinforcementState() {
 		// Populate availableStateTransitions and availableCommands as needed
@@ -222,8 +357,8 @@ class IssueOrdersState : public IState
 {
 public:
 	std::string name = "issueorder";
-	std::vector<IState*> availableStateTransitions;
-	std::vector<ICommand*> availableCommands;
+	std::vector<IState*> availableStateTransitions = {new ExecuteOrdersState};
+	std::vector<ICommand*> availableCommands = {new IssueOrderCommand, new EndIssueOrdersCommand};
 
 	IssueOrdersState() {
 		// Populate availableStateTransitions and availableCommands as needed
@@ -248,8 +383,8 @@ class ExecuteOrdersState : public IState
 {
 public:
 	std::string name = "endissueorders";
-	std::vector<IState*> availableStateTransitions;
-	std::vector<ICommand*> availableCommands;
+	std::vector<IState*> availableStateTransitions = {new AssignReinforcementState, new WinState};
+	std::vector<ICommand*> availableCommands = {new EndExecuteOrdersCommand, new WinCommand};
 
 	ExecuteOrdersState() {
 		// Populate availableStateTransitions and availableCommands as needed
@@ -269,6 +404,8 @@ public:
 		return availableCommands;
 	}
 };
+
+
 
 int main() {
     GameEngine::instance = new GameEngine();
