@@ -7,7 +7,9 @@
 class CardTypes {
 public:
     virtual ~CardTypes() {}
-    virtual std::string getType() const = 0;
+    std::string getType() {
+        return type;
+    };
     virtual void play() const = 0;
 protected:
     std::string type;
@@ -17,9 +19,6 @@ class BombCard : public CardTypes {
 public:
     BombCard() {
         type = "Bomb";
-    }
-    std::string getType() const override {
-        return type;
     }
     void play() const override {
         std::cout << "Playing Bomb Card!" << std::endl;
@@ -31,9 +30,6 @@ public:
     ReinforcementCard() {
         type = "Reinforcement";
     }
-    std::string getType() const override {
-        return type;
-    }
     void play() const override {
         std::cout << "Playing Reinforcement Card!" << std::endl;
     }
@@ -43,9 +39,6 @@ class BlockadeCard : public CardTypes {
 public:
     BlockadeCard() {
         type = "Blockade";
-    }
-    std::string getType() const override {
-        return type;
     }
     void play() const override {
         std::cout << "Playing Blockade Card!" << std::endl;
@@ -57,9 +50,6 @@ public:
     AirliftCard() {
         type = "Airlift";
     }
-    std::string getType() const override {
-        return type;
-    }
     void play() const override {
         std::cout << "Playing Airlift Card!" << std::endl;
     }
@@ -69,9 +59,6 @@ class DiplomacyCard : public CardTypes {
 public:
     DiplomacyCard() {
         type = "Diplomacy";
-    }
-    std::string getType() const override {
-        return type;
     }
     void play() const override {
         std::cout << "Playing Diplomacy Card!" << std::endl;
@@ -105,6 +92,10 @@ class Card {
         }
         void print() const {
             std::cout << "Card Type: " << cardType->getType() << std::endl;
+        }
+    
+        void play() const {
+            cardType->play();
         }
     private:
         enum typeNames { bomb, reinforcement, blockade, airlift, diplomacy };
@@ -151,11 +142,13 @@ private:
 class Hand {
 public:
 
-    Hand(Deck& deck) : deck(deck) {
-    }
+    //if this doesnt work, try this->deck = deck; and remove reference from declaration
+    Hand(Deck& deck) : deck(deck) {}
+
     void addCard() {
         hand.push_back(deck.draw());
     }
+
     void print() const {
         std::cout << "Hand contains " << hand.size() << " cards." << std::endl;
         for (size_t i = 0; i < hand.size(); ++i) {
@@ -163,9 +156,10 @@ public:
             hand[i].print();
         }
     }
+
     void playCard(int index) {
         if (index < 0 || index >= hand.size()) throw std::out_of_range("Invalid card index");
-        // For simplicity, just remove the card from hand
+        hand[index].play();
         Card card = hand[index];
         hand.erase(hand.begin() + index);
 
