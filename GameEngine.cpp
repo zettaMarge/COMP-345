@@ -78,8 +78,14 @@ GameEngine::GameEngine() {
     mapLoadedState->availableCommands.emplace_back(
         std::make_unique<SimpleCommand>("validatemap", mapValidatedState.get()));
 
+    mapLoadedState->availableCommands.emplace_back(
+        std::make_unique<SimpleCommand>("loadmap", nullptr));
+
     mapValidatedState->availableCommands.emplace_back(
         std::make_unique<SimpleCommand>("addplayer", playersAddedState.get()));
+
+    playersAddedState->availableCommands.emplace_back(
+        std::make_unique<SimpleCommand>("addplayer", nullptr));
 
     playersAddedState->availableCommands.emplace_back(
         std::make_unique<SimpleCommand>("assigncountries", assignReinforcementState.get()));
@@ -88,13 +94,23 @@ GameEngine::GameEngine() {
         std::make_unique<SimpleCommand>("issueorder", issueOrdersState.get()));
 
     issueOrdersState->availableCommands.emplace_back(
+        std::make_unique<SimpleCommand>("issueorder", nullptr));
+
+    issueOrdersState->availableCommands.emplace_back(
         std::make_unique<SimpleCommand>("endissueorders", executeOrdersState.get()));
+
+    executeOrdersState->availableCommands.emplace_back(
+        std::make_unique<SimpleCommand>("execorder", nullptr));
+
+    executeOrdersState->availableCommands.emplace_back(
+        std::make_unique<SimpleCommand>("endexecorder", assignReinforcementState.get()));
 
     executeOrdersState->availableCommands.emplace_back(
         std::make_unique<SimpleCommand>("win", winState.get()));
 
     winState->availableCommands.emplace_back(
         std::make_unique<SimpleCommand>("play", mainMenuState.get()));
+
     winState->availableCommands.emplace_back(
         std::make_unique<SimpleCommand>("end", nullptr)); // exit game
 
