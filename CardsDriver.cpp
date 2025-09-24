@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Cards.h"
+#include "Cards.cpp"
 
 int main() {
     int cardIndex;

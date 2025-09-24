@@ -5,9 +5,8 @@
 
 class CardTypes {
 public:
-    virtual ~CardTypes();
-    virtual std::string getType() const = 0;
-    virtual void play() const = 0;
+    std::string getType() const;
+    virtual void play() = 0;
 protected:
     std::string type;
 };
@@ -15,41 +14,38 @@ protected:
 class BombCard : public CardTypes {
 public:
     BombCard();
-    std::string getType() const override;
-    void play() const override;
+    void play() override;
 };
 
 class ReinforcementCard : public CardTypes {
 public:
     ReinforcementCard();
-    std::string getType() const override;
-    void play() const override;
+    void play() override;
 };
 
 class BlockadeCard : public CardTypes {
 public:
     BlockadeCard();
-    std::string getType() const override;
-    void play() const override;
+    void play() override;
 };
 
 class AirliftCard : public CardTypes {
 public:
     AirliftCard();
-    std::string getType() const override;
-    void play() const override;
+    void play() override;
 };
 
 class DiplomacyCard : public CardTypes {
 public:
     DiplomacyCard();
-    std::string getType() const override;
-    void play() const override;
+    void play() override;
 };
 
 class Card {
 public:
     Card(int type);
+    void play() const;
+    void print() const;
 private:
     enum typeNames { bomb, reinforcement, blockade, airlift, diplomacy };
     typeNames type;
