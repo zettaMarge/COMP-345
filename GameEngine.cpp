@@ -124,7 +124,11 @@ int GameEngine::Run() {
     while (true) {
         std::cout << "> ";
         if (!std::getline(std::cin, input)) break;
-        if (!ProcessInput(input)) std::cout << "Invalid command\n";
+
+        // If ProcessInput returns false, break out of the loop (quit game).
+        if (!ProcessInput(input)) {
+            break;
+        }
     }
     return 0;
 }
@@ -135,17 +139,23 @@ bool GameEngine::ProcessInput(const std::string& input) {
             cmd->Execute();
             if (cmd->name == "end") {
                 std::cout << "Game Over.\n";
-                return false;
+                return false;   // signal quit
             }
             if (cmd->nextState) {
                 currentState->OnExit();
                 currentState = cmd->nextState;
                 currentState->OnEnter();
             }
-            return true;
+            return true;  // valid command
         }
     }
-    return false;
+
+    std::cout << "Invalid command. Available commands:\n";
+    for (auto& cmd : currentState->availableCommands) {
+        std::cout << " - " << cmd->name << "\n";
+    }
+
+    return true; // return true so the loop continues
 }
 
 // ===== Entry point =====
@@ -155,5 +165,8 @@ int main() {
 
     std::cout << "Press Enter to exit...";
     std::cin.get();
+
+    delete GameEngine::instance;   
+    GameEngine::instance = nullptr;
     return 0;
 }
