@@ -3,6 +3,8 @@
 #include <vector>
 #include <iostream>
 
+// Abstract base class for all card types. The type is changed in each derived class constructor
+// and the play() function is overridden to provide specific functionality for each card type.
 class CardTypes {
 public:
     std::string getType() const;
@@ -11,39 +13,79 @@ protected:
     std::string type;
 };
 
+// Class for Bomb type cards, derived from CardTypes
 class BombCard : public CardTypes {
 public:
     BombCard();
+    BombCard(const BombCard& other);
+    BombCard& operator=(const BombCard& other);
+    ~BombCard();
+
+    void print() const;
     void play() override;
 };
 
+// Class for Reinforcement type cards, derived from CardTypes
 class ReinforcementCard : public CardTypes {
 public:
     ReinforcementCard();
+    ReinforcementCard(const ReinforcementCard& other);
+    ReinforcementCard& operator=(const ReinforcementCard& other);
+    ~ReinforcementCard();
+
+    void print() const; 
     void play() override;
 };
 
+// Class for Blockade type cards, derived from CardTypes
 class BlockadeCard : public CardTypes {
 public:
     BlockadeCard();
+    BlockadeCard(const BlockadeCard& other);
+    BlockadeCard& operator=(const BlockadeCard& other);
+    ~BlockadeCard();
+
+    void print() const;
     void play() override;
 };
 
+// Class for Airlift type cards, derived from CardTypes
 class AirliftCard : public CardTypes {
 public:
     AirliftCard();
+    AirliftCard(const AirliftCard& other);
+    AirliftCard& operator=(const AirliftCard& other);
+    ~AirliftCard();
+
+    void print() const;
     void play() override;
 };
 
+// Class for Diplomacy type cards, derived from CardTypes
 class DiplomacyCard : public CardTypes {
 public:
     DiplomacyCard();
+    DiplomacyCard(const DiplomacyCard& other);
+    DiplomacyCard& operator=(const DiplomacyCard& other);
+    ~DiplomacyCard();
+
+    void print() const;
     void play() override;
 };
 
+// Card class that contains a pointer to a CardTypes object. The specific type of card is determined
+// by the integer (enum) passed to the constructor. The play() and print() functions call the
+// corresponding functions of the CardTypes object.
 class Card {
 public:
+    Card(const Card& other); 
+    Card& operator=(const Card& other); 
+    ~Card(); 
+    void print() const;
+
+    // main constructor
     Card(int type);
+
     void play() const;
     void print() const;
 private:
@@ -52,22 +94,36 @@ private:
     CardTypes* cardType;
 };
 
+// Deck class that contains a vector of Card objects. It has functions to draw a card from the deck,
+// add a card to the deck, and print the contents of the deck. The deck is initialized with 30 random cards.
 class Deck {
 public:
+    Deck(const Deck& other);
+    Deck& operator=(const Deck& other);
+    ~Deck();
+    void print() const;
+
     Deck();
     Card draw();
     void addCard(const Card& card);
-    void print() const;
 private:
     std::vector<Card> cards;
     const int initialSize = 30;
 };
 
+// Hand class that contains a vector of Card objects. It has functions to add a card to the hand
+// and print the contents of the hand. It also has a function to play a card from the hand, which
+// removes the card from the hand and calls its play() function. The Hand class is associated
+// with a Deck object, from which it draws cards.
 class Hand {
 public:
+    Hand(const Hand& other);
+    Hand& operator=(const Hand& other);
+    ~Hand();
+    void print() const;
+
     Hand(Deck& deck);
     void addCard();
-    void print() const;
     void playCard(int index);
 private:
     std::vector<Card> hand;
