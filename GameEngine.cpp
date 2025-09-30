@@ -48,27 +48,27 @@ MapLoadedState::MapLoadedState()
         "Leaving map loading state") {}
 
 MapValidatedState::MapValidatedState()
-    : SimpleState("MapValidated", "Map validated successfully",
+    : SimpleState("MapValidated", "Entering map validated state",
 		"Leaving map validated state") {}
 
 PlayersAddedState::PlayersAddedState()
-    : SimpleState("PlayersAdded", "Players added successfully",
+    : SimpleState("PlayersAdded", "entering addplayerstate",
         "Leaving players added state") {}
 
 AssignReinforcementState::AssignReinforcementState()
-    : SimpleState("AssignReinforcement", "Assigning reinforcements",
+    : SimpleState("AssignReinforcement", "entering reinforcementassignment",
         "Leaving assign reinforcement state") {}
 
 IssueOrdersState::IssueOrdersState()
-    : SimpleState("IssueOrders", "Issuing orders",
+    : SimpleState("IssueOrders", "entering issueordersstate",
         "Leaving issue orders state") {}
 
 ExecuteOrdersState::ExecuteOrdersState()
-    : SimpleState("ExecuteOrders", "Executing orders",
+    : SimpleState("ExecuteOrders", "entering execorderstate",
         "Leaving execute orders state") {}
 
 WinGameState::WinGameState()
-    : SimpleState("WinGame", "You won the game!",
+    : SimpleState("WinGame", "Entering winstate",
         "Exiting win state") {}
 
 
@@ -138,17 +138,43 @@ GameEngine::~GameEngine() = default;
 
 GameEngine::GameEngine(const GameEngine& other) {
     if (other.mainMenuState) mainMenuState = other.mainMenuState->Clone();
+    if (other.mapLoadedState) mapLoadedState = other.mapLoadedState->Clone();
+    if (other.mapValidatedState) mapValidatedState = other.mapValidatedState->Clone();
+    if (other.playersAddedState) playersAddedState = other.playersAddedState->Clone();
+    if (other.assignReinforcementState) assignReinforcementState = other.assignReinforcementState->Clone();
+    if (other.issueOrdersState) issueOrdersState = other.issueOrdersState->Clone();
     if (other.executeOrdersState) executeOrdersState = other.executeOrdersState->Clone();
+    if (other.winState) winState = other.winState->Clone();
 
     currentState = (other.currentState == other.mainMenuState.get())
         ? mainMenuState.get()
-        : executeOrdersState.get();
+        : (other.currentState == other.mapLoadedState.get())
+        ? mapLoadedState.get()
+        : (other.currentState == other.mapValidatedState.get())
+        ? mapValidatedState.get()
+        : (other.currentState == other.playersAddedState.get())
+        ? playersAddedState.get()
+        : (other.currentState == other.assignReinforcementState.get())
+        ? assignReinforcementState.get()
+        : (other.currentState == other.issueOrdersState.get())
+        ? issueOrdersState.get()
+        : (other.currentState == other.executeOrdersState.get())
+        ? executeOrdersState.get()
+        : (other.currentState == other.winState.get())
+        ? winState.get()
+        : nullptr;
 }
 
 GameEngine& GameEngine::operator=(const GameEngine& other) {
     if (this != &other) {
         if (other.mainMenuState) mainMenuState = other.mainMenuState->Clone();
+		if (other.mapLoadedState) mapLoadedState = other.mapLoadedState->Clone();
+		if (other.mapValidatedState) mapValidatedState = other.mapValidatedState->Clone();
+		if (other.playersAddedState) playersAddedState = other.playersAddedState->Clone();
+		if (other.assignReinforcementState) assignReinforcementState = other.assignReinforcementState->Clone();
+		if (other.issueOrdersState) issueOrdersState = other.issueOrdersState->Clone();
         if (other.executeOrdersState) executeOrdersState = other.executeOrdersState->Clone();
+		if (other.winState) winState = other.winState->Clone();
 
         currentState = (other.currentState == other.mainMenuState.get())
             ? mainMenuState.get()
