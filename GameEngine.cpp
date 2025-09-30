@@ -1,61 +1,76 @@
 #include "GameEngine.h"
 
+// ===== SimpleState implementation =====
+SimpleState::SimpleState(const std::string& n,
+    const std::string& enterMsg,
+    const std::string& exitMsg)
+    : IState(n), enterMessage(enterMsg), exitMessage(exitMsg) {
+}
+
+SimpleState::SimpleState(const SimpleState& other)
+    : IState(other.name),
+    enterMessage(other.enterMessage),
+    exitMessage(other.exitMessage) {
+    for (const auto& cmd : other.availableCommands) {
+        availableCommands.emplace_back(std::make_unique<SimpleCommand>(cmd->name, cmd->nextState));
+    }
+}
+
+SimpleState& SimpleState::operator=(const SimpleState& other) {
+    if (this != &other) {
+        name = other.name;
+        enterMessage = other.enterMessage;
+        exitMessage = other.exitMessage;
+        availableCommands.clear();
+        for (const auto& cmd : other.availableCommands) {
+            availableCommands.emplace_back(std::make_unique<SimpleCommand>(cmd->name, cmd->nextState));
+        }
+    }
+    return *this;
+}
+
+std::ostream& operator<<(std::ostream& os, const SimpleState& s) {
+    os << "State: " << s.name;
+    return os;
+}
+
+void SimpleState::OnEnter() { std::cout << enterMessage << "\n"; }
+void SimpleState::OnExit() { std::cout << exitMessage << "\n"; }
+
 // ===== Concrete States =====
-class MainMenuState : public IState {
-public:
-    MainMenuState() : IState("MainMenu") {}
-    void OnEnter() override { std::cout << "Welcome to the game!\n"; }
-    void OnExit() override { std::cout << "Exiting Main Menu\n"; }
-};
 
-class MapLoaded : public IState {
-public:
-    MapLoaded() : IState("MapLoaded") {}
-    void OnEnter() override { std::cout << "Loading map...\n"; }
-    void OnExit() override { std::cout << "Exiting Map Loaded State\n"; }
-};
+MainMenuState::MainMenuState()
+    : SimpleState("MainMenu", "Welcome to the game!",
+        "Leaving Main Menu...") {}
 
-class MapValidated : public IState {
-public:
-    MapValidated() : IState("MapValidated") {}
-    void OnEnter() override { std::cout << "Validating map...\n"; }
-    void OnExit() override { std::cout << "Exiting Map Validated State\n"; }
-};
+MapLoadedState::MapLoadedState()
+    : SimpleState("MapLoaded", "Entering map loading state",
+        "Leaving map loading state") {}
 
-class PlayersAdded : public IState {
-public:
-    PlayersAdded() : IState("PlayersAdded") {}
-    void OnEnter() override { std::cout << "Adding players...\n"; }
-    void OnExit() override { std::cout << "Exiting Players Added State\n"; }
-};
+MapValidatedState::MapValidatedState()
+    : SimpleState("MapValidated", "Map validated successfully",
+		"Leaving map validated state") {}
 
-class AssignReinforcement : public IState {
-public:
-    AssignReinforcement() : IState("AssignReinforcement") {}
-    void OnEnter() override { std::cout << "Assigning reinforcements...\n"; }
-    void OnExit() override { std::cout << "Exiting Assign Reinforcement State\n"; }
-};
+PlayersAddedState::PlayersAddedState()
+    : SimpleState("PlayersAdded", "Players added successfully",
+        "Leaving players added state") {}
 
-class IssueOrders : public IState {
-public:
-    IssueOrders() : IState("IssueOrders") {}
-    void OnEnter() override { std::cout << "Issuing orders...\n"; }
-    void OnExit() override { std::cout << "Exiting Issue Orders State\n"; }
-};
+AssignReinforcementState::AssignReinforcementState()
+    : SimpleState("AssignReinforcement", "Assigning reinforcements",
+        "Leaving assign reinforcement state") {}
 
-class ExecuteOrders : public IState {
-public:
-    ExecuteOrders() : IState("ExecuteOrders") {}
-    void OnEnter() override { std::cout << "Executing orders...\n"; }
-    void OnExit() override { std::cout << "Exiting Execute Orders State\n"; }
-};
+IssueOrdersState::IssueOrdersState()
+    : SimpleState("IssueOrders", "Issuing orders",
+        "Leaving issue orders state") {}
 
-class WinGame : public IState {
-public:
-    WinGame() : IState("WinGame") {}
-    void OnEnter() override { std::cout << "You win!\n"; }
-    void OnExit() override { std::cout << "Exiting Win State\n"; }
-};
+ExecuteOrdersState::ExecuteOrdersState()
+    : SimpleState("ExecuteOrders", "Executing orders",
+        "Leaving execute orders state") {}
+
+WinGameState::WinGameState()
+    : SimpleState("WinGame", "You won the game!",
+        "Exiting win state") {}
+
 
 // ===== GameEngine Implementation =====
 GameEngine* GameEngine::instance = nullptr;
@@ -63,13 +78,13 @@ GameEngine* GameEngine::instance = nullptr;
 GameEngine::GameEngine() {
     // Create all states
     mainMenuState = std::make_unique<MainMenuState>();
-    mapLoadedState = std::make_unique<MapLoaded>();
-    mapValidatedState = std::make_unique<MapValidated>();
-    playersAddedState = std::make_unique<PlayersAdded>();
-    assignReinforcementState = std::make_unique<AssignReinforcement>();
-    issueOrdersState = std::make_unique<IssueOrders>();
-    executeOrdersState = std::make_unique<ExecuteOrders>();
-    winState = std::make_unique<WinGame>();
+    mapLoadedState = std::make_unique<MapLoadedState>();
+    mapValidatedState = std::make_unique<MapValidatedState>();
+    playersAddedState = std::make_unique<PlayersAddedState>();
+    assignReinforcementState = std::make_unique<AssignReinforcementState>();
+    issueOrdersState = std::make_unique<IssueOrdersState>();
+    executeOrdersState = std::make_unique<ExecuteOrdersState>();
+    winState = std::make_unique<WinGameState>();
 
     // Hook commands with automatic transitions
     mainMenuState->availableCommands.emplace_back(
@@ -118,6 +133,30 @@ GameEngine::GameEngine() {
     currentState = mainMenuState.get();
     currentState->OnEnter();
 }
+
+GameEngine::~GameEngine() = default;
+
+GameEngine::GameEngine(const GameEngine& other) {
+    if (other.mainMenuState) mainMenuState = other.mainMenuState->Clone();
+    if (other.executeOrdersState) executeOrdersState = other.executeOrdersState->Clone();
+
+    currentState = (other.currentState == other.mainMenuState.get())
+        ? mainMenuState.get()
+        : executeOrdersState.get();
+}
+
+GameEngine& GameEngine::operator=(const GameEngine& other) {
+    if (this != &other) {
+        if (other.mainMenuState) mainMenuState = other.mainMenuState->Clone();
+        if (other.executeOrdersState) executeOrdersState = other.executeOrdersState->Clone();
+
+        currentState = (other.currentState == other.mainMenuState.get())
+            ? mainMenuState.get()
+            : executeOrdersState.get();
+    }
+    return *this;
+}
+
 
 int GameEngine::Run() {
     std::string input;
