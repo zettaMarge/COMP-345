@@ -11,6 +11,35 @@ using std::vector;
 class Territory{};
 class Player{};
 
+// A player's list of orders
+class OrdersList{
+    public:
+        // Copy constructor
+        OrdersList(const OrdersList& obj);
+
+        // Destructor
+        ~OrdersList();
+
+        // Assignment operator
+        OrdersList& operator= (const OrdersList& obj);
+
+        // Stream insertion operator
+        friend ostream& operator<<(ostream& stream, const OrdersList& obj);
+
+        // Add a new order to the list
+        void add(Order* newOrder);
+
+        // Move an order to a new position in the list
+        void move(int fromId, int toId);
+
+        // Delete an order from the list
+        void remove(int id);
+
+    private:
+        vector<Order*> orders;
+};
+
+
 // Abstract Order class - cannot be instantiated
 class Order {
     public:
@@ -34,34 +63,6 @@ class Order {
         virtual bool validate() = 0;
 };
 
-// Deploy order
-class Deploy : public Order {
-    public:
-        // Constructor
-        Deploy(Player* owningPlayer, int nbUnits, Territory* target);
-
-        // Copy constructor
-        Deploy(const Deploy& obj);
-
-        // Destructor
-        ~Deploy();
-
-        // Assignment operator
-        Deploy& operator= (const Deploy& obj);
-
-        // Prints the order to the specified stream
-        ostream& print(ostream& stream) const;
-
-        // Move a certain number of army units from the current player’s reinforcement pool to one of the current player’s territories
-        void execute();
-
-    private:   
-        int nbUnits;
-        Territory* target;
-
-        // Validates the order
-        bool validate();
-};
 
 // Advance order
 class Advance : public Order {
@@ -91,64 +92,8 @@ class Advance : public Order {
 
         // Validates the order
         bool validate();
-
 };
 
-// Bomb order
-class Bomb : public Order {
-    public:
-        // Constructor
-        Bomb(Player* owningPlayer, Territory* target);
-
-        //Copy construcotr
-        Bomb(const Bomb& obj);
-
-        // Destructor
-        ~Bomb();
-
-        // Assignment operator
-        Bomb& operator= (const Bomb& obj);
-
-        // Prints the order to the specified stream
-        ostream& print(ostream& stream) const;
-
-        // Destroy half of the army units located on an opponent’s territory that is adjacent to one of the current player’s territories
-        void execute();
-
-    private:
-        Territory* target;
-
-        // Validates the order
-        bool validate();
-};
-
-// Blockade order
-class Blockade : public Order {
-    public:
-        // Constructor
-        Blockade(Player* owningPlayer, Territory* target);
-
-        // Copy constructor
-        Blockade(const Blockade& obj);
-
-        // Destructor
-        ~Blockade();
-
-        // Assignment operator
-        Blockade& operator= (const Blockade& obj);
-
-        // Prints the order to the specified stream
-        ostream& print(ostream& stream) const;
-
-        // Triple the number of army units on one of the current player’s territories and make it a neutral territory.
-        void execute();
-
-    private:
-        Territory* target;
-
-        // Validates the order
-        bool validate();
-};
 
 // Airlift order
 class Airlift : public Order {
@@ -180,6 +125,95 @@ class Airlift : public Order {
         bool validate();
 };
 
+
+// Blockade order
+class Blockade : public Order {
+    public:
+        // Constructor
+        Blockade(Player* owningPlayer, Territory* target);
+
+        // Copy constructor
+        Blockade(const Blockade& obj);
+
+        // Destructor
+        ~Blockade();
+
+        // Assignment operator
+        Blockade& operator= (const Blockade& obj);
+
+        // Prints the order to the specified stream
+        ostream& print(ostream& stream) const;
+
+        // Triple the number of army units on one of the current player’s territories and make it a neutral territory.
+        void execute();
+
+    private:
+        Territory* target;
+
+        // Validates the order
+        bool validate();
+};
+
+
+// Bomb order
+class Bomb : public Order {
+    public:
+        // Constructor
+        Bomb(Player* owningPlayer, Territory* target);
+
+        //Copy construcotr
+        Bomb(const Bomb& obj);
+
+        // Destructor
+        ~Bomb();
+
+        // Assignment operator
+        Bomb& operator= (const Bomb& obj);
+
+        // Prints the order to the specified stream
+        ostream& print(ostream& stream) const;
+
+        // Destroy half of the army units located on an opponent’s territory that is adjacent to one of the current player’s territories
+        void execute();
+
+    private:
+        Territory* target;
+
+        // Validates the order
+        bool validate();
+};
+
+
+// Deploy order
+class Deploy : public Order {
+    public:
+        // Constructor
+        Deploy(Player* owningPlayer, int nbUnits, Territory* target);
+
+        // Copy constructor
+        Deploy(const Deploy& obj);
+
+        // Destructor
+        ~Deploy();
+
+        // Assignment operator
+        Deploy& operator= (const Deploy& obj);
+
+        // Prints the order to the specified stream
+        ostream& print(ostream& stream) const;
+
+        // Move a certain number of army units from the current player’s reinforcement pool to one of the current player’s territories
+        void execute();
+
+    private:   
+        int nbUnits;
+        Territory* target;
+
+        // Validates the order
+        bool validate();
+};
+
+
 // Negotiate order
 class Negotiate : public Order {
     public:
@@ -206,32 +240,4 @@ class Negotiate : public Order {
 
         // Validates the order
         bool validate();
-};
-
-// A player's list of orders
-class OrdersList{
-    public:
-        // Copy constructor
-        OrdersList(const OrdersList& obj);
-
-        // Destructor
-        ~OrdersList();
-
-        // Assignment operator
-        OrdersList& operator= (const OrdersList& obj);
-
-        // Stream insertion operator
-        friend ostream& operator<<(ostream& stream, const OrdersList& obj);
-
-        // Add a new order to the list
-        void add(Order* newOrder);
-
-        // Move an order to a new position in the list
-        void move(int fromId, int toId);
-
-        // Delete an order from the list
-        void remove(int id);
-
-    private:
-        vector<Order*> orders;
 };

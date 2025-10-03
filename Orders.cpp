@@ -4,396 +4,6 @@
 
 using std::endl;
 
-// ----- Order -----
-// Destrcutor
-Order::~Order() {
-    delete owningPlayer;
-    owningPlayer = NULL;
-}
-
-ostream& operator<<(ostream& stream, const Order& obj) {
-    return obj.print(stream);
-}
-
-// -----------------
-
-
-// ----- Deploy -----
-// Constructor
-Deploy::Deploy(Player* owningPlayer, int nbUnits, Territory* target) {
-    owningPlayer = owningPlayer;
-    nbUnits = nbUnits;
-    target = target;
-}
-
-// Copy constructor
-Deploy::Deploy(const Deploy& obj) {
-    owningPlayer = new Player;
-    *owningPlayer = *obj.owningPlayer;
-
-    nbUnits = obj.nbUnits;
-
-    target = new Territory;
-    *target = *obj.target;
-}
-
-// Destructor
-Deploy::~Deploy() {
-    delete target;
-    target = NULL;
-}
-
-// Assignment operator
-Deploy& Deploy::operator=(const Deploy& obj) {
-    if (this != &obj) {
-        owningPlayer = new Player;
-        *owningPlayer = *obj.owningPlayer;
-
-        nbUnits = obj.nbUnits;
-
-        target = new Territory;
-        *target = *obj.target;
-    }
-
-    return *this;
-}
-
-// Prints the order to the specified stream
-ostream& Deploy::print(ostream& stream) const {
-    stream << "Deploy: adding " << nbUnits << "units to [TERRITORY]" << std::endl;
-}
-
-// Move a certain number of army units from the current player’s reinforcement pool to one of the current player’s territories
-void Deploy::execute() {
-    if (validate()) {
-        std::cout << "Executing: Deploy order." << std::endl;
-    }
-    else {
-        std::cout << "This Deploy order is invalid." << std::endl;
-    }
-}
-
-// Validates the order
-bool Deploy::validate() {
-    //TODO if territory belongs to player
-}
-
-// ------------------
-
-
-// ----- Advance -----
-// Constructor
-Advance::Advance(Player* owningPlayer, int nbUnits, Territory* src, Territory* target) {
-    owningPlayer = owningPlayer;
-    nbUnits = nbUnits;
-    src = src;
-    target = target;
-}
-
-// Copy constructor
-Advance::Advance(const Advance& obj) {
-    owningPlayer = new Player;
-    *owningPlayer = *obj.owningPlayer;
-
-    nbUnits = obj.nbUnits;
-
-    src = new Territory;
-    *src = *obj.src;
-
-    target = new Territory;
-    *target = *obj.target;
-}
-
-// Destructor
-Advance::~Advance() {
-    delete src;
-    src = NULL;
-
-    delete target;
-    target = NULL;
-}
-
-// Assignment operator
-Advance& Advance::operator= (const Advance& obj) {
-    if (this != &obj) {
-        owningPlayer = new Player;
-        *owningPlayer = *obj.owningPlayer;
-
-        nbUnits = obj.nbUnits;
-
-        src = new Territory;
-        *src = *obj.src;
-
-        target = new Territory;
-        *target = *obj.target;
-    }
-
-    return *this;
-}
-
-// Prints the order to the specified stream
-ostream& Advance::print(ostream& stream) const {
-    stream << "Advance: moving " << nbUnits << "units from [TERRITORY] to [TERRITORY]" << std::endl;
-}
-
-// Move a certain number of army units from one of the current player’s territories to another territory that is adjacent to the source territory
-void Advance::execute() {
-    if (validate()) {
-        std::cout << "Executing: Advance order." << std::endl;
-    }
-    else {
-        std::cout << "This Advance order is invalid." << std::endl;
-    }
-}
-
-// Validates the order
-bool Advance::validate() {
-    //TODO if src belongs to player, has enough units to move, AND target is adjacent
-}
-// -------------------
-
-
-// ----- Bomb -----
-// Constructor
-Bomb::Bomb(Player* owningPlayer, Territory* target) {
-    owningPlayer = owningPlayer;
-    target = target;
-}
-
-// Copy constructor
-Bomb::Bomb(const Bomb& obj) {
-    owningPlayer = new Player;
-    *owningPlayer = *obj.owningPlayer;
-
-    target = new Territory;
-    *target = *obj.target;
-}
-
-// Destructor
-Bomb::~Bomb() {
-    delete target;
-    target = NULL;
-}
-
-// Assignment operator
-Bomb& Bomb::operator= (const Bomb& obj) {
-    if (this != &obj) {
-        owningPlayer = new Player;
-        *owningPlayer = *obj.owningPlayer;
-
-        target = new Territory;
-        *target = *obj.target;
-    }
-
-    return *this;
-}
-
-// Prints the order to the specified stream
-ostream& Bomb::print(ostream& stream) const {
-    stream << "Bomb: destroy half of the units on [[TERRITORY]]" << std::endl;  
-}
-
-// Destroy half of the army units located on an opponent’s territory that is adjacent to one of the current player’s territories
-void Bomb::execute() {
-    if (validate()) {
-        std::cout << "Executing: Bomb order." << std::endl;
-    }
-    else {
-        std::cout << "This Bomb order is invalid." << std::endl;
-    }
-}
-
-// Validates the order
-bool Bomb::validate() {
-    //TODO if target doesnt belong to player, and is adjacent to a territory owned by player
-}
-// ----------------
-
-
-// ----- Blockade -----
-// Constructor
-Blockade::Blockade(Player* owningPlayer, Territory* target) {
-    owningPlayer = owningPlayer;
-    target = target;
-}
-
-// Copy constructor
-Blockade::Blockade(const Blockade& obj) {
-    owningPlayer = new Player;
-    *owningPlayer = *obj.owningPlayer;
-
-    target = new Territory;
-    *target = *obj.target;
-}
-
-// Destructor
-Blockade::~Blockade() {
-    delete target;
-    target = NULL;
-}
-
-// Assignment operator
-Blockade& Blockade::operator= (const Blockade& obj) {
-    if (this != &obj) {
-        owningPlayer = new Player;
-        *owningPlayer = *obj.owningPlayer;
-
-        target = new Territory;
-        *target = *obj.target;
-    }
-
-    return *this;
-}
-
-// Prints the order to the specified stream
-ostream& Blockade::print(ostream& stream) const {
-    stream << "Blockade: tripling the number of the units on [[TERRITORY]]" << std::endl; 
-}
-
-// Triple the number of army units on one of the current player’s territories and make it a neutral territory.
-void Blockade::execute() {
-    if (validate()) {
-        std::cout << "Executing: Blockade order." << std::endl;
-    }
-    else {
-        std::cout << "This Blockade order is invalid." << std::endl;
-    }
-}
-
-// Validates the order
-bool Blockade::validate() {
-    //TODO if target belongs to player
-}
-// --------------------
-
-
-// ----- Airlift -----
-// Constructor
-Airlift::Airlift(Player* owningPlayer, int nbUnits, Territory* src, Territory* target) {
-    owningPlayer = owningPlayer;
-    nbUnits = nbUnits;
-    src = src;
-    target = target;
-}
-
-// Copy constructor
-Airlift::Airlift(const Airlift& obj) {
-    owningPlayer = new Player;
-    *owningPlayer = *obj.owningPlayer;
-
-    nbUnits = obj.nbUnits;
-
-    src = new Territory;
-    *src = *obj.src;
-
-    target = new Territory;
-    *target = *obj.target;
-}
-
-// Destructor
-Airlift::~Airlift() {
-    delete src;
-    src = NULL;
-
-    delete target;
-    target = NULL;
-}
-
-// Assignment operator
-Airlift& Airlift::operator= (const Airlift& obj) {
-    if (this != &obj) {
-        owningPlayer = new Player;
-        *owningPlayer = *obj.owningPlayer;
-
-        nbUnits = obj.nbUnits;
-
-        src = new Territory;
-        *src = *obj.src;
-
-        target = new Territory;
-        *target = *obj.target;
-    }
-
-    return *this;
-}
-
-// Prints the order to the specified stream
-ostream& Airlift::print(ostream& stream) const {
-    stream << "Airlift: moving " << nbUnits << "units from [TERRITORY] to [TERRITORY]" << std::endl; 
-}
-
-// Advance a certain number of army units from one of the current player’s territories to any another territory
-void Airlift::execute() {
-    if (validate()) {
-        std::cout << "Executing: Airlift order." << std::endl;
-    }
-    else {
-        std::cout << "This Airlift order is invalid." << std::endl;
-    }
-}
-
-// Validates the order
-bool Airlift::validate() {
-    //TODO if src belongs to player
-}
-// -------------------
-
-
-// ----- Negotiate -----
-// Constructor
-Negotiate::Negotiate(Player* owningPlayer, Player* otherPlayer) {
-    owningPlayer = owningPlayer;
-    otherPlayer = otherPlayer;
-}
-
-// Copy constructor
-Negotiate::Negotiate(const Negotiate& obj) {
-    owningPlayer = new Player;
-    *owningPlayer = *obj.owningPlayer;
-
-    otherPlayer = new Player;
-    *otherPlayer = *obj.otherPlayer;
-}
-
-// Destructor
-Negotiate::~Negotiate() {
-    delete otherPlayer;
-    otherPlayer = NULL;
-}
-
-// Assignment operator
-Negotiate& Negotiate::operator= (const Negotiate& obj) {
-    if (this != &obj) {
-        owningPlayer = new Player;
-        *owningPlayer = *obj.owningPlayer;
-
-        otherPlayer = new Player;
-        *otherPlayer = *obj.otherPlayer;
-    }
-}
-
-// Prints the order to the specified stream
-ostream& Negotiate::print(ostream& stream) const {
-    stream << "Negotiate: preventing attacks between [PLAYER] and [PLAYER]" << std::endl; 
-}
-
-// Prevent attacks between the current player and the player targeted by the negotiate order until the end of the turn.
-void Negotiate::execute() {
-    if (validate()) {
-        std::cout << "Executing: Negotiate order." << std::endl;
-    }
-    else {
-        std::cout << "This Negotiate order is invalid." << std::endl;
-    }
-}
-
-// Validates the order
-bool Negotiate::validate() {
-    //TODO if player != otherPlayer
-}
-// ---------------------
-
-
 // ----- OrdersList -----
 // Copy constructor
 OrdersList::OrdersList(const OrdersList& obj) {
@@ -481,4 +91,394 @@ void OrdersList::remove(int id) {
         orders.erase(orders.begin() + id);
     }
 }
-// ----------------------
+// ----- OrdersList -----
+
+
+// ----- Order -----
+// Destrcutor
+Order::~Order() {
+    delete owningPlayer;
+    owningPlayer = NULL;
+}
+
+ostream& operator<<(ostream& stream, const Order& obj) {
+    return obj.print(stream);
+}
+
+// ----- Order -----
+
+
+// ----- Advance -----
+// Constructor
+Advance::Advance(Player* owningPlayer, int nbUnits, Territory* src, Territory* target) {
+    owningPlayer = owningPlayer;
+    nbUnits = nbUnits;
+    src = src;
+    target = target;
+}
+
+// Copy constructor
+Advance::Advance(const Advance& obj) {
+    owningPlayer = new Player;
+    *owningPlayer = *obj.owningPlayer;
+
+    nbUnits = obj.nbUnits;
+
+    src = new Territory;
+    *src = *obj.src;
+
+    target = new Territory;
+    *target = *obj.target;
+}
+
+// Destructor
+Advance::~Advance() {
+    delete src;
+    src = NULL;
+
+    delete target;
+    target = NULL;
+}
+
+// Assignment operator
+Advance& Advance::operator= (const Advance& obj) {
+    if (this != &obj) {
+        owningPlayer = new Player;
+        *owningPlayer = *obj.owningPlayer;
+
+        nbUnits = obj.nbUnits;
+
+        src = new Territory;
+        *src = *obj.src;
+
+        target = new Territory;
+        *target = *obj.target;
+    }
+
+    return *this;
+}
+
+// Prints the order to the specified stream
+ostream& Advance::print(ostream& stream) const {
+    stream << "Advance: moving " << nbUnits << "units from [TERRITORY] to [TERRITORY]" << std::endl;
+}
+
+// Move a certain number of army units from one of the current player’s territories to another territory that is adjacent to the source territory
+void Advance::execute() {
+    if (validate()) {
+        std::cout << "Executing: Advance order." << std::endl;
+    }
+    else {
+        std::cout << "This Advance order is invalid." << std::endl;
+    }
+}
+
+// Validates the order
+bool Advance::validate() {
+    //TODO if src belongs to player, has enough units to move, AND target is adjacent
+}
+// ----- Advance -----
+
+
+// ----- Airlift -----
+// Constructor
+Airlift::Airlift(Player* owningPlayer, int nbUnits, Territory* src, Territory* target) {
+    owningPlayer = owningPlayer;
+    nbUnits = nbUnits;
+    src = src;
+    target = target;
+}
+
+// Copy constructor
+Airlift::Airlift(const Airlift& obj) {
+    owningPlayer = new Player;
+    *owningPlayer = *obj.owningPlayer;
+
+    nbUnits = obj.nbUnits;
+
+    src = new Territory;
+    *src = *obj.src;
+
+    target = new Territory;
+    *target = *obj.target;
+}
+
+// Destructor
+Airlift::~Airlift() {
+    delete src;
+    src = NULL;
+
+    delete target;
+    target = NULL;
+}
+
+// Assignment operator
+Airlift& Airlift::operator= (const Airlift& obj) {
+    if (this != &obj) {
+        owningPlayer = new Player;
+        *owningPlayer = *obj.owningPlayer;
+
+        nbUnits = obj.nbUnits;
+
+        src = new Territory;
+        *src = *obj.src;
+
+        target = new Territory;
+        *target = *obj.target;
+    }
+
+    return *this;
+}
+
+// Prints the order to the specified stream
+ostream& Airlift::print(ostream& stream) const {
+    stream << "Airlift: moving " << nbUnits << "units from [TERRITORY] to [TERRITORY]" << std::endl; 
+}
+
+// Advance a certain number of army units from one of the current player’s territories to any another territory
+void Airlift::execute() {
+    if (validate()) {
+        std::cout << "Executing: Airlift order." << std::endl;
+    }
+    else {
+        std::cout << "This Airlift order is invalid." << std::endl;
+    }
+}
+
+// Validates the order
+bool Airlift::validate() {
+    //TODO if src belongs to player
+}
+// ----- Airlift -----
+
+
+// ----- Blockade -----
+// Constructor
+Blockade::Blockade(Player* owningPlayer, Territory* target) {
+    owningPlayer = owningPlayer;
+    target = target;
+}
+
+// Copy constructor
+Blockade::Blockade(const Blockade& obj) {
+    owningPlayer = new Player;
+    *owningPlayer = *obj.owningPlayer;
+
+    target = new Territory;
+    *target = *obj.target;
+}
+
+// Destructor
+Blockade::~Blockade() {
+    delete target;
+    target = NULL;
+}
+
+// Assignment operator
+Blockade& Blockade::operator= (const Blockade& obj) {
+    if (this != &obj) {
+        owningPlayer = new Player;
+        *owningPlayer = *obj.owningPlayer;
+
+        target = new Territory;
+        *target = *obj.target;
+    }
+
+    return *this;
+}
+
+// Prints the order to the specified stream
+ostream& Blockade::print(ostream& stream) const {
+    stream << "Blockade: tripling the number of the units on [[TERRITORY]]" << std::endl; 
+}
+
+// Triple the number of army units on one of the current player’s territories and make it a neutral territory.
+void Blockade::execute() {
+    if (validate()) {
+        std::cout << "Executing: Blockade order." << std::endl;
+    }
+    else {
+        std::cout << "This Blockade order is invalid." << std::endl;
+    }
+}
+
+// Validates the order
+bool Blockade::validate() {
+    //TODO if target belongs to player
+}
+// ----- Blockade -----
+
+
+// ----- Bomb -----
+// Constructor
+Bomb::Bomb(Player* owningPlayer, Territory* target) {
+    owningPlayer = owningPlayer;
+    target = target;
+}
+
+// Copy constructor
+Bomb::Bomb(const Bomb& obj) {
+    owningPlayer = new Player;
+    *owningPlayer = *obj.owningPlayer;
+
+    target = new Territory;
+    *target = *obj.target;
+}
+
+// Destructor
+Bomb::~Bomb() {
+    delete target;
+    target = NULL;
+}
+
+// Assignment operator
+Bomb& Bomb::operator= (const Bomb& obj) {
+    if (this != &obj) {
+        owningPlayer = new Player;
+        *owningPlayer = *obj.owningPlayer;
+
+        target = new Territory;
+        *target = *obj.target;
+    }
+
+    return *this;
+}
+
+// Prints the order to the specified stream
+ostream& Bomb::print(ostream& stream) const {
+    stream << "Bomb: destroy half of the units on [[TERRITORY]]" << std::endl;  
+}
+
+// Destroy half of the army units located on an opponent’s territory that is adjacent to one of the current player’s territories
+void Bomb::execute() {
+    if (validate()) {
+        std::cout << "Executing: Bomb order." << std::endl;
+    }
+    else {
+        std::cout << "This Bomb order is invalid." << std::endl;
+    }
+}
+
+// Validates the order
+bool Bomb::validate() {
+    //TODO if target doesnt belong to player, and is adjacent to a territory owned by player
+}
+// ----- Bomb -----
+
+
+// ----- Deploy -----
+// Constructor
+Deploy::Deploy(Player* owningPlayer, int nbUnits, Territory* target) {
+    owningPlayer = owningPlayer;
+    nbUnits = nbUnits;
+    target = target;
+}
+
+// Copy constructor
+Deploy::Deploy(const Deploy& obj) {
+    owningPlayer = new Player;
+    *owningPlayer = *obj.owningPlayer;
+
+    nbUnits = obj.nbUnits;
+
+    target = new Territory;
+    *target = *obj.target;
+}
+
+// Destructor
+Deploy::~Deploy() {
+    delete target;
+    target = NULL;
+}
+
+// Assignment operator
+Deploy& Deploy::operator=(const Deploy& obj) {
+    if (this != &obj) {
+        owningPlayer = new Player;
+        *owningPlayer = *obj.owningPlayer;
+
+        nbUnits = obj.nbUnits;
+
+        target = new Territory;
+        *target = *obj.target;
+    }
+
+    return *this;
+}
+
+// Prints the order to the specified stream
+ostream& Deploy::print(ostream& stream) const {
+    stream << "Deploy: adding " << nbUnits << "units to [TERRITORY]" << std::endl;
+}
+
+// Move a certain number of army units from the current player’s reinforcement pool to one of the current player’s territories
+void Deploy::execute() {
+    if (validate()) {
+        std::cout << "Executing: Deploy order." << std::endl;
+    }
+    else {
+        std::cout << "This Deploy order is invalid." << std::endl;
+    }
+}
+
+// Validates the order
+bool Deploy::validate() {
+    //TODO if territory belongs to player
+}
+
+// ----- Deploy -----
+
+
+// ----- Negotiate -----
+// Constructor
+Negotiate::Negotiate(Player* owningPlayer, Player* otherPlayer) {
+    owningPlayer = owningPlayer;
+    otherPlayer = otherPlayer;
+}
+
+// Copy constructor
+Negotiate::Negotiate(const Negotiate& obj) {
+    owningPlayer = new Player;
+    *owningPlayer = *obj.owningPlayer;
+
+    otherPlayer = new Player;
+    *otherPlayer = *obj.otherPlayer;
+}
+
+// Destructor
+Negotiate::~Negotiate() {
+    delete otherPlayer;
+    otherPlayer = NULL;
+}
+
+// Assignment operator
+Negotiate& Negotiate::operator= (const Negotiate& obj) {
+    if (this != &obj) {
+        owningPlayer = new Player;
+        *owningPlayer = *obj.owningPlayer;
+
+        otherPlayer = new Player;
+        *otherPlayer = *obj.otherPlayer;
+    }
+}
+
+// Prints the order to the specified stream
+ostream& Negotiate::print(ostream& stream) const {
+    stream << "Negotiate: preventing attacks between [PLAYER] and [PLAYER]" << std::endl; 
+}
+
+// Prevent attacks between the current player and the player targeted by the negotiate order until the end of the turn.
+void Negotiate::execute() {
+    if (validate()) {
+        std::cout << "Executing: Negotiate order." << std::endl;
+    }
+    else {
+        std::cout << "This Negotiate order is invalid." << std::endl;
+    }
+}
+
+// Validates the order
+bool Negotiate::validate() {
+    //TODO if player != otherPlayer
+}
+// ----- Negotiate -----
