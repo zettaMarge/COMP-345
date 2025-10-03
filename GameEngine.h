@@ -8,6 +8,11 @@
 class IState;
 
 // ===== ICommand =====
+//Interface for commands
+//contains a name and an optional next state to transition to
+//virtual execute method where methods can plug in their own functionality
+//will later implement the other class' methods 
+//contains copy/assign and stream insertion as requested lol
 class ICommand {
 public:
     std::string name;
@@ -38,6 +43,8 @@ public:
 };
 
 // Simple command implementation
+//purely for this iteration of this project to make my life easier
+//later on each command will just inherit from ICommand and implement their own Execute method
 class SimpleCommand : public ICommand {
 public:
     SimpleCommand(const std::string& n, IState* next = nullptr)
@@ -47,21 +54,28 @@ public:
 };
 
 // ===== IState =====
+//Interface for states
+//contains a name and a list of available commands
+//virtual OnEnter and OnExit methods where states can plug in their own functionality
+//clone method to facilitate deep copying of states(necessary for GameEngine copy/assign)
 class IState {
 public:
-    std::string name;
-    std::vector<std::unique_ptr<ICommand>> availableCommands;
-    IState(const std::string& n) : name(n) {}
+	std::string name; //state name
+	std::vector<std::unique_ptr<ICommand>> availableCommands; //vector of commands available in this state
+	IState(const std::string& n) : name(n) {} //constructor
 
-    virtual ~IState() = default;
+	virtual ~IState() = default; //virtual destructor
 
     virtual void OnEnter() = 0;
     virtual void OnExit() = 0;
 
-    virtual std::unique_ptr<IState> Clone() const = 0;
+	virtual std::unique_ptr<IState> Clone() const = 0; //for deep copying
 };
 
 // ===== SimpleState =====
+//similar to Icommand, purely for this iteration of this project to make my life easier
+//although each state might not need its own functionality, will depend on demands of future iterations
+//contains copy/assign and stream insertion as requested lol
 class SimpleState : public IState {
 public:
     std::string enterMessage;
@@ -69,14 +83,14 @@ public:
 
     SimpleState(const std::string& n,
         const std::string& enterMsg,
-        const std::string& exitMsg);
+		const std::string& exitMsg); //constructor
 
     // Copy / assign
-    SimpleState(const SimpleState& other);
-    SimpleState& operator=(const SimpleState& other);
+	SimpleState(const SimpleState& other); // copy constructor
+	SimpleState& operator=(const SimpleState& other); // copy assignment
 
     // Stream insertion
-    friend std::ostream& operator<<(std::ostream& os, const SimpleState& s);
+    friend std::ostream& operator<<(std::ostream& os, const SimpleState& s); 
 
     // Default behavior
     void OnEnter() override;
@@ -84,13 +98,15 @@ public:
 
     std::unique_ptr<IState> Clone() const override {
         return std::make_unique<SimpleState>(*this);
-    }
+	} //for deep copying
 };
 
 // ===== Specialized States =====
+// I gave each state its own class for clarity and I'm guessing I'll need to add functionality later
+// Each state implements Clone for deep copying along w a constructor
 class MainMenuState : public SimpleState {
 public:
-    MainMenuState();
+    MainMenuState(); 
     std::unique_ptr<IState> Clone() const override {
         return std::make_unique<MainMenuState>(*this);
     }
@@ -154,9 +170,12 @@ public:
 
 
 // ===== GameEngine =====
+// Singleton class that manages the game states and transitions
+// Owns all states and manages the current state
+// Contains Run and ProcessInput methods to handle the game loop and user input
 class GameEngine {
 public:
-    static GameEngine* instance;
+	static GameEngine* instance; // singleton instance
 
     // Own all states
     std::unique_ptr<IState> mainMenuState;
@@ -168,17 +187,17 @@ public:
     std::unique_ptr<IState> executeOrdersState;
     std::unique_ptr<IState> winState;
 
-    IState* currentState = nullptr;
+	IState* currentState = nullptr; // current state pointer
 
-    GameEngine();
-    ~GameEngine();
+	GameEngine(); // constructor
+	~GameEngine(); // destructor
 
     // Copy / assign
     GameEngine(const GameEngine& other);
     GameEngine& operator=(const GameEngine& other);
 
-    friend std::ostream& operator<<(std::ostream& os, const GameEngine& engine);
+	friend std::ostream& operator<<(std::ostream& os, const GameEngine& engine); // stream insertion
 
-    int Run();
-    bool ProcessInput(const std::string& input);
+	int Run(); // main game loop
+	bool ProcessInput(const std::string& input); // process user input
 };

@@ -1,21 +1,19 @@
 #include "GameEngine.h"
 
 // ===== SimpleState implementation =====
-SimpleState::SimpleState(const std::string& n,
-    const std::string& enterMsg,
-    const std::string& exitMsg)
+// SimpleState constructor
+SimpleState::SimpleState(const std::string& n, const std::string& enterMsg, const std::string& exitMsg)
     : IState(n), enterMessage(enterMsg), exitMessage(exitMsg) {
-}
+} 
 
-SimpleState::SimpleState(const SimpleState& other)
-    : IState(other.name),
-    enterMessage(other.enterMessage),
-    exitMessage(other.exitMessage) {
+// simple state Copy constructor
+SimpleState::SimpleState(const SimpleState& other)  : IState(other.name), enterMessage(other.enterMessage), exitMessage(other.exitMessage) {
+    //deep copy of commands
     for (const auto& cmd : other.availableCommands) {
         availableCommands.emplace_back(std::make_unique<SimpleCommand>(cmd->name, cmd->nextState));
-    }
+	}
 }
-
+// simple state assignment operator
 SimpleState& SimpleState::operator=(const SimpleState& other) {
     if (this != &other) {
         name = other.name;
@@ -28,7 +26,7 @@ SimpleState& SimpleState::operator=(const SimpleState& other) {
     }
     return *this;
 }
-
+// Stream insertion for SimpleState
 std::ostream& operator<<(std::ostream& os, const SimpleState& s) {
     os << "State: " << s.name;
     return os;
@@ -38,7 +36,7 @@ void SimpleState::OnEnter() { std::cout << enterMessage << "\n"; }
 void SimpleState::OnExit() { std::cout << exitMessage << "\n"; }
 
 // ===== Concrete States =====
-
+//construction of all the main states and their current functionality which is only messages lol
 MainMenuState::MainMenuState()
     : SimpleState("MainMenu", "Welcome to the game!",
         "Leaving Main Menu...") {}
@@ -73,10 +71,11 @@ WinGameState::WinGameState()
 
 
 // ===== GameEngine Implementation =====
-GameEngine* GameEngine::instance = nullptr;
+GameEngine* GameEngine::instance = nullptr; // initialize singleton instance to nullptr
 
 GameEngine::GameEngine() {
     // Create all states
+	//unique pointers to manage state lifetimes that way I dont have do worry about memory leaks
     mainMenuState = std::make_unique<MainMenuState>();
     mapLoadedState = std::make_unique<MapLoadedState>();
     mapValidatedState = std::make_unique<MapValidatedState>();
@@ -87,6 +86,7 @@ GameEngine::GameEngine() {
     winState = std::make_unique<WinGameState>();
 
     // Hook commands with automatic transitions
+	//I feel like there's probably a more elegant way to do this but whatever
     mainMenuState->availableCommands.emplace_back(
         std::make_unique<SimpleCommand>("loadmap", mapLoadedState.get()));
 
@@ -130,12 +130,14 @@ GameEngine::GameEngine() {
         std::make_unique<SimpleCommand>("end", nullptr)); // exit game
 
     // Start the game
-    currentState = mainMenuState.get();
+	currentState = mainMenuState.get(); // start at main menu
     currentState->OnEnter();
 }
 
-GameEngine::~GameEngine() = default;
+GameEngine::~GameEngine() = default; // unique_ptrs auto-cleanup
 
+// Copy constructor, really just for the sake of having one, as you can tell its really annoying to implement
+//cuz you have to deep copy everything but yeah it's there
 GameEngine::GameEngine(const GameEngine& other) {
     if (other.mainMenuState) mainMenuState = other.mainMenuState->Clone();
     if (other.mapLoadedState) mapLoadedState = other.mapLoadedState->Clone();
@@ -146,6 +148,9 @@ GameEngine::GameEngine(const GameEngine& other) {
     if (other.executeOrdersState) executeOrdersState = other.executeOrdersState->Clone();
     if (other.winState) winState = other.winState->Clone();
 
+	// Set current state pointer to the corresponding state in this instance
+	// If the other currentState is null, set this currentState to null as well
+	//once again not very elegant but it works
     currentState = (other.currentState == other.mainMenuState.get())
         ? mainMenuState.get()
         : (other.currentState == other.mapLoadedState.get())
@@ -165,6 +170,8 @@ GameEngine::GameEngine(const GameEngine& other) {
         : nullptr;
 }
 
+//GameEngine assignment operator
+//once again deep copy everything
 GameEngine& GameEngine::operator=(const GameEngine& other) {
     if (this != &other) {
         if (other.mainMenuState) mainMenuState = other.mainMenuState->Clone();
@@ -178,14 +185,30 @@ GameEngine& GameEngine::operator=(const GameEngine& other) {
 
         currentState = (other.currentState == other.mainMenuState.get())
             ? mainMenuState.get()
-            : executeOrdersState.get();
+            : (other.currentState == other.mapLoadedState.get())
+            ? mapLoadedState.get()
+            : (other.currentState == other.mapValidatedState.get())
+            ? mapValidatedState.get()
+            : (other.currentState == other.playersAddedState.get())
+            ? playersAddedState.get()
+            : (other.currentState == other.assignReinforcementState.get())
+            ? assignReinforcementState.get()
+            : (other.currentState == other.issueOrdersState.get())
+            ? issueOrdersState.get()
+            : (other.currentState == other.executeOrdersState.get())
+            ? executeOrdersState.get()
+            : (other.currentState == other.winState.get())
+            ? winState.get()
+            : nullptr;
     }
-    return *this;
+	return *this; // return this instance if theyre the same
 }
 
-
+//main game loop
+//using a while true loop Ive found no reason not to
+//prompts user for input and processes it
 int GameEngine::Run() {
-    std::string input;
+	std::string input; // user input
     while (true) {
         std::cout << "> ";
         if (!std::getline(std::cin, input)) break;
@@ -198,6 +221,11 @@ int GameEngine::Run() {
     return 0;
 }
 
+//process user input
+//checks if input matches any available commands in the current state
+//if so, executes the command and transitions to the next state if applicable
+//if not returs list of available commands
+//if command is end it returns false to signal quitting the game
 bool GameEngine::ProcessInput(const std::string& input) {
     for (auto& cmd : currentState->availableCommands) {
         if (cmd->name == input) {
@@ -224,6 +252,8 @@ bool GameEngine::ProcessInput(const std::string& input) {
 }
 
 // ===== Entry point =====
+//using main for now
+//I'll rename this to testgameegine or whatever when its time
 int main() {
     GameEngine::instance = new GameEngine();
     GameEngine::instance->Run();
