@@ -223,6 +223,55 @@ void Card::play() const{
     cardType->play();
 }
 
+// Copy constructor for Card
+Card::Card(const Card& other) {
+    type = other.type;
+    // Deep copy of CardTypes object based on the type
+    switch (type) {
+        case bomb:
+            cardType = new BombCard(*(static_cast<BombCard*>(other.cardType)));
+            break;
+        case reinforcement:
+            cardType = new ReinforcementCard(*(static_cast<ReinforcementCard*>(other.cardType)));
+            break;
+        case blockade:
+            cardType = new BlockadeCard(*(static_cast<BlockadeCard*>(other.cardType)));
+            break;
+        case airlift:
+            cardType = new AirliftCard(*(static_cast<AirliftCard*>(other.cardType)));
+            break;
+        case diplomacy:
+            cardType = new DiplomacyCard(*(static_cast<DiplomacyCard*>(other.cardType)));
+            break;
+    }
+}
+
+// Assignment operator for Card
+Card& Card::operator=(const Card& other) {
+    if (this != &other) {
+        delete cardType; // Free existing resource
+        type = other.type;
+        // Deep copy of CardTypes object based on the type
+        switch (type) {
+            case bomb:
+                cardType = new BombCard(*(static_cast<BombCard*>(other.cardType)));
+                break;
+            case reinforcement:
+                cardType = new ReinforcementCard(*(static_cast<ReinforcementCard*>(other.cardType)));
+                break;
+            case blockade:
+                cardType = new BlockadeCard(*(static_cast<BlockadeCard*>(other.cardType)));
+                break;
+            case airlift:
+                cardType = new AirliftCard(*(static_cast<AirliftCard*>(other.cardType)));
+                break;
+            case diplomacy:
+                cardType = new DiplomacyCard(*(static_cast<DiplomacyCard*>(other.cardType)));
+                break;
+        }
+    }
+    return *this;
+}
 
 //----------------------------------------------------------------
 // Deck class implementation
@@ -238,7 +287,7 @@ Deck::Deck(){
 Deck::Deck(const Deck& other) : cards(other.cards) {
     // Deep copy of cards vector
     for (size_t i = 0; i < cards.size(); i++) {
-        other.cards.push_back(cards[i]);
+        this->cards.push_back(other.cards[i]);
     }
     
 }

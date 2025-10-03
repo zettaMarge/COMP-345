@@ -81,7 +81,7 @@ public:
     Card(const Card& other); 
     Card& operator=(const Card& other); 
     ~Card(); 
-    void print() const;
+    void print();
 
     // main constructor
     Card(int type);
