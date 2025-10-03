@@ -3,6 +3,7 @@
 #include <list>
 #include <iostream>
 #include <vector>
+#include <string>
 
 using std::ostream;
 using std::vector;
@@ -14,6 +15,9 @@ class Player{};
 // A player's list of orders
 class OrdersList{
     public:
+        // Constructor
+        OrdersList();
+
         // Copy constructor
         OrdersList(const OrdersList& obj);
 
@@ -52,6 +56,9 @@ class Order {
         // Prints the order to the specified stream
         virtual ostream& print(ostream& stream) const = 0;
 
+        // Returns the effect of the order as a string
+        virtual std::string effect() const = 0;
+
         // Executes the order
         virtual void execute() = 0;
 
@@ -81,6 +88,9 @@ class Advance : public Order {
 
         // Prints the order to the specified stream
         ostream& print(ostream& stream) const;
+
+        // Returns the effect of the order as a string
+        std::string effect() const;
 
         // Move a certain number of army units from one of the current player’s territories to another territory that is adjacent to the source territory
         void execute();
@@ -113,6 +123,9 @@ class Airlift : public Order {
         // Prints the order to the specified stream
         ostream& print(ostream& stream) const;
 
+        // Returns the effect of the order as a string
+        std::string effect() const;
+
         // Advance a certain number of army units from one of the current player’s territories to any another territory
         void execute();
     
@@ -144,6 +157,9 @@ class Blockade : public Order {
         // Prints the order to the specified stream
         ostream& print(ostream& stream) const;
 
+        // Returns the effect of the order as a string
+        std::string effect() const;
+
         // Triple the number of army units on one of the current player’s territories and make it a neutral territory.
         void execute();
 
@@ -172,6 +188,9 @@ class Bomb : public Order {
 
         // Prints the order to the specified stream
         ostream& print(ostream& stream) const;
+
+        // Returns the effect of the order as a string
+        std::string effect() const;
 
         // Destroy half of the army units located on an opponent’s territory that is adjacent to one of the current player’s territories
         void execute();
@@ -202,6 +221,9 @@ class Deploy : public Order {
         // Prints the order to the specified stream
         ostream& print(ostream& stream) const;
 
+        // Returns the effect of the order as a string
+        std::string effect() const;
+
         // Move a certain number of army units from the current player’s reinforcement pool to one of the current player’s territories
         void execute();
 
@@ -231,6 +253,9 @@ class Negotiate : public Order {
 
         // Prints the order to the specified stream
         ostream& print(ostream& stream) const;
+
+        // Returns the effect of the order as a string
+        std::string effect() const;
 
         // Prevent attacks between the current player and the player targeted by the negotiate order until the end of the turn.
         void execute();

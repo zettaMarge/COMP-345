@@ -160,13 +160,18 @@ Advance& Advance::operator= (const Advance& obj) {
 
 // Prints the order to the specified stream
 ostream& Advance::print(ostream& stream) const {
-    stream << "Advance: moving " << nbUnits << "units from [TERRITORY] to [TERRITORY]" << std::endl;
+    stream << "Advance: " << effect() << std::endl;
+}
+
+// Returns the effect of the order as a string
+std::string Advance::effect() const {
+    return std::string("moving ") + std::to_string(nbUnits) + std::string(" units from [TERRITORY] to [TERRITORY]");
 }
 
 // Move a certain number of army units from one of the current player’s territories to another territory that is adjacent to the source territory
 void Advance::execute() {
     if (validate()) {
-        std::cout << "Executing: Advance order." << std::endl;
+        std::cout << "Advance order successful in" << effect() << std::endl;
     }
     else {
         std::cout << "This Advance order is invalid." << std::endl;
@@ -232,13 +237,18 @@ Airlift& Airlift::operator= (const Airlift& obj) {
 
 // Prints the order to the specified stream
 ostream& Airlift::print(ostream& stream) const {
-    stream << "Airlift: moving " << nbUnits << "units from [TERRITORY] to [TERRITORY]" << std::endl; 
+    stream << "Airlift: moving " << effect() << std::endl; 
+}
+
+// Returns the effect of the order as a string
+std::string Airlift::effect() const {
+    return std::string("moving ") + std::to_string(nbUnits) + std::string(" units from [TERRITORY] to [TERRITORY]");
 }
 
 // Advance a certain number of army units from one of the current player’s territories to any another territory
 void Airlift::execute() {
     if (validate()) {
-        std::cout << "Executing: Airlift order." << std::endl;
+        std::cout << "Airlift order successful in" << effect() << std::endl;
     }
     else {
         std::cout << "This Airlift order is invalid." << std::endl;
@@ -289,13 +299,18 @@ Blockade& Blockade::operator= (const Blockade& obj) {
 
 // Prints the order to the specified stream
 ostream& Blockade::print(ostream& stream) const {
-    stream << "Blockade: tripling the number of the units on [[TERRITORY]]" << std::endl; 
+    stream << "Blockade: " << effect() << std::endl; 
+}
+
+// Returns the effect of the order as a string
+std::string Blockade::effect() const {
+    return "tripling the number of units on [[TERRITORY]]";
 }
 
 // Triple the number of army units on one of the current player’s territories and make it a neutral territory.
 void Blockade::execute() {
     if (validate()) {
-        std::cout << "Executing: Blockade order." << std::endl;
+        std::cout << "Blockade order successful in" << effect() << std::endl;
     }
     else {
         std::cout << "This Blockade order is invalid." << std::endl;
@@ -346,13 +361,18 @@ Bomb& Bomb::operator= (const Bomb& obj) {
 
 // Prints the order to the specified stream
 ostream& Bomb::print(ostream& stream) const {
-    stream << "Bomb: destroy half of the units on [[TERRITORY]]" << std::endl;  
+    stream << "Bomb: " << std::endl;  
+}
+
+// Returns the effect of the order as a string
+std::string Bomb::effect() const {
+    return "destroy half of the units on [[TERRITORY]]";
 }
 
 // Destroy half of the army units located on an opponent’s territory that is adjacent to one of the current player’s territories
 void Bomb::execute() {
     if (validate()) {
-        std::cout << "Executing: Bomb order." << std::endl;
+        std::cout << "Bomb order successful in" << effect() << std::endl;
     }
     else {
         std::cout << "This Bomb order is invalid." << std::endl;
@@ -408,13 +428,18 @@ Deploy& Deploy::operator=(const Deploy& obj) {
 
 // Prints the order to the specified stream
 ostream& Deploy::print(ostream& stream) const {
-    stream << "Deploy: adding " << nbUnits << "units to [TERRITORY]" << std::endl;
+    stream << "Deploy: " << effect() << std::endl;
+}
+
+// Returns the effect of the order as a string
+std::string Deploy::effect() const {
+    return std::string("adding ") + std::to_string(nbUnits) + std::string(" units to [TERRITORY]");
 }
 
 // Move a certain number of army units from the current player’s reinforcement pool to one of the current player’s territories
 void Deploy::execute() {
     if (validate()) {
-        std::cout << "Executing: Deploy order." << std::endl;
+        std::cout << "Deploy order successful in" << effect() << std::endl;
     }
     else {
         std::cout << "This Deploy order is invalid." << std::endl;
@@ -464,13 +489,18 @@ Negotiate& Negotiate::operator= (const Negotiate& obj) {
 
 // Prints the order to the specified stream
 ostream& Negotiate::print(ostream& stream) const {
-    stream << "Negotiate: preventing attacks between [PLAYER] and [PLAYER]" << std::endl; 
+    stream << "Negotiate: " << effect() << std::endl; 
+}
+
+// Returns the effect of the order as a string
+std::string Negotiate::effect() const {
+    return std::string("preventing attacks between [PLAYER] and [PLAYER]");
 }
 
 // Prevent attacks between the current player and the player targeted by the negotiate order until the end of the turn.
 void Negotiate::execute() {
     if (validate()) {
-        std::cout << "Executing: Negotiate order." << std::endl;
+        std::cout << "Negotiate order successful in" << effect() << std::endl;
     }
     else {
         std::cout << "This Negotiate order is invalid." << std::endl;
