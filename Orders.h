@@ -3,25 +3,31 @@
 #include <list>
 #include <iostream>
 #include <vector>
-using namespace std;
 
-//placeholders
+using std::ostream;
+using std::vector;
+
+// Forward declarations
 class Territory{};
 class Player{};
 
 // Abstract Order class - cannot be instantiated
 class Order {
     public:
-        std::string type;
-
         // Destructor
         ~Order();
+
+        // Stream insertion operator
+        friend ostream& operator<<(ostream& stream, const Order& obj);
+
+        // Prints the order to the specified stream
+        virtual ostream& print(ostream& stream) const = 0;
 
         // Executes the order
         virtual void execute() = 0;
 
     protected:
-        Player* m_owningPlayer;
+        Player* owningPlayer;
 
     private:
         // Validates the order
@@ -43,15 +49,15 @@ class Deploy : public Order {
         // Assignment operator
         Deploy& operator= (const Deploy& obj);
 
-        // Stream insertion operator
-        friend ostream& operator<<(ostream& stream, const Deploy& obj);
+        // Prints the order to the specified stream
+        ostream& print(ostream& stream) const;
 
         // Move a certain number of army units from the current player’s reinforcement pool to one of the current player’s territories
         void execute();
 
     private:   
-        int m_nbUnits;
-        Territory* m_target;
+        int nbUnits;
+        Territory* target;
 
         // Validates the order
         bool validate();
@@ -72,16 +78,16 @@ class Advance : public Order {
         // Assignment operator
         Advance& operator= (const Advance& obj);
 
-        // Stream insertion operator
-        friend ostream& operator<<(ostream& stream, const Advance& obj);
+        // Prints the order to the specified stream
+        ostream& print(ostream& stream) const;
 
         // Move a certain number of army units from one of the current player’s territories to another territory that is adjacent to the source territory
         void execute();
     
     private:   
-        int m_nbUnits;
-        Territory* m_src;
-        Territory* m_target;
+        int nbUnits;
+        Territory* src;
+        Territory* target;
 
         // Validates the order
         bool validate();
@@ -103,14 +109,14 @@ class Bomb : public Order {
         // Assignment operator
         Bomb& operator= (const Bomb& obj);
 
-        // Stream insertion operator
-        friend ostream& operator<<(ostream& stream, const Bomb& obj);
+        // Prints the order to the specified stream
+        ostream& print(ostream& stream) const;
 
         // Destroy half of the army units located on an opponent’s territory that is adjacent to one of the current player’s territories
         void execute();
 
     private:
-        Territory* m_target;
+        Territory* target;
 
         // Validates the order
         bool validate();
@@ -131,14 +137,14 @@ class Blockade : public Order {
         // Assignment operator
         Blockade& operator= (const Blockade& obj);
 
-        // Stream insertion operator
-        friend ostream& operator<<(ostream& stream, const Blockade& obj);
+        // Prints the order to the specified stream
+        ostream& print(ostream& stream) const;
 
         // Triple the number of army units on one of the current player’s territories and make it a neutral territory.
         void execute();
 
     private:
-        Territory* m_target;
+        Territory* target;
 
         // Validates the order
         bool validate();
@@ -159,16 +165,16 @@ class Airlift : public Order {
         // Assignment operator
         Airlift& operator= (const Airlift& obj);
 
-        // Stream insertion operator
-        friend ostream& operator<<(ostream& stream, const Airlift& obj);
+        // Prints the order to the specified stream
+        ostream& print(ostream& stream) const;
 
         // Advance a certain number of army units from one of the current player’s territories to any another territory
         void execute();
     
     private:   
-        int m_nbUnits;
-        Territory* m_src;
-        Territory* m_target;
+        int nbUnits;
+        Territory* src;
+        Territory* target;
 
         // Validates the order
         bool validate();
@@ -189,14 +195,14 @@ class Negotiate : public Order {
         // Assignment operator
         Negotiate& operator= (const Negotiate& obj);
 
-        // Stream insertion operator
-        friend ostream& operator<<(ostream& stream, const Negotiate& obj);
+        // Prints the order to the specified stream
+        ostream& print(ostream& stream) const;
 
         // Prevent attacks between the current player and the player targeted by the negotiate order until the end of the turn.
         void execute();
 
     private:
-        Player* m_otherPlayer;
+        Player* otherPlayer;
 
         // Validates the order
         bool validate();
@@ -209,7 +215,7 @@ class OrdersList{
         OrdersList(const OrdersList& obj);
 
         // Destructor
-        ~OrdersList() = default;
+        ~OrdersList();
 
         // Assignment operator
         OrdersList& operator= (const OrdersList& obj);
@@ -218,7 +224,7 @@ class OrdersList{
         friend ostream& operator<<(ostream& stream, const OrdersList& obj);
 
         // Add a new order to the list
-        void add(Order& newOrder);
+        void add(Order* newOrder);
 
         // Move an order to a new position in the list
         void move(int fromId, int toId);
@@ -227,5 +233,5 @@ class OrdersList{
         void remove(int id);
 
     private:
-        vector<Order> m_orders;
+        vector<Order*> orders;
 };
