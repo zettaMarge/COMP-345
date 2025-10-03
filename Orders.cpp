@@ -50,12 +50,12 @@ ostream& operator<<(ostream& stream, const OrdersList& obj) {
 }
 
 // Add a new order to the list
-void OrdersList::add(Order* newOrder) {
+void OrdersList::Add(Order* newOrder) {
     orders.push_back(newOrder);
 }
 
 // Move an order to a new position in the list
-void OrdersList::move(int fromId, int toId) {
+void OrdersList::Move(int fromId, int toId) {
     if (orders.size() == 0)
     {
         std::cout << "Error: no order in the list." << std::endl;
@@ -77,7 +77,7 @@ void OrdersList::move(int fromId, int toId) {
 }
 
 // Delete an order from the list
-void OrdersList::remove(int id) {
+void OrdersList::Remove(int id) {
     if (orders.size() == 0)
     {
         std::cout << "Error: no order in the list." << std::endl;
@@ -102,7 +102,7 @@ Order::~Order() {
 }
 
 ostream& operator<<(ostream& stream, const Order& obj) {
-    return obj.print(stream);
+    return obj.Print(stream);
 }
 
 // ----- Order -----
@@ -159,19 +159,19 @@ Advance& Advance::operator= (const Advance& obj) {
 }
 
 // Prints the order to the specified stream
-ostream& Advance::print(ostream& stream) const {
-    stream << "Advance: " << effect() << std::endl;
+ostream& Advance::Print(ostream& stream) const {
+    stream << "Advance: " << GetEffect() << std::endl;
 }
 
 // Returns the effect of the order as a string
-std::string Advance::effect() const {
+std::string Advance::GetEffect() const {
     return std::string("moving ") + std::to_string(nbUnits) + std::string(" units from [TERRITORY] to [TERRITORY]");
 }
 
 // Move a certain number of army units from one of the current player’s territories to another territory that is adjacent to the source territory
-void Advance::execute() {
-    if (validate()) {
-        std::cout << "Advance order successful in" << effect() << std::endl;
+void Advance::Execute() {
+    if (Validate()) {
+        std::cout << "Advance order successful in" << GetEffect() << std::endl;
     }
     else {
         std::cout << "This Advance order is invalid." << std::endl;
@@ -179,7 +179,7 @@ void Advance::execute() {
 }
 
 // Validates the order
-bool Advance::validate() {
+bool Advance::Validate() {
     //TODO if src belongs to player, has enough units to move, AND target is adjacent
 }
 // ----- Advance -----
@@ -236,19 +236,19 @@ Airlift& Airlift::operator= (const Airlift& obj) {
 }
 
 // Prints the order to the specified stream
-ostream& Airlift::print(ostream& stream) const {
-    stream << "Airlift: moving " << effect() << std::endl; 
+ostream& Airlift::Print(ostream& stream) const {
+    stream << "Airlift: moving " << GetEffect() << std::endl; 
 }
 
 // Returns the effect of the order as a string
-std::string Airlift::effect() const {
+std::string Airlift::GetEffect() const {
     return std::string("moving ") + std::to_string(nbUnits) + std::string(" units from [TERRITORY] to [TERRITORY]");
 }
 
 // Advance a certain number of army units from one of the current player’s territories to any another territory
-void Airlift::execute() {
-    if (validate()) {
-        std::cout << "Airlift order successful in" << effect() << std::endl;
+void Airlift::Execute() {
+    if (Validate()) {
+        std::cout << "Airlift order successful in" << GetEffect() << std::endl;
     }
     else {
         std::cout << "This Airlift order is invalid." << std::endl;
@@ -256,7 +256,7 @@ void Airlift::execute() {
 }
 
 // Validates the order
-bool Airlift::validate() {
+bool Airlift::Validate() {
     //TODO if src belongs to player
 }
 // ----- Airlift -----
@@ -298,19 +298,19 @@ Blockade& Blockade::operator= (const Blockade& obj) {
 }
 
 // Prints the order to the specified stream
-ostream& Blockade::print(ostream& stream) const {
-    stream << "Blockade: " << effect() << std::endl; 
+ostream& Blockade::Print(ostream& stream) const {
+    stream << "Blockade: " << GetEffect() << std::endl; 
 }
 
 // Returns the effect of the order as a string
-std::string Blockade::effect() const {
+std::string Blockade::GetEffect() const {
     return "tripling the number of units on [[TERRITORY]]";
 }
 
 // Triple the number of army units on one of the current player’s territories and make it a neutral territory.
-void Blockade::execute() {
-    if (validate()) {
-        std::cout << "Blockade order successful in" << effect() << std::endl;
+void Blockade::Execute() {
+    if (Validate()) {
+        std::cout << "Blockade order successful in" << GetEffect() << std::endl;
     }
     else {
         std::cout << "This Blockade order is invalid." << std::endl;
@@ -318,7 +318,7 @@ void Blockade::execute() {
 }
 
 // Validates the order
-bool Blockade::validate() {
+bool Blockade::Validate() {
     //TODO if target belongs to player
 }
 // ----- Blockade -----
@@ -360,19 +360,19 @@ Bomb& Bomb::operator= (const Bomb& obj) {
 }
 
 // Prints the order to the specified stream
-ostream& Bomb::print(ostream& stream) const {
+ostream& Bomb::Print(ostream& stream) const {
     stream << "Bomb: " << std::endl;  
 }
 
 // Returns the effect of the order as a string
-std::string Bomb::effect() const {
+std::string Bomb::GetEffect() const {
     return "destroy half of the units on [[TERRITORY]]";
 }
 
 // Destroy half of the army units located on an opponent’s territory that is adjacent to one of the current player’s territories
-void Bomb::execute() {
-    if (validate()) {
-        std::cout << "Bomb order successful in" << effect() << std::endl;
+void Bomb::Execute() {
+    if (Validate()) {
+        std::cout << "Bomb order successful in" << GetEffect() << std::endl;
     }
     else {
         std::cout << "This Bomb order is invalid." << std::endl;
@@ -380,7 +380,7 @@ void Bomb::execute() {
 }
 
 // Validates the order
-bool Bomb::validate() {
+bool Bomb::Validate() {
     //TODO if target doesnt belong to player, and is adjacent to a territory owned by player
 }
 // ----- Bomb -----
@@ -427,19 +427,19 @@ Deploy& Deploy::operator=(const Deploy& obj) {
 }
 
 // Prints the order to the specified stream
-ostream& Deploy::print(ostream& stream) const {
-    stream << "Deploy: " << effect() << std::endl;
+ostream& Deploy::Print(ostream& stream) const {
+    stream << "Deploy: " << GetEffect() << std::endl;
 }
 
 // Returns the effect of the order as a string
-std::string Deploy::effect() const {
+std::string Deploy::GetEffect() const {
     return std::string("adding ") + std::to_string(nbUnits) + std::string(" units to [TERRITORY]");
 }
 
 // Move a certain number of army units from the current player’s reinforcement pool to one of the current player’s territories
-void Deploy::execute() {
-    if (validate()) {
-        std::cout << "Deploy order successful in" << effect() << std::endl;
+void Deploy::Execute() {
+    if (Validate()) {
+        std::cout << "Deploy order successful in" << GetEffect() << std::endl;
     }
     else {
         std::cout << "This Deploy order is invalid." << std::endl;
@@ -447,7 +447,7 @@ void Deploy::execute() {
 }
 
 // Validates the order
-bool Deploy::validate() {
+bool Deploy::Validate() {
     //TODO if territory belongs to player
 }
 
@@ -488,19 +488,19 @@ Negotiate& Negotiate::operator= (const Negotiate& obj) {
 }
 
 // Prints the order to the specified stream
-ostream& Negotiate::print(ostream& stream) const {
-    stream << "Negotiate: " << effect() << std::endl; 
+ostream& Negotiate::Print(ostream& stream) const {
+    stream << "Negotiate: " << GetEffect() << std::endl; 
 }
 
 // Returns the effect of the order as a string
-std::string Negotiate::effect() const {
+std::string Negotiate::GetEffect() const {
     return std::string("preventing attacks between [PLAYER] and [PLAYER]");
 }
 
 // Prevent attacks between the current player and the player targeted by the negotiate order until the end of the turn.
-void Negotiate::execute() {
-    if (validate()) {
-        std::cout << "Negotiate order successful in" << effect() << std::endl;
+void Negotiate::Execute() {
+    if (Validate()) {
+        std::cout << "Negotiate order successful in" << GetEffect() << std::endl;
     }
     else {
         std::cout << "This Negotiate order is invalid." << std::endl;
@@ -508,7 +508,7 @@ void Negotiate::execute() {
 }
 
 // Validates the order
-bool Negotiate::validate() {
+bool Negotiate::Validate() {
     //TODO if player != otherPlayer
 }
 // ----- Negotiate -----

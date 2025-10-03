@@ -1,3 +1,13 @@
+//-----------------------------------------------------
+    //Marjorie Dudemaine 40287779
+    //COMP-345-D 2252 Assignment 1 Orders.h
+    //Dr. Hamed Jafarpour
+    //Submitted: TBD
+    //Due: October 7, 2025 
+    //I certify that this submission is my original work and meets the Faculty’s Expectations of Originality 
+    //Marjorie Dudemaine
+//----------------------------------------------------- 
+
 #pragma once
 
 #include <list>
@@ -31,13 +41,13 @@ class OrdersList{
         friend ostream& operator<<(ostream& stream, const OrdersList& obj);
 
         // Add a new order to the list
-        void add(Order* newOrder);
+        void Add(Order* newOrder);
 
         // Move an order to a new position in the list
-        void move(int fromId, int toId);
+        void Move(int fromId, int toId);
 
         // Delete an order from the list
-        void remove(int id);
+        void Remove(int id);
 
     private:
         vector<Order*> orders;
@@ -54,20 +64,20 @@ class Order {
         friend ostream& operator<<(ostream& stream, const Order& obj);
 
         // Prints the order to the specified stream
-        virtual ostream& print(ostream& stream) const = 0;
+        virtual ostream& Print(ostream& stream) const = 0;
 
         // Returns the effect of the order as a string
-        virtual std::string effect() const = 0;
+        virtual std::string GetEffect() const = 0;
 
         // Executes the order
-        virtual void execute() = 0;
+        virtual void Execute() = 0;
 
     protected:
         Player* owningPlayer;
 
     private:
         // Validates the order
-        virtual bool validate() = 0;
+        virtual bool Validate() = 0;
 };
 
 
@@ -87,13 +97,13 @@ class Advance : public Order {
         Advance& operator= (const Advance& obj);
 
         // Prints the order to the specified stream
-        ostream& print(ostream& stream) const;
+        ostream& Print(ostream& stream) const;
 
         // Returns the effect of the order as a string
-        std::string effect() const;
+        std::string GetEffect() const;
 
         // Move a certain number of army units from one of the current player’s territories to another territory that is adjacent to the source territory
-        void execute();
+        void Execute();
     
     private:   
         int nbUnits;
@@ -101,7 +111,7 @@ class Advance : public Order {
         Territory* target;
 
         // Validates the order
-        bool validate();
+        bool Validate();
 };
 
 
@@ -121,13 +131,13 @@ class Airlift : public Order {
         Airlift& operator= (const Airlift& obj);
 
         // Prints the order to the specified stream
-        ostream& print(ostream& stream) const;
+        ostream& Print(ostream& stream) const;
 
         // Returns the effect of the order as a string
-        std::string effect() const;
+        std::string GetEffect() const;
 
         // Advance a certain number of army units from one of the current player’s territories to any another territory
-        void execute();
+        void Execute();
     
     private:   
         int nbUnits;
@@ -135,7 +145,7 @@ class Airlift : public Order {
         Territory* target;
 
         // Validates the order
-        bool validate();
+        bool Validate();
 };
 
 
@@ -155,19 +165,19 @@ class Blockade : public Order {
         Blockade& operator= (const Blockade& obj);
 
         // Prints the order to the specified stream
-        ostream& print(ostream& stream) const;
+        ostream& Print(ostream& stream) const;
 
         // Returns the effect of the order as a string
-        std::string effect() const;
+        std::string GetEffect() const;
 
         // Triple the number of army units on one of the current player’s territories and make it a neutral territory.
-        void execute();
+        void Execute();
 
     private:
         Territory* target;
 
         // Validates the order
-        bool validate();
+        bool Validate();
 };
 
 
@@ -187,19 +197,19 @@ class Bomb : public Order {
         Bomb& operator= (const Bomb& obj);
 
         // Prints the order to the specified stream
-        ostream& print(ostream& stream) const;
+        ostream& Print(ostream& stream) const;
 
         // Returns the effect of the order as a string
-        std::string effect() const;
+        std::string GetEffect() const;
 
         // Destroy half of the army units located on an opponent’s territory that is adjacent to one of the current player’s territories
-        void execute();
+        void Execute();
 
     private:
         Territory* target;
 
         // Validates the order
-        bool validate();
+        bool Validate();
 };
 
 
@@ -219,20 +229,20 @@ class Deploy : public Order {
         Deploy& operator= (const Deploy& obj);
 
         // Prints the order to the specified stream
-        ostream& print(ostream& stream) const;
+        ostream& Print(ostream& stream) const;
 
         // Returns the effect of the order as a string
-        std::string effect() const;
+        std::string GetEffect() const;
 
         // Move a certain number of army units from the current player’s reinforcement pool to one of the current player’s territories
-        void execute();
+        void Execute();
 
     private:   
         int nbUnits;
         Territory* target;
 
         // Validates the order
-        bool validate();
+        bool Validate();
 };
 
 
@@ -252,17 +262,17 @@ class Negotiate : public Order {
         Negotiate& operator= (const Negotiate& obj);
 
         // Prints the order to the specified stream
-        ostream& print(ostream& stream) const;
+        ostream& Print(ostream& stream) const;
 
         // Returns the effect of the order as a string
-        std::string effect() const;
+        std::string GetEffect() const;
 
         // Prevent attacks between the current player and the player targeted by the negotiate order until the end of the turn.
-        void execute();
+        void Execute();
 
     private:
         Player* otherPlayer;
 
         // Validates the order
-        bool validate();
+        bool Validate();
 };
