@@ -7,6 +7,8 @@
 // ===== Forward declarations =====
 class IState;
 
+int TestGameEngine(); // test the game engine
+
 // ===== ICommand =====
 //Interface for commands
 //contains a name and an optional next state to transition to

@@ -254,7 +254,7 @@ bool GameEngine::ProcessInput(const std::string& input) {
 // ===== Entry point =====
 //using main for now
 //I'll rename this to testgameegine or whatever when its time
-int main() {
+int TestGameEngine() {
     GameEngine::instance = new GameEngine();
     GameEngine::instance->Run();
 
