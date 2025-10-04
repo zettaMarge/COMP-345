@@ -75,7 +75,7 @@ public:
 };
 
 // ===== SimpleState =====
-//similar to Icommand, purely for this iteration of this project to make my life easier
+//similar to Simplecommand, purely for this iteration of this project to make my life easier
 //although each state might not need its own functionality, will depend on demands of future iterations
 //contains copy/assign and stream insertion as requested lol
 class SimpleState : public IState {
