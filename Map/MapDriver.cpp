@@ -3,17 +3,17 @@
 #include <iostream>
 #include <string>
 
-std::vector<Map*> testLoadMaps(const std::vector<std::string>& mapFiles){
+std::vector<Map*> TestLoadMaps(const std::vector<std::string>& mapFiles){
     std::vector<Map*> validMaps;
 
     for(int i = 0; i < mapFiles.size(); i++){
         std::cout << "Checking map file: " << mapFiles[i] << std::endl;
         MapLoader loader;
 
-        if(loader.loadMapFile(mapFiles[i])){
-            Map* gameMap = new Map(loader.createMap());
+        if(loader.LoadMapFile(mapFiles[i])){
+            Map* gameMap = new Map(loader.CreateMap());
 
-            if(gameMap->validate()){
+            if(gameMap->Validate()){
                 std::cout << "Map " << mapFiles[i] << " is valid\n" << std::endl;
                 validMaps.push_back(gameMap);
             }else{
@@ -37,7 +37,7 @@ int main(){
         "../Maps/_64_ BIG BLUE.map"
     };
 
-    std::vector<Map*> validMaps = testLoadMaps(mapFiles);
+    std::vector<Map*> validMaps = TestLoadMaps(mapFiles);
     std::cout << "Successfully loaded " << validMaps.size() << " valid maps" << std::endl;
 
     for(Map* m : validMaps){

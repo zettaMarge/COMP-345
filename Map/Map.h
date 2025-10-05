@@ -3,17 +3,30 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <iostream>
 
 struct Continent; // Forward declaration for Continent struct
 
 struct Territory{
-    // Player* owner;
+    Player* owner;
     std::string name;
     Continent* continent;
     std::vector<Territory*> adj;
     int numArmies;
 
-    Territory(const std::string& _name, Continent* _continent); // Add player here later
+    // Constructor
+    Territory(const std::string& _name, Continent* _continent);
+
+    // Copy constructor
+    Territory(const Territory& _territory);
+
+    // Assignment operator
+    Territory& operator=(const Territory& _territory);
+
+    // Stream insertion operator
+    friend std::ostream& operator << (std::ostream& os, const Territory& _territory);
+
+    
 };
 
 struct Continent{
@@ -21,40 +34,77 @@ struct Continent{
     int points;
     std::vector<Territory*> territories;
 
+    // Constructor
     Continent(const std::string& _name, int _points);
+
+    // Copy constructor
+    Continent(const Continent& _continent);
+
+    // Assignment operator
+    Continent& operator=(const Continent& _continent);
+
+    // Stream insertion operator
+    friend std::ostream& operator << (std::ostream& os, const Continent& _continent);
 };
 
 class Map {
     public:
+        //Destructor
         ~Map();
 
-        Continent* addContinent(const std::string& name, int points);
-        Territory* addTerritory(const std::string& name, Continent* continent);
-        void addAdjacency(Territory* from, Territory* to);
+        // Constructor
+        Map();
 
-        Continent* getContinentByName(const std::string& name);
-        Territory* getTerritoryByName(const std::string& name);
+        // Copy constructor
+        Map(const Map& _map);
 
-        bool validate();
+        // Assignment operator
+        Map& operator=(const Map& _map);
+
+        // Stream insertion operator
+        friend std::ostream& operator << (std::ostream& os, const Map& _map);
+
+        Continent* AddContinent(const std::string& name, int points);
+        Territory* AddTerritory(const std::string& name, Continent* continent);
+        void AddAdjacency(Territory* from, Territory* to);
+
+        Continent* GetContinentByName(const std::string& name);
+        Territory* GetTerritoryByName(const std::string& name);
+
+        void SetTerritoryOwner(Territory* territory, Player* owner);
+        void SetTerritoryArmies(Territory* territory, int armies);
+
+        bool IsAdjacent(Territory* a, Territory* b);
+        bool Validate();
 
     private:
-        bool isAdjacent(Territory* a, Territory* b);
         std::unordered_map<std::string, Continent*> continentByName;
         std::unordered_map<std::string, Territory*> territoryByName;
 
         std::vector<Continent*> continents;
         std::vector<Territory*> territories;
 
-        void dfs(Territory* current, std::unordered_set<Territory*>& visited);
-        void dfsContinent(Territory* current, std::unordered_set<Territory*>& visited, Continent* continent);
+        void Dfs(Territory* current, std::unordered_set<Territory*>& visited);
+        void DfsContinent(Territory* current, std::unordered_set<Territory*>& visited, Continent* continent);
 };
 
 class MapLoader{
     public:
-        bool loadMapFile(const std::string& filename);
-        Map createMap();
+        MapLoader();
+
+        // Copy constructor
+        MapLoader(const MapLoader& _mapLoader);
+
+        // Assignment operator
+        MapLoader& operator=(const MapLoader& _mapLoader);
+
+        // Stream insertion operator
+        friend std::ostream& operator<<(std::ostream& os, const MapLoader& _mapLoader);
+
+        bool LoadMapFile(const std::string& filename);
+        Map CreateMap();
     private:
         std::vector<std::string> content;
-        bool loadFile(const std::string& filename);
-        bool validateMap();
+        bool LoadFile(const std::string& filename);
+        bool ValidateMap();
 };
