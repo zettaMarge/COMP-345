@@ -18,7 +18,7 @@
 class CardTypes {
 public:
     std::string getType() const;
-    virtual void play() = 0;
+    virtual void Play() = 0;
 protected:
     std::string type;
 };
@@ -31,8 +31,8 @@ public:
     BombCard& operator=(const BombCard& other);
     ~BombCard();
 
-    void print() const;
-    void play() override;
+    void Print() const;
+    void Play() override;
 };
 
 // Class for Reinforcement type cards, derived from CardTypes
@@ -43,8 +43,8 @@ public:
     ReinforcementCard& operator=(const ReinforcementCard& other);
     ~ReinforcementCard();
 
-    void print() const; 
-    void play() override;
+    void Print() const;
+    void Play() override;
 };
 
 // Class for Blockade type cards, derived from CardTypes
@@ -55,8 +55,8 @@ public:
     BlockadeCard& operator=(const BlockadeCard& other);
     ~BlockadeCard();
 
-    void print() const;
-    void play() override;
+    void Print() const;
+    void Play() override;
 };
 
 // Class for Airlift type cards, derived from CardTypes
@@ -67,8 +67,8 @@ public:
     AirliftCard& operator=(const AirliftCard& other);
     ~AirliftCard();
 
-    void print() const;
-    void play() override;
+    void Print() const;
+    void Play() override;
 };
 
 // Class for Diplomacy type cards, derived from CardTypes
@@ -79,8 +79,8 @@ public:
     DiplomacyCard& operator=(const DiplomacyCard& other);
     ~DiplomacyCard();
 
-    void print() const;
-    void play() override;
+    void Print() const;
+    void Play() override;
 };
 
 // Card class that contains a pointer to a CardTypes object. The specific type of card is determined
@@ -90,14 +90,13 @@ class Card {
 public:
     Card(const Card& other); 
     Card& operator=(const Card& other); 
-    ~Card(); 
-    void print();
+    ~Card();
 
     // main constructor
     Card(int type);
 
-    void play() const;
-    void print() const;
+    void Play() const;
+    void Print() const;
 private:
     enum typeNames { bomb, reinforcement, blockade, airlift, diplomacy };
     typeNames type;
@@ -111,11 +110,11 @@ public:
     Deck(const Deck& other);
     Deck& operator=(const Deck& other);
     ~Deck();
-    void print() const;
+    void Print() const;
 
     Deck();
-    Card draw();
-    void addCard(const Card& card);
+    Card Draw();
+    void AddCard(const Card& card);
 private:
     std::vector<Card> cards;
     const int initialSize = 30;
@@ -130,11 +129,11 @@ public:
     Hand(const Hand& other);
     Hand& operator=(const Hand& other);
     ~Hand();
-    void print() const;
+    void Print() const;
 
     Hand(Deck& deck);
-    void addCard();
-    void playCard(int index);
+    void AddCard();
+    void PlayCard(int index);
 private:
     std::vector<Card> hand;
     Deck& deck;

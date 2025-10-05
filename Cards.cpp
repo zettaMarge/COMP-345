@@ -46,12 +46,12 @@ BombCard::~BombCard() {
 }
 
 // Print function for BombCard
-void BombCard::print() const {
+void BombCard::Print() const {
     std::cout << "Card Type: " << type << std::endl;
 }
 
 // Implementation of play function for BombCard
-void BombCard::play() {
+void BombCard::Play() {
     std::cout << "Playing Bomb Card!" << std::endl;
 }
 
@@ -80,12 +80,12 @@ ReinforcementCard::~ReinforcementCard() {
 }
 
 // Print function for ReinforcementCard
-void ReinforcementCard::print() const {
+void ReinforcementCard::Print() const {
     std::cout << "Card Type: " << type << std::endl;
 }
 
 // Implementation of play function for ReinforcementCard
-void ReinforcementCard::play() {
+void ReinforcementCard::Play() {
     std::cout << "Playing Reinforcement Card!" << std::endl;
 }
 
@@ -114,12 +114,12 @@ BlockadeCard::~BlockadeCard() {
 }
 
 // Print function for BlockadeCard
-void BlockadeCard::print() const {
+void BlockadeCard::Print() const {
     std::cout << "Card Type: " << type << std::endl;
 }
 
 // Implementation of play function for BlockadeCard
-void BlockadeCard::play() {
+void BlockadeCard::Play() {
     std::cout << "Playing Blockade Card!" << std::endl;
 }
 
@@ -148,12 +148,12 @@ AirliftCard::~AirliftCard() {
 }
 
 // Print function for AirliftCard
-void AirliftCard::print() const {
+void AirliftCard::Print() const {
     std::cout << "Card Type: " << type << std::endl;
 }
 
 // Implementation of play function for AirliftCard
-void AirliftCard::play() {
+void AirliftCard::Play() {
     std::cout << "Playing Airlift Card!" << std::endl;
 }
 
@@ -182,12 +182,12 @@ DiplomacyCard::~DiplomacyCard() {
 }
 
 // Print function for DiplomacyCard
-void DiplomacyCard::print() const {
+void DiplomacyCard::Print() const {
     std::cout << "Card Type: " << type << std::endl;
 }
 
 // Implementation of play function for DiplomacyCard
-void DiplomacyCard::play() {
+void DiplomacyCard::Play() {
     std::cout << "Playing Diplomacy Card!" << std::endl;
 }
 
@@ -224,13 +224,13 @@ Card::~Card() {
 }
 
 // Print function to display the type of the card
-void Card:: print() const {
+void Card::Print() const {
     std::cout << "Card Type: " << cardType->getType() << std::endl;
 }
 
 // Play function to invoke the play method of the specific CardTypes object
-void Card::play() const{
-    cardType->play();
+void Card::Play() const{
+    cardType->Play();
 }
 
 // Copy constructor for Card
@@ -316,7 +316,7 @@ Deck::~Deck() {
 }
 
 // Print function to display the contents of the deck
-void Deck::print() const {
+void Deck::Print() const {
     std::cout << "Deck contains " << cards.size() << " cards." << std::endl;
     for (const auto& card : cards) {
         card.print();
@@ -324,7 +324,7 @@ void Deck::print() const {
 }
 
 // Card draw function to draw a random card from the deck
-Card Deck::draw(){
+Card Deck::Draw(){
     //verify deck not empty
     if (cards.empty()) throw std::out_of_range("Deck is empty");
       
@@ -343,7 +343,7 @@ Card Deck::draw(){
 }
 
 // Function to add a card to the deck
-void Deck::addCard(const Card& card){
+void Deck::AddCard(const Card& card){
     cards.push_back(card);
 }
 
@@ -373,12 +373,12 @@ Hand::~Hand() {
 }
 
 // Function to add a card to the hand by drawing from the deck
-void Hand::addCard() {
-    hand.push_back(deck.draw());
+void Hand::AddCard() {
+    hand.push_back(deck.Draw());
 }
 
 // Function to print the contents of the hand and its indexes
-void Hand::print() const {
+void Hand::Print() const {
     std::cout << "Hand contains " << hand.size() << " cards." << std::endl;
     for (size_t i = 0; i < hand.size(); ++i) {
         std::cout << i << "- ";
@@ -387,13 +387,17 @@ void Hand::print() const {
 }
 
 // Function to play a card from the hand by index in hand
-void Hand::playCard(int index) {
+void Hand::PlayCard(int index) {
     //verifies if the index is valid
     if (index < 0 || index >= hand.size()) throw std::out_of_range("Invalid card index");
     
     //plays the card, removes it from hand, and adds it back to the deck
-    hand[index].play();
+    hand[index].Play();
+
     Card card = hand[index];
-    hand.erase(hand.begin() + index);
-    deck.addCard(card);
+    hand[index] = hand[hand.size() - 1];
+    hand[hand.size() - 1] = card;
+    hand.pop_back(); //no need to delete since card is not dynamically allocated
+
+    deck.AddCard(card);
 }
