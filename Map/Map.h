@@ -12,7 +12,7 @@ struct Territory{
     std::string name;
     Continent* continent;
     std::vector<Territory*> adj;
-    int numArmies;
+    int numUnits;
 
     // Constructor
     Territory(const std::string& _name, Continent* _continent);
@@ -26,7 +26,9 @@ struct Territory{
     // Stream insertion operator
     friend std::ostream& operator << (std::ostream& os, const Territory& _territory);
 
-    
+    const std::vector<Territory*>& AdjacentTerritories() const;
+    bool IsAdjacent(Territory* a) const;
+    void SetArmies(int);
 };
 
 struct Continent{
@@ -70,9 +72,6 @@ class Map {
 
         Continent* GetContinentByName(const std::string& name);
         Territory* GetTerritoryByName(const std::string& name);
-
-        void SetTerritoryOwner(Territory* territory, Player* owner);
-        void SetTerritoryArmies(Territory* territory, int armies);
 
         bool IsAdjacent(Territory* a, Territory* b);
         bool Validate();

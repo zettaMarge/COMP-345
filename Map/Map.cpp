@@ -5,20 +5,20 @@
 #include <algorithm>
 #include <sstream>
 
-// Territory and Continent constructors
+// Territory
 
 Territory::Territory(const std::string& _name, Continent* _continent){
     owner = nullptr;
     name = _name;
     continent = _continent;
-    numArmies = 0;
+    numUnits = 0;
 }
 
 Territory::Territory(const Territory& _territory){
     owner = _territory.owner;
     name = _territory.name;
     continent = _territory.continent;
-    numArmies = _territory.numArmies;
+    numUnits = _territory.numUnits;
     adj = _territory.adj;
 }
 
@@ -27,18 +27,41 @@ Territory& Territory::operator=(const Territory& _territory){
     owner = _territory.owner;
     name = _territory.name;
     continent = _territory.continent;
-    numArmies = _territory.numArmies;
+    numUnits = _territory.numUnits;
     adj = _territory.adj;
     return *this;
 }
 
 std::ostream& operator<<(std::ostream& os, const Territory& _territory){
     os << "Territory: " << _territory.name
-    << " (Owner: " << _territory.owner->GetName()
+    << " (Owner: " << (_territory.owner ? _territory.owner->GetName() : "No owner")
     << ", Continent: " << _territory.continent
-    << ", Armies: " << _territory.numArmies
+    << ", Armies: " << _territory.numUnits
     << ", Adjacent territories: " << _territory.adj.size() << ")";
     return os;
+}
+
+// Return the vector of adjacent territories
+// Returns:
+// - adj: vector of Territories that are adjacent to said Territory.
+const std::vector<Territory*>& Territory::AdjacentTerritories() const{
+    return adj;
+}
+
+// Checks if a territory is already in the adjacent territories list.
+// Parameters:
+// - a: pointer to a territory that is to be looked.
+// Returns:
+// - true if 'a' is already listed as adjacent to said territory, false otherwise
+bool Territory::IsAdjacent(Territory* a) const{
+    return std::find(adj.begin(), adj.end(), a) != adj.end();
+}
+
+// Sets the territory's numUnits
+// Parameters:
+// - numUnits: Number of units
+void Territory::SetArmies(int _numUnits){
+    numUnits = _numUnits;
 }
 
 Continent::Continent(const std::string& _name, int _points){
@@ -83,7 +106,7 @@ Map::Map(const Map& _map){
     for(int i = 0; i < _map.territories.size(); i++){
         Continent* newContinent = GetContinentByName(_map.territories[i]->continent->name);
         Territory* newTerritory = AddTerritory(_map.territories[i]->name, newContinent);
-        newTerritory->numArmies = _map.territories[i]->numArmies;
+        newTerritory->numUnits = _map.territories[i]->numUnits;
     }
 
     for(int i = 0; i < _map.territories.size(); i++){
@@ -112,7 +135,7 @@ Map& Map::operator=(const Map& _map){
     for(int i = 0; i < _map.territories.size(); i++){
         Continent* newContinent = GetContinentByName(_map.territories[i]->continent->name);
         Territory* newTerritory = AddTerritory(_map.territories[i]->name, newContinent);
-        newTerritory->numArmies = _map.territories[i]->numArmies;
+        newTerritory->numUnits = _map.territories[i]->numUnits;
     }
 
     for(int i = 0; i < _map.territories.size(); i++){
@@ -200,22 +223,6 @@ Continent* Map::GetContinentByName(const std::string& name){
 // Returns pointer to a Territory object by name
 Territory* Map::GetTerritoryByName(const std::string& name){
     return territoryByName[name];
-}
-
-// Sets the territory's owner
-// Parameters:
-// - territory: Pointer to a territory
-// - owner: Ponter to a player
-void Map::SetTerritoryOwner(Territory* territory, Player* owner){
-    territory->owner = owner;
-}
-
-// Sets the territory's armies
-// Parameters:
-// - territory: Pointer to a territory
-// - armies: Number of armies
-void Map::SetTerritoryArmies(Territory* territory, int armies){
-    territory->numArmies = armies;
 }
 
 // Performs a depth-first search in all the map, starting with any node
