@@ -1,0 +1,30 @@
+ May - 2003
+
+ 
+ If you are running an older version of CONQUEST you may get an 
+ 'ERROR' message upon opening this map -
+
+ Just click 'OK' and continue on to the game -
+
+ This will not affect your conquest game in any way - 
+
+
+
+
+ 
+ - more info -
+
+ I have designed a .map file where some territories 'do not' connect to other territories 
+ which actually are shown to connect on the .bmp file - 
+
+ You will understand after playing this creative map : )
+
+ Enjoy !
+
+
+ << If you enjoy this map and would like others,
+    please contact Me at the email address below >>
+
+
+            Crush_Conquest@Yahoo.com
+
