@@ -1,4 +1,5 @@
 #include "Map.h"
+#include "Player.h"
 
 #include <iostream>
 #include <fstream>

@@ -6,6 +6,7 @@
 #include <iostream>
 
 struct Continent; // Forward declaration for Continent struct
+class Player; // Forward declaration for Player class
 
 struct Territory{
     Player* owner;
