@@ -1,6 +1,6 @@
 #include "Orders.h"
-//#include "Map.h"
-//#include "Player.h"
+#include "Map.h"
+#include "Player.h"
 
 using std::endl;
 
@@ -38,7 +38,7 @@ OrdersList& OrdersList::operator= (const OrdersList& obj) {
 
 // Stream insertion operator
 ostream& operator<<(ostream& stream, const OrdersList& obj) {
-    stream << "Order list: ";
+    stream << "Order list:\n";
 
     for (const auto& order : obj.orders)
     {
@@ -47,6 +47,11 @@ ostream& operator<<(ostream& stream, const OrdersList& obj) {
 
     stream << endl;
     return stream;
+}
+
+// Getter for the actual list
+vector<Order*> OrdersList::GetListItems() {
+    return orders;
 }
 
 // Add a new order to the list
@@ -105,11 +110,28 @@ ostream& operator<<(ostream& stream, const Order& obj) {
     return obj.Print(stream);
 }
 
+// Setter for owningPlayer
+void Order::SetOwningPlayer(Player* player) {
+    owningPlayer = player;
+}
+
+// Getter for owningPlayer
+Player* Order::GetOwningPlayer() {
+    return owningPlayer;
+}
+
+bool Order::TerritoryBelongsToPlayer(Territory* territory) {
+    return territory->owner->GetName() == owningPlayer->GetName();
+}
+
 // ----- Order -----
 
 
 // ----- Advance -----
-// Constructor
+// Default constructor
+Advance::Advance() {}
+
+// Parameterized constructor
 Advance::Advance(Player* owningPlayer, int nbUnits, Territory* src, Territory* target) {
     owningPlayer = owningPlayer;
     nbUnits = nbUnits;
@@ -158,6 +180,36 @@ Advance& Advance::operator= (const Advance& obj) {
     return *this;
 }
 
+// Setter for nbUnits
+void Advance::SetNbUnits(int nb) {
+    nbUnits = nb;
+}
+
+// Getter for nbUnits
+int Advance::GetNbUnits() {
+    return nbUnits;
+}
+
+// Setter for src
+void Advance::SetSrc(Territory* territory) {
+    src = territory;
+}
+
+// Getter for src
+Territory* Advance::GetSrc() {
+    return src;
+}
+
+// Setter for target
+void Advance::SetTarget(Territory* Target) {
+    target = territory;
+}
+
+// Getter for target
+Territory* Advance::GetTarget() {
+    return target;
+}
+
 // Prints the order to the specified stream
 ostream& Advance::Print(ostream& stream) const {
     stream << "Advance: " << GetEffect() << std::endl;
@@ -165,10 +217,12 @@ ostream& Advance::Print(ostream& stream) const {
 
 // Returns the effect of the order as a string
 std::string Advance::GetEffect() const {
-    return std::string("moving ") + std::to_string(nbUnits) + std::string(" units from [TERRITORY] to [TERRITORY]");
+    return std::string("moving ") + std::to_string(nbUnits) + 
+        std::string(" units from ") + std::to_string(src) + std::string(" to ") + std::to_string(target);
 }
 
-// Move a certain number of army units from one of the current player’s territories to another territory that is adjacent to the source territory
+// Move a certain number of army units from one of the current player’s territories to
+// another territory that is adjacent to the source territory
 void Advance::Execute() {
     if (Validate()) {
         std::cout << "Advance order successful in" << GetEffect() << std::endl;
@@ -178,15 +232,19 @@ void Advance::Execute() {
     }
 }
 
-// Validates the order
+// Check if the source territory belongs to the same player as the order, has enough units to move,
+// and that the target is adjacent to it
 bool Advance::Validate() {
-    //TODO if src belongs to player, has enough units to move, AND target is adjacent
+    return TerritoryBelongsToPlayer(src) && src->numArmies >= nbUnits && src->IsAdjacent(target);
 }
 // ----- Advance -----
 
 
 // ----- Airlift -----
-// Constructor
+// Default constructor
+Airlift::Airlift() {}
+
+// Parameterized constructor
 Airlift::Airlift(Player* owningPlayer, int nbUnits, Territory* src, Territory* target) {
     owningPlayer = owningPlayer;
     nbUnits = nbUnits;
@@ -235,6 +293,36 @@ Airlift& Airlift::operator= (const Airlift& obj) {
     return *this;
 }
 
+// Setter for nbUnits
+void Airlift::SetNbUnits(int nb) {
+    nbUnits = nb;
+}
+
+// Getter for nbUnits
+int Airlift::GetNbUnits() {
+    return nbUnits;
+}
+
+// Setter for src
+void Airlift::SetSrc(Territory* territory) {
+    src = territory;
+}
+
+// Getter for src
+Territory* Airlift::GetSrc() {
+    return src;
+}
+
+// Setter for target
+void Airlift::SetTarget(Territory* Target) {
+    target = territory;
+}
+
+// Getter for target
+Territory* Airlift::GetTarget() {
+    return target;
+}
+
 // Prints the order to the specified stream
 ostream& Airlift::Print(ostream& stream) const {
     stream << "Airlift: moving " << GetEffect() << std::endl; 
@@ -242,7 +330,8 @@ ostream& Airlift::Print(ostream& stream) const {
 
 // Returns the effect of the order as a string
 std::string Airlift::GetEffect() const {
-    return std::string("moving ") + std::to_string(nbUnits) + std::string(" units from [TERRITORY] to [TERRITORY]");
+    return std::string("moving ") + std::to_string(nbUnits) + 
+        std::string(" units from ") + std::to_string(src) + std::string(" to ") + std::to_string(target);
 }
 
 // Advance a certain number of army units from one of the current player’s territories to any another territory
@@ -255,15 +344,18 @@ void Airlift::Execute() {
     }
 }
 
-// Validates the order
+// Check if the source territory belongs to the same player as the order and has enough units to move
 bool Airlift::Validate() {
-    //TODO if src belongs to player
+    return TerritoryBelongsToPlayer(src) && src->numArmies >= nbUnits;
 }
 // ----- Airlift -----
 
 
 // ----- Blockade -----
-// Constructor
+// Default constructor
+Blockade::Blockade() {}
+
+// Parameterized constructor
 Blockade::Blockade(Player* owningPlayer, Territory* target) {
     owningPlayer = owningPlayer;
     target = target;
@@ -297,6 +389,16 @@ Blockade& Blockade::operator= (const Blockade& obj) {
     return *this;
 }
 
+// Setter for target
+void Blockade::SetTarget(Territory* Target) {
+    target = territory;
+}
+
+// Getter for target
+Territory* Blockade::GetTarget() {
+    return target;
+}
+
 // Prints the order to the specified stream
 ostream& Blockade::Print(ostream& stream) const {
     stream << "Blockade: " << GetEffect() << std::endl; 
@@ -304,7 +406,7 @@ ostream& Blockade::Print(ostream& stream) const {
 
 // Returns the effect of the order as a string
 std::string Blockade::GetEffect() const {
-    return "tripling the number of units on [[TERRITORY]]";
+    return "tripling the number of units on " + td::to_string(target);
 }
 
 // Triple the number of army units on one of the current player’s territories and make it a neutral territory.
@@ -317,15 +419,18 @@ void Blockade::Execute() {
     }
 }
 
-// Validates the order
+// Check if the target territory belongs to the same player as the order
 bool Blockade::Validate() {
-    //TODO if target belongs to player
+    return TerritoryBelongsToPlayer(target);
 }
 // ----- Blockade -----
 
 
 // ----- Bomb -----
-// Constructor
+// Default constructor
+Bomb::Bomb() {}
+
+// Parameterized constructor
 Bomb::Bomb(Player* owningPlayer, Territory* target) {
     owningPlayer = owningPlayer;
     target = target;
@@ -359,6 +464,16 @@ Bomb& Bomb::operator= (const Bomb& obj) {
     return *this;
 }
 
+// Setter for target
+void Bomb::SetTarget(Territory* Target) {
+    target = territory;
+}
+
+// Getter for target
+Territory* Bomb::GetTarget() {
+    return target;
+}
+
 // Prints the order to the specified stream
 ostream& Bomb::Print(ostream& stream) const {
     stream << "Bomb: " << std::endl;  
@@ -366,7 +481,7 @@ ostream& Bomb::Print(ostream& stream) const {
 
 // Returns the effect of the order as a string
 std::string Bomb::GetEffect() const {
-    return "destroy half of the units on [[TERRITORY]]";
+    return "destroying half of the units on " + td::to_string(target);
 }
 
 // Destroy half of the army units located on an opponent’s territory that is adjacent to one of the current player’s territories
@@ -379,15 +494,20 @@ void Bomb::Execute() {
     }
 }
 
-// Validates the order
+// Check if the target belongs to another player and has an adjacent territory
+// that belongs to the player issuing the order
 bool Bomb::Validate() {
-    //TODO if target doesnt belong to player, and is adjacent to a territory owned by player
+    return target->owner->GetName() != owningPlayer->GetName() &&
+        std::find_if(target->adj.begin(), target->adj.end(), TerritoryBelongsToPlayer) != target->adj.end();
 }
 // ----- Bomb -----
 
 
 // ----- Deploy -----
-// Constructor
+// Default constructor
+Deploy::Deploy() {}
+
+// Parameterized constructor
 Deploy::Deploy(Player* owningPlayer, int nbUnits, Territory* target) {
     owningPlayer = owningPlayer;
     nbUnits = nbUnits;
@@ -426,6 +546,26 @@ Deploy& Deploy::operator=(const Deploy& obj) {
     return *this;
 }
 
+// Setter for nbUnits
+void Deploy::SetNbUnits(int nb) {
+    nbUnits = nb;
+}
+
+// Getter for nbUnits
+int Deploy::GetNbUnits() {
+    return nbUnits;
+}
+
+// Setter for target
+void Deploy::SetTarget(Territory* Target) {
+    target = territory;
+}
+
+// Getter for target
+Territory* Deploy::GetTarget() {
+    return target;
+}
+
 // Prints the order to the specified stream
 ostream& Deploy::Print(ostream& stream) const {
     stream << "Deploy: " << GetEffect() << std::endl;
@@ -433,7 +573,7 @@ ostream& Deploy::Print(ostream& stream) const {
 
 // Returns the effect of the order as a string
 std::string Deploy::GetEffect() const {
-    return std::string("adding ") + std::to_string(nbUnits) + std::string(" units to [TERRITORY]");
+    return std::string("adding ") + std::to_string(nbUnits) + std::string(" units to ") + td::to_string(target);
 }
 
 // Move a certain number of army units from the current player’s reinforcement pool to one of the current player’s territories
@@ -446,16 +586,19 @@ void Deploy::Execute() {
     }
 }
 
-// Validates the order
+// Check if the target belongs to the same player as the order
 bool Deploy::Validate() {
-    //TODO if territory belongs to player
+    return TerritoryBelongsToPlayer(target);
 }
 
 // ----- Deploy -----
 
 
 // ----- Negotiate -----
-// Constructor
+// Default constructor
+Negotiate::Negotiate() {}
+
+// Parameterized constructor
 Negotiate::Negotiate(Player* owningPlayer, Player* otherPlayer) {
     owningPlayer = owningPlayer;
     otherPlayer = otherPlayer;
@@ -487,6 +630,16 @@ Negotiate& Negotiate::operator= (const Negotiate& obj) {
     }
 }
 
+// Setter for otherPlayer
+void Negotiate::SetOwningPlayer(Player* player) {
+    otherPlayer = player;
+}
+
+// Getter for otherPlayer
+Player* Negotiate::GetOwningPlayer() {
+    return otherPlayer;
+}
+
 // Prints the order to the specified stream
 ostream& Negotiate::Print(ostream& stream) const {
     stream << "Negotiate: " << GetEffect() << std::endl; 
@@ -494,7 +647,7 @@ ostream& Negotiate::Print(ostream& stream) const {
 
 // Returns the effect of the order as a string
 std::string Negotiate::GetEffect() const {
-    return std::string("preventing attacks between [PLAYER] and [PLAYER]");
+    return std::string("preventing attacks between ") + owningPlayer->GetName() + std::string(" and ") + otherPlayer->GetName();
 }
 
 // Prevent attacks between the current player and the player targeted by the negotiate order until the end of the turn.
@@ -507,8 +660,8 @@ void Negotiate::Execute() {
     }
 }
 
-// Validates the order
+// Check if the other player is different than the one issuing the order
 bool Negotiate::Validate() {
-    //TODO if player != otherPlayer
+    return otherPlayer->GetName() != owningPlayer->GetName();
 }
 // ----- Negotiate -----
