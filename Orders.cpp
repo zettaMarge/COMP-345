@@ -632,12 +632,12 @@ Negotiate& Negotiate::operator= (const Negotiate& obj) {
 }
 
 // Setter for otherPlayer
-void Negotiate::SetOwningPlayer(Player* player) {
+void Negotiate::SetOtherPlayer(Player* player) {
     otherPlayer = player;
 }
 
 // Getter for otherPlayer
-Player* Negotiate::GetOwningPlayer() {
+Player* Negotiate::GetOtherPlayer() {
     return otherPlayer;
 }
 
