@@ -19,8 +19,8 @@ using std::ostream;
 using std::vector;
 
 // Forward declarations
-class Territory{};
-class Player{};
+class Territory;
+class Player;
 
 // A player's list of orders
 class OrdersList{
