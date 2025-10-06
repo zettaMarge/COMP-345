@@ -28,7 +28,7 @@ std::vector<Map*> TestLoadMaps(const std::vector<std::string>& mapFiles){
     return validMaps;
 }
 
-int main(){
+int TestMaps(){
     std::vector<std::string> mapFiles = {
         "../Maps/_11_ Against All Odds.map",
         "../Maps/001_I72_Ghtroc 720.map",

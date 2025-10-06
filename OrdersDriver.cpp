@@ -1,5 +1,5 @@
 #include "Orders.h"
-#include "Map.h"
+#include "Map/Map.h"
 #include "Player.h"
 #include <iostream>
 
@@ -27,24 +27,24 @@ void testOrdersLists() {
 
 
     std::cout << "----- Creating players -----" << std::endl;
-    Player* p1;
+    Player* p1 = new Player();
     p1->SetName("Player1");
     p1->AddTerritory(canada);
     p1->AddTerritory(usa);
 
-    Player* p2;
+    Player* p2 = new Player();
     p1->SetName("Player2");
     p1->AddTerritory(mexico);
 
 
     std::cout << "----- Creating Orders -----" << std::endl;
-    Advance* advanceValid;
+    Advance* advanceValid = new Advance();
     advanceValid->SetOwningPlayer(p1);
     advanceValid->SetNbUnits(3);
     advanceValid->SetSrc(canada);
     advanceValid->SetTarget(usa);
 
-    Advance* advanceInvalid = new Advance(advanceValid);
+    Advance* advanceInvalid = new Advance(*advanceValid);
     advanceInvalid->SetTarget(mexico);
 
     Airlift* airlift = new Airlift(p1, 3, canada, mexico);
@@ -68,29 +68,30 @@ void testOrdersLists() {
 
 
     std::cout << "----- Adding orders to p1's list -----" << std::endl;
-    p1->GetPlayerOrders()->Add(advanceValid);
-    p1->GetPlayerOrders()->Add(advanceInvalid);
-    p1->GetPlayerOrders()->Add(airlift);
-    p1->GetPlayerOrders()->Add(blockade);
-    p1->GetPlayerOrders()->Add(bomb);
-    p1->GetPlayerOrders()->Add(deploy);
-    p1->GetPlayerOrders()->Add(negotiate);
+    p1->IssueOrder(advanceValid);
+    p1->IssueOrder(advanceInvalid);
+    p1->IssueOrder(airlift);
+    p1->IssueOrder(blockade);
+    p1->IssueOrder(bomb);
+    p1->IssueOrder(deploy);
+    p1->IssueOrder(negotiate);
     std::cout << p1->GetPlayerOrders() << std::endl;
 
     
     std::cout << "----- Executing orders -----" << std::endl;
-    for (const auto& order : p1->GetPlayerOrders()->GetListItems())
-    {
-        order.Execute();
+    // Fix: Store the result of GetListItems() in a local variable of type vector<Order*>
+    std::vector<Order*> orders = p1->GetPlayerOrders()->GetListItems();
+    for (const auto& order : orders) {
+        order->Execute();
     }
 
     
     std::cout << "----- Moving orders in list -----" << std::endl;
-    p1->GetPlayerOrders()->Move(1, p1->GetPlayerOrders()->GetListItems().size - 1)
+    p1->GetPlayerOrders()->Move(1, orders.size() - 1);
     std::cout << p1->GetPlayerOrders() << std::endl;
 
     std::cout << "----- Removing orders from list -----" << std::endl;
-    p1->GetPlayerOrders()->Remove(p1->GetPlayerOrders()->GetListItems().size - 1)
+    p1->GetPlayerOrders()->Remove(p1->GetPlayerOrders()->GetListItems().size() - 1);
     std::cout << p1->GetPlayerOrders() << std::endl;
 
     std::cout << "-------------------------" << std::endl;

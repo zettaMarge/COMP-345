@@ -8,9 +8,9 @@
 //Mia Letendre
 //-----------------------------------------------------
 #include "Cards.h"
-#include "Map.h"
+#include "Map/Map.h"
 #include "Orders.h"
-#include "Players.h"
+#include "Player.h"
 #include <vector>
 #include <iostream>
 using namespace std;
@@ -63,9 +63,10 @@ int testPlayers() {
     cout << p1.GetPlayerOrders() << endl;
     cout << endl;
 
-    Hand* hand1 = new Hand();
-    hand1->addCard();
-    hand1->addCard();
+	Deck* deck1 = new Deck();
+    Hand* hand1 = new Hand(*deck1);
+    hand1->AddCard();
+    hand1->AddCard();
     p1.SetPlayerHand(hand1);
     cout << "Hand of Player1: ";
     cout<< p1.GetPlayerHand() << endl;
@@ -74,7 +75,3 @@ int testPlayers() {
 }
 
 
-int main()
-{
-    return testPlayers();
-}
