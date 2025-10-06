@@ -16,6 +16,7 @@ struct Territory{
     int numUnits;
 
     // Constructor
+    Territory();
     Territory(const std::string& _name, Continent* _continent);
 
     // Copy constructor

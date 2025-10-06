@@ -8,7 +8,7 @@
 //Mia Letendre
 //-----------------------------------------------------
 #include "Cards.h"
-#include "Map/Map.h"
+#include "Map.h"
 #include "Orders.h"
 #include "Player.h"
 #include <vector>

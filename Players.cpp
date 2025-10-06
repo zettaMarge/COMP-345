@@ -10,7 +10,7 @@
 #include "Cards.h"
 #include "Map.h"
 #include "Orders.h"
-#include "Players.h"
+#include "Player.h"
 #include <vector>
 #include <iostream>
 #include <unordered_set>
@@ -27,7 +27,7 @@ Player::Player(){
     
     name = "Luara Palmer";
     playerTerritories = vector<Territory*>();
-    playerHand = new Hand();
+    playerHand = nullptr;
     playersOrders = new OrdersList();
 
 }
@@ -148,7 +148,7 @@ ostream& operator<<(ostream& os, const Player& p) {
     os << endl;
     os << "Cards in hand: " << endl;
     if (p.playerHand) {
-        p.playerHand->print();
+        p.playerHand->Print();
     } else {
         os << "No hand assigned." << endl;
     }

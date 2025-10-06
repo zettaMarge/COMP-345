@@ -1,6 +1,7 @@
 #include "Orders.h"
-#include "Map/Map.h"
+#include "Map.h"
 #include "Player.h"
+#include <algorithm>
 
 using std::endl;
 
@@ -202,7 +203,7 @@ Territory* Advance::GetSrc() {
 
 // Setter for target
 void Advance::SetTarget(Territory* Target) {
-    target = territory;
+    target = Target;
 }
 
 // Getter for target
@@ -218,7 +219,7 @@ ostream& Advance::Print(ostream& stream) const {
 // Returns the effect of the order as a string
 std::string Advance::GetEffect() const {
     return std::string("moving ") + std::to_string(nbUnits) + 
-        std::string(" units from ") + std::to_string(src) + std::string(" to ") + std::to_string(target);
+        std::string(" units from ") + src->name + std::string(" to ") + target->name;
 }
 
 // Move a certain number of army units from one of the current player’s territories to
@@ -235,7 +236,7 @@ void Advance::Execute() {
 // Check if the source territory belongs to the same player as the order, has enough units to move,
 // and that the target is adjacent to it
 bool Advance::Validate() {
-    return TerritoryBelongsToPlayer(src) && src->numArmies >= nbUnits && src->IsAdjacent(target);
+    return TerritoryBelongsToPlayer(src) && src->numUnits >= nbUnits && src->IsAdjacent(target);
 }
 // ----- Advance -----
 
@@ -315,7 +316,7 @@ Territory* Airlift::GetSrc() {
 
 // Setter for target
 void Airlift::SetTarget(Territory* Target) {
-    target = territory;
+    target = Target;
 }
 
 // Getter for target
@@ -331,7 +332,7 @@ ostream& Airlift::Print(ostream& stream) const {
 // Returns the effect of the order as a string
 std::string Airlift::GetEffect() const {
     return std::string("moving ") + std::to_string(nbUnits) + 
-        std::string(" units from ") + std::to_string(src) + std::string(" to ") + std::to_string(target);
+        std::string(" units from ") + src->name + std::string(" to ") + target->name;
 }
 
 // Advance a certain number of army units from one of the current player’s territories to any another territory
@@ -346,7 +347,7 @@ void Airlift::Execute() {
 
 // Check if the source territory belongs to the same player as the order and has enough units to move
 bool Airlift::Validate() {
-    return TerritoryBelongsToPlayer(src) && src->numArmies >= nbUnits;
+    return TerritoryBelongsToPlayer(src) && src->numUnits >= nbUnits;
 }
 // ----- Airlift -----
 
@@ -391,7 +392,7 @@ Blockade& Blockade::operator= (const Blockade& obj) {
 
 // Setter for target
 void Blockade::SetTarget(Territory* Target) {
-    target = territory;
+    target = Target;
 }
 
 // Getter for target
@@ -406,7 +407,7 @@ ostream& Blockade::Print(ostream& stream) const {
 
 // Returns the effect of the order as a string
 std::string Blockade::GetEffect() const {
-    return "tripling the number of units on " + td::to_string(target);
+    return "tripling the number of units on " + target->name;
 }
 
 // Triple the number of army units on one of the current player’s territories and make it a neutral territory.
@@ -466,7 +467,7 @@ Bomb& Bomb::operator= (const Bomb& obj) {
 
 // Setter for target
 void Bomb::SetTarget(Territory* Target) {
-    target = territory;
+    target = Target;
 }
 
 // Getter for target
@@ -481,7 +482,7 @@ ostream& Bomb::Print(ostream& stream) const {
 
 // Returns the effect of the order as a string
 std::string Bomb::GetEffect() const {
-    return "destroying half of the units on " + td::to_string(target);
+    return "destroying half of the units on " + target->name;
 }
 
 // Destroy half of the army units located on an opponent’s territory that is adjacent to one of the current player’s territories
@@ -558,7 +559,7 @@ int Deploy::GetNbUnits() {
 
 // Setter for target
 void Deploy::SetTarget(Territory* Target) {
-    target = territory;
+    target = Target;
 }
 
 // Getter for target
@@ -573,7 +574,7 @@ ostream& Deploy::Print(ostream& stream) const {
 
 // Returns the effect of the order as a string
 std::string Deploy::GetEffect() const {
-    return std::string("adding ") + std::to_string(nbUnits) + std::string(" units to ") + td::to_string(target);
+    return std::string("adding ") + std::to_string(nbUnits) + std::string(" units to ") + target->name;
 }
 
 // Move a certain number of army units from the current player’s reinforcement pool to one of the current player’s territories

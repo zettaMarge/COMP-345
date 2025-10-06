@@ -8,6 +8,7 @@
 
 // Territory
 
+Territory::Territory(){}
 Territory::Territory(const std::string& _name, Continent* _continent){
     owner = nullptr;
     name = _name;
@@ -341,7 +342,7 @@ bool MapLoader::LoadFile(const std::string& filename){
 
     std::string line;
     while(std::getline(file, line)){
-        if(!line.empty() && !std::all_of(line.begin(), line.end(), isspace)){
+        if(!line.empty() && !std::all_of(line.begin(), line.end(), [](unsigned char c){ return std::isspace(c); })){
             content.push_back(line);
         }
     }
