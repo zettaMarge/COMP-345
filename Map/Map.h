@@ -28,7 +28,7 @@ struct Territory{
 
     const std::vector<Territory*>& AdjacentTerritories() const;
     bool IsAdjacent(Territory* a) const;
-    void SetArmies(int);
+    void SetUnits(int);
 };
 
 struct Continent{

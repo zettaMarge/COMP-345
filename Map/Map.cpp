@@ -36,7 +36,7 @@ std::ostream& operator<<(std::ostream& os, const Territory& _territory){
     os << "Territory: " << _territory.name
     << " (Owner: " << (_territory.owner ? _territory.owner->GetName() : "No owner")
     << ", Continent: " << _territory.continent
-    << ", Armies: " << _territory.numUnits
+    << ", Units: " << _territory.numUnits
     << ", Adjacent territories: " << _territory.adj.size() << ")";
     return os;
 }
@@ -60,7 +60,7 @@ bool Territory::IsAdjacent(Territory* a) const{
 // Sets the territory's numUnits
 // Parameters:
 // - numUnits: Number of units
-void Territory::SetArmies(int _numUnits){
+void Territory::SetUnits(int _numUnits){
     numUnits = _numUnits;
 }
 
