@@ -19,8 +19,8 @@
 using namespace std;
 class Player{
 public:
-    vector<Territory*> ToAttack(); //returns list of territories to attack
-    vector<Territory*> ToDefend(); //returns list of territories to defend
+    vector<Territory*> ToAttack() const; //returns list of territories to attack
+    vector<Territory*> ToDefend() const ; //returns list of territories to defend
     void AddTerritory(Territory* t); //adds territory to players list of territories
     void RemoveTerritory(Territory* t); //removes territory from players list of territories
    
@@ -38,7 +38,7 @@ public:
     string GetName();
     vector<Territory*> GetPlayerTerritories();
     Hand* GetPlayerHand();
-    OrdersList* GetPlayerOrders();
+    OrdersList* GetPlayerOrders() const;
     void SetName(string name);
     void setPlayerTerritories(vector<Territory*> territories);
     void SetPlayerHand(Hand* hand);
