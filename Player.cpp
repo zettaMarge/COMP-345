@@ -82,6 +82,7 @@ void Player::IssueOrder(Order* x) {
     playersOrders->Add(x);
 };
 
+//Returns true when a Territory is found in a Player's owned territories
 bool Player::IsTerritoryOwned(Territory* t) {
     return std::find(playerTerritories.begin(), playerTerritories.end(), t) != playerTerritories.end();
 }
