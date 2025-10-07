@@ -81,7 +81,7 @@ void testOrdersLists() {
     std::cout << "----- negotiate done -----" << std::endl;
     
     std::cout << "----- printing list -----" << std::endl;
-    std::cout << p1->GetPlayerOrders() << std::endl;
+    std::cout << *p1->GetPlayerOrders() << std::endl;
 
     
     std::cout << "----- Executing orders -----" << std::endl;
