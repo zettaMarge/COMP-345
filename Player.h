@@ -8,8 +8,7 @@
 //I certify that this submission is my original work and meets the Faculty’s Expectations of Originality 
 //Mia Letendre
 //-----------------------------------------------------
-#ifndef PLAYERS_H
-#define PLAYERS_H
+#pragma once
 #include <vector>
 #include <iostream>
 #include <string>
@@ -53,6 +52,3 @@ private:
     OrdersList* playersOrders; //list of orders owned by player
     
 };
-
-
-#endif

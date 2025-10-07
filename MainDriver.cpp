@@ -1,8 +1,9 @@
 #include "GameEngine.h"
-#include "MapDriver.cpp"
-#include "OrdersDriver.cpp"
-#include "PlayerDriver.cpp"
-#include "CardsDriver.cpp"
+
+int TestMaps();
+void testPlayers();
+void TestCards();
+void testOrdersLists();
 
 int main() {
 	TestMaps();

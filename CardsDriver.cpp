@@ -10,7 +10,6 @@
 
 #include <iostream>
 #include "Cards.h"
-#include "Cards.cpp"
 
 int TestCards() {
     // index of card to play
