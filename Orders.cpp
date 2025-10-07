@@ -221,7 +221,7 @@ std::string Advance::GetEffect() const {
 // another territory that is adjacent to the source territory
 void Advance::Execute() {
     if (Validate()) {
-        std::cout << "Advance order successful in" << GetEffect() << std::endl;
+        std::cout << "Advance order successful in " << GetEffect() << std::endl;
     }
     else {
         std::cout << "This Advance order is invalid." << std::endl;
@@ -322,7 +322,7 @@ std::string Airlift::GetEffect() const {
 // Advance a certain number of army units from one of the current player’s territories to any another territory
 void Airlift::Execute() {
     if (Validate()) {
-        std::cout << "Airlift order successful in" << GetEffect() << std::endl;
+        std::cout << "Airlift order successful in " << GetEffect() << std::endl;
     }
     else {
         std::cout << "This Airlift order is invalid." << std::endl;
@@ -392,7 +392,7 @@ std::string Blockade::GetEffect() const {
 // Triple the number of army units on one of the current player’s territories and make it a neutral territory.
 void Blockade::Execute() {
     if (Validate()) {
-        std::cout << "Blockade order successful in" << GetEffect() << std::endl;
+        std::cout << "Blockade order successful in " << GetEffect() << std::endl;
     }
     else {
         std::cout << "This Blockade order is invalid." << std::endl;
@@ -462,7 +462,7 @@ std::string Bomb::GetEffect() const {
 // Destroy half of the army units located on an opponent’s territory that is adjacent to one of the current player’s territories
 void Bomb::Execute() {
     if (Validate()) {
-        std::cout << "Bomb order successful in" << GetEffect() << std::endl;
+        std::cout << "Bomb order successful in " << GetEffect() << std::endl;
     }
     else {
         std::cout << "This Bomb order is invalid." << std::endl;
@@ -549,7 +549,7 @@ std::string Deploy::GetEffect() const {
 // Move a certain number of army units from the current player’s reinforcement pool to one of the current player’s territories
 void Deploy::Execute() {
     if (Validate()) {
-        std::cout << "Deploy order successful in" << GetEffect() << std::endl;
+        std::cout << "Deploy order successful in " << GetEffect() << std::endl;
     }
     else {
         std::cout << "This Deploy order is invalid." << std::endl;
@@ -620,7 +620,7 @@ std::string Negotiate::GetEffect() const {
 // Prevent attacks between the current player and the player targeted by the negotiate order until the end of the turn.
 void Negotiate::Execute() {
     if (Validate()) {
-        std::cout << "Negotiate order successful in" << GetEffect() << std::endl;
+        std::cout << "Negotiate order successful in " << GetEffect() << std::endl;
     }
     else {
         std::cout << "This Negotiate order is invalid." << std::endl;
