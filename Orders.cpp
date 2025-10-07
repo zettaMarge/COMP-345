@@ -121,6 +121,7 @@ Player* Order::GetOwningPlayer() {
     return owningPlayer;
 }
 
+// Checks whether a given territory belongs to the order's player
 bool Order::TerritoryBelongsToPlayer(Territory* territory) {
     return territory->owner->GetName() == owningPlayer->GetName();
 }
@@ -214,6 +215,7 @@ Territory* Advance::GetTarget() {
 // Prints the order to the specified stream
 ostream& Advance::Print(ostream& stream) const {
     stream << "Advance: " << GetEffect() << std::endl;
+    return stream;
 }
 
 // Returns the effect of the order as a string
@@ -326,7 +328,8 @@ Territory* Airlift::GetTarget() {
 
 // Prints the order to the specified stream
 ostream& Airlift::Print(ostream& stream) const {
-    stream << "Airlift: moving " << GetEffect() << std::endl; 
+    stream << "Airlift: moving " << GetEffect() << std::endl;
+    return stream;
 }
 
 // Returns the effect of the order as a string
@@ -403,6 +406,7 @@ Territory* Blockade::GetTarget() {
 // Prints the order to the specified stream
 ostream& Blockade::Print(ostream& stream) const {
     stream << "Blockade: " << GetEffect() << std::endl; 
+    return stream;
 }
 
 // Returns the effect of the order as a string
@@ -478,6 +482,7 @@ Territory* Bomb::GetTarget() {
 // Prints the order to the specified stream
 ostream& Bomb::Print(ostream& stream) const {
     stream << "Bomb: " << std::endl;  
+    return stream;
 }
 
 // Returns the effect of the order as a string
@@ -498,8 +503,9 @@ void Bomb::Execute() {
 // Check if the target belongs to another player and has an adjacent territory
 // that belongs to the player issuing the order
 bool Bomb::Validate() {
+    std::string ownerName = owningPlayer->GetName();
     return target->owner->GetName() != owningPlayer->GetName() &&
-        std::find_if(target->adj.begin(), target->adj.end(), TerritoryBelongsToPlayer) != target->adj.end();
+        std::find_if(target->adj.begin(), target->adj.end(), [&ownerName](const Territory* t) { return t->owner->GetName() == ownerName; }) != target->adj.end();
 }
 // ----- Bomb -----
 
@@ -570,6 +576,7 @@ Territory* Deploy::GetTarget() {
 // Prints the order to the specified stream
 ostream& Deploy::Print(ostream& stream) const {
     stream << "Deploy: " << GetEffect() << std::endl;
+    return stream;
 }
 
 // Returns the effect of the order as a string
@@ -629,6 +636,8 @@ Negotiate& Negotiate::operator= (const Negotiate& obj) {
         otherPlayer = new Player;
         *otherPlayer = *obj.otherPlayer;
     }
+
+    return *this;
 }
 
 // Setter for otherPlayer
@@ -644,6 +653,7 @@ Player* Negotiate::GetOtherPlayer() {
 // Prints the order to the specified stream
 ostream& Negotiate::Print(ostream& stream) const {
     stream << "Negotiate: " << GetEffect() << std::endl; 
+    return stream;
 }
 
 // Returns the effect of the order as a string
