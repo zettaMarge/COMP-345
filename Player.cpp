@@ -150,9 +150,9 @@ ostream& operator<<(ostream& os, const Player& p) {
     for (const Territory* t : p.playerTerritories) {
         os << t << " ";
     }
-     vector<Territory*> defendList = p1.ToDefend();
+     vector<Territory*> defendList = p.ToDefend();
     cout << "Territories to defend: ";
-    if (defendist.size() == 0) {
+    if (defendList.size() == 0) {
         cout << "None";
     }
     for (Territory* t : defendList) {
@@ -160,7 +160,7 @@ ostream& operator<<(ostream& os, const Player& p) {
     }
 
     cout << endl;
-    vector<Territory*> attackList = p1.ToAttack(); 
+    vector<Territory*> attackList = p.ToAttack(); 
     cout << "Territories to attack: ";
     if (attackList.size() == 0) {
         cout << "None";
@@ -177,7 +177,7 @@ ostream& operator<<(ostream& os, const Player& p) {
         os << "No hand assigned." << endl;
     }
     os << "Orders issued: " ;
-    for (Order* o : p1.GetPlayerOrders()->GetListItems()) {
+    for (Order* o : p.GetPlayerOrders()->GetListItems()) {
         cout << *o;
     }
     return os;
