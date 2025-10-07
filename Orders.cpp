@@ -47,7 +47,7 @@ ostream& operator<<(ostream& stream, const OrdersList& obj) {
 
     for (const auto& order : obj.orders)
     {
-        stream << order << "\n----------\n";
+        stream << *order << "\n----------\n";
     }
 
     stream << endl;
