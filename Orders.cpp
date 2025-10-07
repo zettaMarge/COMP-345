@@ -6,6 +6,10 @@
 using std::endl;
 
 // ----- OrdersList -----
+
+// Default constructor
+OrdersList::OrdersList(){}
+
 // Copy constructor
 OrdersList::OrdersList(const OrdersList& obj) {
     for (size_t i = 0; i < obj.orders.size(); i++)

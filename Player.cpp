@@ -28,7 +28,7 @@ Player::Player(){
     name = "Luara Palmer";
     playerTerritories = vector<Territory*>();
     playerHand = nullptr;
-    playersOrders = nullptr;
+    playersOrders = new OrdersList();
 
 }
 
