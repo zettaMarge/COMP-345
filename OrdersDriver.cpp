@@ -39,7 +39,7 @@ void testOrdersLists() {
 
     std::cout << "----- Creating Orders -----" << std::endl;
     Advance* advanceValid = new Advance();
-    advanceValid->SetOwningPlayer(p1);
+    advanceValid->SetOwningPlayer(p1->GetName());
     advanceValid->SetNbUnits(3);
     advanceValid->SetSrc(canada);
     advanceValid->SetTarget(usa);
@@ -47,11 +47,11 @@ void testOrdersLists() {
     Advance* advanceInvalid = new Advance(*advanceValid);
     advanceInvalid->SetTarget(mexico);
 
-    Airlift* airlift = new Airlift(p1, 3, canada, mexico);
-    Blockade* blockade = new Blockade(p1, canada);
-    Bomb* bomb = new Bomb(p1, mexico);
-    Deploy* deploy = new Deploy(p1, 3, canada);
-    Negotiate* negotiate = new Negotiate(p1, p2);
+    Airlift* airlift = new Airlift(p1->GetName(), 3, canada, mexico);
+    Blockade* blockade = new Blockade(p1->GetName(), canada);
+    Bomb* bomb = new Bomb(p1->GetName(), mexico);
+    Deploy* deploy = new Deploy(p1->GetName(), 3, canada);
+    Negotiate* negotiate = new Negotiate(p1->GetName(), p2->GetName());
 
 
     std::cout << "----- Adding orders to p1's list -----" << std::endl;

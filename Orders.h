@@ -37,6 +37,7 @@ class OrdersList{
         void Add(Order* newOrder);
         void Move(int fromId, int toId);
         void Remove(int id);
+        void SetOwningPlayer(std::string name);
 
     private:
         vector<Order*> orders;
@@ -46,19 +47,17 @@ class OrdersList{
 // Abstract Order class - cannot be instantiated
 class Order {
     public:
-        ~Order();
-
         friend ostream& operator<<(ostream& stream, const Order& obj);
 
-        void SetOwningPlayer(Player* player);
-        Player* GetOwningPlayer();
+        void SetOwningPlayer(std::string playerName);
+        std::string GetOwningPlayer();
 
         virtual ostream& Print(ostream& stream) const = 0;
         virtual std::string GetEffect() const = 0;
         virtual void Execute() = 0;
 
     protected:
-        Player* owningPlayer;
+        std::string owningPlayer;
 
         bool TerritoryBelongsToPlayer(Territory* territory);
 
@@ -71,7 +70,7 @@ class Order {
 class Advance : public Order {
     public:
         Advance();
-        Advance(Player* owningPlayer, int nbUnits, Territory* src, Territory* target);
+        Advance(std::string owningPlayer, int nbUnits, Territory* src, Territory* target);
         Advance(const Advance& obj);
         ~Advance();
 
@@ -101,7 +100,7 @@ class Advance : public Order {
 class Airlift : public Order {
     public:
         Airlift();
-        Airlift(Player* owningPlayer, int nbUnits, Territory* src, Territory* target);
+        Airlift(std::string owningPlayer, int nbUnits, Territory* src, Territory* target);
         Airlift(const Airlift& obj);
         ~Airlift();
 
@@ -131,7 +130,7 @@ class Airlift : public Order {
 class Blockade : public Order {
     public:
         Blockade();
-        Blockade(Player* owningPlayer, Territory* target);
+        Blockade(std::string owningPlayer, Territory* target);
         Blockade(const Blockade& obj);
         ~Blockade();
 
@@ -155,7 +154,7 @@ class Blockade : public Order {
 class Bomb : public Order {
     public:
         Bomb();
-        Bomb(Player* owningPlayer, Territory* target);
+        Bomb(std::string owningPlayer, Territory* target);
         Bomb(const Bomb& obj);
         ~Bomb();
 
@@ -179,7 +178,7 @@ class Bomb : public Order {
 class Deploy : public Order {
     public:
         Deploy();
-        Deploy(Player* owningPlayer, int nbUnits, Territory* target);
+        Deploy(std::string owningPlayer, int nbUnits, Territory* target);
         Deploy(const Deploy& obj);
         ~Deploy();
 
@@ -206,21 +205,20 @@ class Deploy : public Order {
 class Negotiate : public Order {
     public:
         Negotiate();
-        Negotiate(Player* owningPlayer, Player* otherPlayer);
+        Negotiate(std::string owningPlayer, std::string otherPlayer);
         Negotiate(const Negotiate& obj);
-        ~Negotiate();
 
         Negotiate& operator= (const Negotiate& obj);
 
-        void SetOtherPlayer(Player* player);
-        Player* GetOtherPlayer();
+        void SetOtherPlayer(std::string player);
+        std::string GetOtherPlayer();
 
         ostream& Print(ostream& stream) const;
         std::string GetEffect() const;
         void Execute();
 
     private:
-        Player* otherPlayer;
+        std::string otherPlayer;
 
         bool Validate();
 };

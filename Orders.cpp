@@ -99,33 +99,35 @@ void OrdersList::Remove(int id) {
         orders.erase(orders.begin() + id);
     }
 }
+
+// Change the name of the owning player for all orders in the list
+void OrdersList::SetOwningPlayer(std::string player) {
+    for (const auto& order : orders) {
+        order->SetOwningPlayer(player);
+    }
+}
 // ----- OrdersList -----
 
 
 // ----- Order -----
-// Destrcutor
-Order::~Order() {
-    delete owningPlayer;
-    owningPlayer = NULL;
-}
-
+// Stream insertion operator
 ostream& operator<<(ostream& stream, const Order& obj) {
     return obj.Print(stream);
 }
 
 // Setter for owningPlayer
-void Order::SetOwningPlayer(Player* player) {
+void Order::SetOwningPlayer(std::string player) {
     owningPlayer = player;
 }
 
 // Getter for owningPlayer
-Player* Order::GetOwningPlayer() {
+std::string Order::GetOwningPlayer() {
     return owningPlayer;
 }
 
 // Checks whether a given territory belongs to the order's player
 bool Order::TerritoryBelongsToPlayer(Territory* territory) {
-    return territory->GetOwner()->GetName() == owningPlayer->GetName();
+    return territory->GetOwner()->GetName() == owningPlayer;
 }
 
 // ----- Order -----
@@ -136,7 +138,7 @@ bool Order::TerritoryBelongsToPlayer(Territory* territory) {
 Advance::Advance() {}
 
 // Parameterized constructor
-Advance::Advance(Player* owningPlayer, int nbUnits, Territory* src, Territory* target) {
+Advance::Advance(std::string owningPlayer, int nbUnits, Territory* src, Territory* target) {
     this->owningPlayer = owningPlayer;
     this->nbUnits = nbUnits;
     this->src = src;
@@ -238,7 +240,7 @@ bool Advance::Validate() {
 Airlift::Airlift() {}
 
 // Parameterized constructor
-Airlift::Airlift(Player* owningPlayer, int nbUnits, Territory* src, Territory* target) {
+Airlift::Airlift(std::string owningPlayer, int nbUnits, Territory* src, Territory* target) {
     this->owningPlayer = owningPlayer;
     this->nbUnits = nbUnits;
     this->src = src;
@@ -338,7 +340,7 @@ bool Airlift::Validate() {
 Blockade::Blockade() {}
 
 // Parameterized constructor
-Blockade::Blockade(Player* owningPlayer, Territory* target) {
+Blockade::Blockade(std::string owningPlayer, Territory* target) {
     this->owningPlayer = owningPlayer;
     this->target = target;
 }
@@ -408,7 +410,7 @@ bool Blockade::Validate() {
 Bomb::Bomb() {}
 
 // Parameterized constructor
-Bomb::Bomb(Player* owningPlayer, Territory* target) {
+Bomb::Bomb(std::string owningPlayer, Territory* target) {
     this->owningPlayer = owningPlayer;
     this->target = target;
 }
@@ -469,10 +471,10 @@ void Bomb::Execute() {
 // Check if the target belongs to another player and has an adjacent territory
 // that belongs to the player issuing the order
 bool Bomb::Validate() {
-    std::string ownerName = owningPlayer->GetName();
+    std::string ownerName = owningPlayer;
     std::vector<Territory *> adj = target->AdjacentTerritories();
 
-    return target->GetOwner()->GetName() != owningPlayer->GetName() &&
+    return target->GetOwner()->GetName() != owningPlayer &&
         std::find_if(adj.begin(), adj.end(), [&ownerName](Territory* t) { return t->GetOwner()->GetName() == ownerName; }) != adj.end();
 }
 // ----- Bomb -----
@@ -483,7 +485,7 @@ bool Bomb::Validate() {
 Deploy::Deploy() {}
 
 // Parameterized constructor
-Deploy::Deploy(Player* owningPlayer, int nbUnits, Territory* target) {
+Deploy::Deploy(std::string owningPlayer, int nbUnits, Territory* target) {
     this->owningPlayer = owningPlayer;
     this->nbUnits = nbUnits;
     this->target = target;
@@ -567,7 +569,7 @@ bool Deploy::Validate() {
 Negotiate::Negotiate() {}
 
 // Parameterized constructor
-Negotiate::Negotiate(Player* owningPlayer, Player* otherPlayer) {
+Negotiate::Negotiate(std::string owningPlayer, std::string otherPlayer) {
     this->owningPlayer = owningPlayer;
     this->otherPlayer = otherPlayer;
 }
@@ -576,12 +578,6 @@ Negotiate::Negotiate(Player* owningPlayer, Player* otherPlayer) {
 Negotiate::Negotiate(const Negotiate& obj) {
     owningPlayer = obj.owningPlayer;
     otherPlayer = obj.otherPlayer;
-}
-
-// Destructor
-Negotiate::~Negotiate() {
-    delete otherPlayer;
-    otherPlayer = NULL;
 }
 
 // Assignment operator
@@ -595,12 +591,12 @@ Negotiate& Negotiate::operator= (const Negotiate& obj) {
 }
 
 // Setter for otherPlayer
-void Negotiate::SetOtherPlayer(Player* player) {
+void Negotiate::SetOtherPlayer(std::string player) {
     otherPlayer = player;
 }
 
 // Getter for otherPlayer
-Player* Negotiate::GetOtherPlayer() {
+std::string Negotiate::GetOtherPlayer() {
     return otherPlayer;
 }
 
@@ -612,7 +608,7 @@ ostream& Negotiate::Print(ostream& stream) const {
 
 // Returns the effect of the order as a string
 std::string Negotiate::GetEffect() const {
-    return std::string("preventing attacks between ") + owningPlayer->GetName() + std::string(" and ") + otherPlayer->GetName();
+    return std::string("preventing attacks between ") + owningPlayer + std::string(" and ") + otherPlayer;
 }
 
 // Prevent attacks between the current player and the player targeted by the negotiate order until the end of the turn.
@@ -627,6 +623,6 @@ void Negotiate::Execute() {
 
 // Check if the other player is different than the one issuing the order
 bool Negotiate::Validate() {
-    return otherPlayer->GetName() != owningPlayer->GetName();
+    return otherPlayer != owningPlayer;
 }
 // ----- Negotiate -----
