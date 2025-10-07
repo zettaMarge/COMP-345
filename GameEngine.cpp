@@ -1,4 +1,5 @@
 #include "GameEngine.h"
+#include <iomanip>
 
 // ===== SimpleState implementation =====
 // SimpleState constructor
@@ -202,6 +203,36 @@ GameEngine& GameEngine::operator=(const GameEngine& other) {
             : nullptr;
     }
 	return *this; // return this instance if theyre the same
+}
+
+//stream insertion for GameEngine
+//returns output stream of current state and available commands
+std::ostream& operator<<(std::ostream& os, const GameEngine& engine) {
+    os << "==== Current State of the Game Engine:\n";
+
+    if (!engine.currentState) {
+        os << "Current state: [none]\n";
+        return os;
+    }
+
+    os << "Current state: " << engine.currentState->name << "\n";
+    os << "Available commands:\n";
+
+    if (engine.currentState->availableCommands.empty()) {
+        os << "  (no commands available)\n";
+    }
+    else {
+        for (const auto& cmd : engine.currentState->availableCommands) {
+            os << "  - " << std::left << std::setw(15) << cmd->name;
+            if (cmd->nextState)
+                os << " -> " << cmd->nextState->name;
+            else
+                os << " (no transition)";
+            os << "\n";
+        }
+    }
+
+    return os;
 }
 
 //main game loop
