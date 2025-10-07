@@ -123,7 +123,7 @@ Player* Order::GetOwningPlayer() {
 
 // Checks whether a given territory belongs to the order's player
 bool Order::TerritoryBelongsToPlayer(Territory* territory) {
-    return territory->owner->GetName() == owningPlayer->GetName();
+    return territory->GetOwner()->GetName() == owningPlayer->GetName();
 }
 
 // ----- Order -----
@@ -134,11 +134,11 @@ bool Order::TerritoryBelongsToPlayer(Territory* territory) {
 Advance::Advance() {}
 
 // Parameterized constructor
-Advance::Advance(Player* owningPlayer, int nbUnits, Territory* src, Territory* target) {
-    owningPlayer = owningPlayer;
-    nbUnits = nbUnits;
-    src = src;
-    target = target;
+Advance::Advance(Player* _owningPlayer, int _nbUnits, Territory* _src, Territory* _target) {
+    owningPlayer = _owningPlayer;
+    nbUnits = _nbUnits;
+    src = _src;
+    target = _target;
 }
 
 // Copy constructor
@@ -148,10 +148,10 @@ Advance::Advance(const Advance& obj) {
 
     nbUnits = obj.nbUnits;
 
-    src = new Territory;
+    src = new Territory(obj.src->GetName(), obj.src->GetContinentByTerritory());
     *src = *obj.src;
 
-    target = new Territory;
+    target = new Territory(obj.target->GetName(), obj.target->GetContinentByTerritory());
     *target = *obj.target;
 }
 
@@ -172,10 +172,10 @@ Advance& Advance::operator= (const Advance& obj) {
 
         nbUnits = obj.nbUnits;
 
-        src = new Territory;
+        src = new Territory(obj.src->GetName(), obj.src->GetContinentByTerritory());
         *src = *obj.src;
 
-        target = new Territory;
+        target = new Territory(obj.target->GetName(), obj.target->GetContinentByTerritory());
         *target = *obj.target;
     }
 
@@ -221,7 +221,7 @@ ostream& Advance::Print(ostream& stream) const {
 // Returns the effect of the order as a string
 std::string Advance::GetEffect() const {
     return std::string("moving ") + std::to_string(nbUnits) + 
-        std::string(" units from ") + src->name + std::string(" to ") + target->name;
+        std::string(" units from ") + src->GetName() + std::string(" to ") + target->GetName();
 }
 
 // Move a certain number of army units from one of the current player’s territories to
@@ -238,7 +238,7 @@ void Advance::Execute() {
 // Check if the source territory belongs to the same player as the order, has enough units to move,
 // and that the target is adjacent to it
 bool Advance::Validate() {
-    return TerritoryBelongsToPlayer(src) && src->numUnits >= nbUnits && src->IsAdjacent(target);
+    return TerritoryBelongsToPlayer(src) && src->GetUnits() >= nbUnits && src->IsAdjacent(target);
 }
 // ----- Advance -----
 
@@ -262,10 +262,10 @@ Airlift::Airlift(const Airlift& obj) {
 
     nbUnits = obj.nbUnits;
 
-    src = new Territory;
+    src = new Territory(obj.src->GetName(), obj.src->GetContinentByTerritory());
     *src = *obj.src;
 
-    target = new Territory;
+    target = new Territory(obj.target->GetName(), obj.target->GetContinentByTerritory());
     *target = *obj.target;
 }
 
@@ -286,10 +286,10 @@ Airlift& Airlift::operator= (const Airlift& obj) {
 
         nbUnits = obj.nbUnits;
 
-        src = new Territory;
+        src = new Territory(obj.src->GetName(), obj.src->GetContinentByTerritory());
         *src = *obj.src;
 
-        target = new Territory;
+        target = new Territory(obj.target->GetName(), obj.target->GetContinentByTerritory());
         *target = *obj.target;
     }
 
@@ -335,7 +335,7 @@ ostream& Airlift::Print(ostream& stream) const {
 // Returns the effect of the order as a string
 std::string Airlift::GetEffect() const {
     return std::string("moving ") + std::to_string(nbUnits) + 
-        std::string(" units from ") + src->name + std::string(" to ") + target->name;
+        std::string(" units from ") + src->GetName() + std::string(" to ") + target->GetName();
 }
 
 // Advance a certain number of army units from one of the current player’s territories to any another territory
@@ -350,7 +350,7 @@ void Airlift::Execute() {
 
 // Check if the source territory belongs to the same player as the order and has enough units to move
 bool Airlift::Validate() {
-    return TerritoryBelongsToPlayer(src) && src->numUnits >= nbUnits;
+    return TerritoryBelongsToPlayer(src) && src->GetUnits() >= nbUnits;
 }
 // ----- Airlift -----
 
@@ -370,7 +370,7 @@ Blockade::Blockade(const Blockade& obj) {
     owningPlayer = new Player;
     *owningPlayer = *obj.owningPlayer;
 
-    target = new Territory;
+    target = new Territory(obj.target->GetName(), obj.target->GetContinentByTerritory());
     *target = *obj.target;
 }
 
@@ -386,7 +386,7 @@ Blockade& Blockade::operator= (const Blockade& obj) {
         owningPlayer = new Player;
         *owningPlayer = *obj.owningPlayer;
 
-        target = new Territory;
+        target = new Territory(obj.target->GetName(), obj.target->GetContinentByTerritory());
         *target = *obj.target;
     }
 
@@ -411,7 +411,7 @@ ostream& Blockade::Print(ostream& stream) const {
 
 // Returns the effect of the order as a string
 std::string Blockade::GetEffect() const {
-    return "tripling the number of units on " + target->name;
+    return "tripling the number of units on " + target->GetName();
 }
 
 // Triple the number of army units on one of the current player’s territories and make it a neutral territory.
@@ -446,7 +446,7 @@ Bomb::Bomb(const Bomb& obj) {
     owningPlayer = new Player;
     *owningPlayer = *obj.owningPlayer;
 
-    target = new Territory;
+    target = new Territory(obj.target->GetName(), obj.target->GetContinentByTerritory());
     *target = *obj.target;
 }
 
@@ -462,7 +462,7 @@ Bomb& Bomb::operator= (const Bomb& obj) {
         owningPlayer = new Player;
         *owningPlayer = *obj.owningPlayer;
 
-        target = new Territory;
+        target = new Territory(obj.target->GetName(), obj.target->GetContinentByTerritory());
         *target = *obj.target;
     }
 
@@ -487,7 +487,7 @@ ostream& Bomb::Print(ostream& stream) const {
 
 // Returns the effect of the order as a string
 std::string Bomb::GetEffect() const {
-    return "destroying half of the units on " + target->name;
+    return "destroying half of the units on " + target->GetName();
 }
 
 // Destroy half of the army units located on an opponent’s territory that is adjacent to one of the current player’s territories
@@ -504,8 +504,9 @@ void Bomb::Execute() {
 // that belongs to the player issuing the order
 bool Bomb::Validate() {
     std::string ownerName = owningPlayer->GetName();
-    return target->owner->GetName() != owningPlayer->GetName() &&
-        std::find_if(target->adj.begin(), target->adj.end(), [&ownerName](const Territory* t) { return t->owner->GetName() == ownerName; }) != target->adj.end();
+    std::vector<Territory *> adj = target->AdjacentTerritories();
+    return target->GetOwner()->GetName() != owningPlayer->GetName() &&
+        std::find_if(adj.begin(), adj.end(), [&ownerName](Territory* t) { return t->GetOwner()->GetName() == ownerName; }) != adj.end();
 }
 // ----- Bomb -----
 
@@ -528,7 +529,7 @@ Deploy::Deploy(const Deploy& obj) {
 
     nbUnits = obj.nbUnits;
 
-    target = new Territory;
+    target = new Territory(obj.target->GetName(), obj.target->GetContinentByTerritory());
     *target = *obj.target;
 }
 
@@ -546,7 +547,7 @@ Deploy& Deploy::operator=(const Deploy& obj) {
 
         nbUnits = obj.nbUnits;
 
-        target = new Territory;
+        target = new Territory(obj.target->GetName(), obj.target->GetContinentByTerritory());
         *target = *obj.target;
     }
 
@@ -581,7 +582,7 @@ ostream& Deploy::Print(ostream& stream) const {
 
 // Returns the effect of the order as a string
 std::string Deploy::GetEffect() const {
-    return std::string("adding ") + std::to_string(nbUnits) + std::string(" units to ") + target->name;
+    return std::string("adding ") + std::to_string(nbUnits) + std::string(" units to ") + target->GetName();
 }
 
 // Move a certain number of army units from the current player’s reinforcement pool to one of the current player’s territories

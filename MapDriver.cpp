@@ -1,3 +1,12 @@
+//-----------------------------------------------------
+    //Sara Vargas Aceves 40349399
+    //COMP-345-D 2252 Assignment 1 MapDriver.cpp
+    //Dr. Hamed Jafarpour
+    //Submitted: TBD
+    //Due: October 7, 2025 
+    //I certify that this submission is my original work and meets the Faculty’s Expectations of Originality 
+    //Sara Vargas Aceves
+//-----------------------------------------------------
 #include "Map.h"
 
 #include <iostream>

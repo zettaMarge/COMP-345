@@ -53,7 +53,7 @@ vector<Territory*> Player::ToAttack() {
     vector<Territory*> toAttackList;
     for (Territory* territory : playerTerritories) {
         for (Territory* neighbor : territory->AdjacentTerritories()) {
-            if (neighbor->owner != this) { 
+            if (neighbor->GetOwner() != this) { 
                 toAttackList.push_back(neighbor);
             }
         }
@@ -82,20 +82,23 @@ void Player::IssueOrder(Order* x) {
     playersOrders->Add(x);
 };
 
+bool Player::IsTerritoryOwned(Territory* t) {
+    return std::find(playerTerritories.begin(), playerTerritories.end(), t) != playerTerritories.end();
+}
+
 //Adds territory to players list of territories
 //temporarally tracks index for temp adjacent territories fucntion
 //assumes in territory that owner is public
 void Player::AddTerritory(Territory* t) {
-    for (Territory* territory : playerTerritories) {
-        if (territory == t) {
-            cout << "Territory already exists in player's list." << endl;
-            return;
-        }
+    if (IsTerritoryOwned(t)) {
+        cout << "Territory already exists in player's list." << endl;
+        return;
     }
+
    playerTerritories.push_back(t);
     
-    if (t->owner != this) {
-        t->owner = this;
+    if (t->GetOwner() != this) {
+        t->SetOwner(this);
     }
 }
 
@@ -104,9 +107,8 @@ void Player::AddTerritory(Territory* t) {
 void Player::RemoveTerritory(Territory* t) {
     auto it = std::remove(playerTerritories.begin(), playerTerritories.end(), t);
     if (it != playerTerritories.end()) {
-        playerTerritories.erase(it, playerTerritories.end());
-        if (t->owner == this) {
-            t->owner = nullptr;
+        if (t->GetOwner() == this) {
+            t->SetOwner(nullptr);
         }
     } else {
         cout << "Territory not found in player's list." << endl;

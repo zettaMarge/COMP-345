@@ -25,9 +25,9 @@ int testPlayers() {
     Territory *t2 = new Territory("Territory2", cont1);
     Territory *t3 = new Territory("Territory3", cont1);
     Map* testMap = new Map();
-    testMap->AddTerritory(t1->name, cont1);
-    testMap->AddTerritory(t2->name, cont1);
-    testMap->AddTerritory(t3->name, cont1);
+    testMap->AddTerritory(t1->GetName(), cont1);
+    testMap->AddTerritory(t2->GetName(), cont1);
+    testMap->AddTerritory(t3->GetName(), cont1);
     Player p1;
     p1.SetName("Player1");
     p1.AddTerritory(t1);
@@ -37,21 +37,21 @@ int testPlayers() {
     cout << "Player Name: " << p1.GetName() << endl;
     cout << "Territories owned by " << p1.GetName() << ": ";
     for (Territory* t : p1.GetPlayerTerritories()) {
-        cout << t->name << " ";
+        cout << t->GetName() << " ";
     }
 
     cout << endl;
     vector<Territory*> defendList = p1.ToDefend();
     cout << "Territories to defend: ";
     for (Territory* t : defendList) {
-        cout << t->name << " ";
+        cout << t->GetName() << " ";
     }
 
     cout << endl;
     vector<Territory*> attackList = p1.ToAttack(); // why doesnt this work
     cout << "Territories to attack: ";
     for (Territory* t : attackList) {
-        cout << t->name << " ";
+        cout << t->GetName() << " ";
     }
     cout << endl;
 

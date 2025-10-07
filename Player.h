@@ -43,7 +43,7 @@ public:
     void setPlayerTerritories(vector<Territory*> territories);
     void SetPlayerHand(Hand* hand);
     void SetPlayerOrders(OrdersList* orders);
-
+    bool IsTerritoryOwned(Territory* t);
 
 private:
     string name; //name of player, used to identify who owns territory
