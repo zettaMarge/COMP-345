@@ -17,7 +17,7 @@ using namespace std;
 
 
 
-int testPlayers() {
+int TestPlayers() {
     // Test data
     Continent *cont1 = new Continent("Continent1", 5);
     Territory *t1 = new Territory("Territory1", cont1);

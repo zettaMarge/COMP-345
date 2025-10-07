@@ -150,6 +150,25 @@ ostream& operator<<(ostream& os, const Player& p) {
     for (const Territory* t : p.playerTerritories) {
         os << t << " ";
     }
+     vector<Territory*> defendList = p1.ToDefend();
+    cout << "Territories to defend: ";
+    if (defendist.size() == 0) {
+        cout << "None";
+    }
+    for (Territory* t : defendList) {
+        cout << t->GetName() << " ";
+    }
+
+    cout << endl;
+    vector<Territory*> attackList = p1.ToAttack(); 
+    cout << "Territories to attack: ";
+    if (attackList.size() == 0) {
+        cout << "None";
+    }
+    for (Territory* t : attackList) {
+        cout << t->GetName() << " ";
+    }
+    cout << endl;
     os << endl;
     os << "Cards in hand: " << endl;
     if (p.playerHand) {
@@ -157,9 +176,13 @@ ostream& operator<<(ostream& os, const Player& p) {
     } else {
         os << "No hand assigned." << endl;
     }
-    os << "Orders issued: " << p.playersOrders << endl;
+    os << "Orders issued: " ;
+    for (Order* o : p1.GetPlayerOrders()->GetListItems()) {
+        cout << *o;
+    }
     return os;
 }
+
 
 // Clean up dynamically allocated Orders
 // Note: Territories are not deleted here as they may be shared among players
