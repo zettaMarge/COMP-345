@@ -1,8 +1,8 @@
 #include "GameEngine.h"
 
 int TestMaps();
-void testPlayers();
-void TestCards();
+int testPlayers();
+int TestCards();
 void testOrdersLists();
 
 int main() {
