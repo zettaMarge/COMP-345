@@ -30,11 +30,11 @@ std::vector<Map*> TestLoadMaps(const std::vector<std::string>& mapFiles){
 
 int TestMaps(){
     std::vector<std::string> mapFiles = {
-        "/Maps/_11_ Against All Odds.map",
-        "/Maps/001_I72_Ghtroc 720.map",
-        "/Maps/005_I72_V-22.map",
-        "/Maps/READ FIRST.txt",
-        "/Maps/_64_ BIG BLUE.map"
+        "./Maps/_11_ Against All Odds.map",
+        "./Maps/001_I72_Ghtroc 720.map",
+        "./Maps/005_I72_V-22.map",
+        "./Maps/READ FIRST.txt",
+        "./Maps/_64_ BIG BLUE.map"
     };
 
     std::vector<Map*> validMaps = TestLoadMaps(mapFiles);
