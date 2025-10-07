@@ -49,7 +49,7 @@ Player::Player(std::string& name, vector<Territory*> playerTerritories, Hand &pl
 //assumes that adjacentTerritories() returns a list of territories adjacent to the territory
 //aslo assumes that the territories var hold all the territories owned by the player
 // Compares Owner pointer to this Player instance
-vector<Territory*> Player::ToAttack() {
+vector<Territory*> Player::ToAttack() const{
     vector<Territory*> toAttackList;
     for (Territory* territory : playerTerritories) {
         for (Territory* neighbor : territory->AdjacentTerritories()) {
@@ -69,7 +69,7 @@ vector<Territory*> Player::ToAttack() {
 //This is a stub meant to be able to code players class
 //will return all the territiories that are owned by the player and can be defended
 // Compares Owner pointer to this Player instance
-vector<Territory*> Player::ToDefend() {
+vector<Territory*> Player::ToDefend() const{
 
     if (playerTerritories.empty()) {
         cout << "No territories to defend." << endl;
@@ -160,7 +160,7 @@ ostream& operator<<(ostream& os, const Player& p) {
     }
 
     cout << endl;
-    vector<Territory*> attackList = p.ToAttack(); 
+    vector<Territory*> attackList = p.ToAttack();
     cout << "Territories to attack: ";
     if (attackList.size() == 0) {
         cout << "None";
@@ -207,7 +207,7 @@ Hand* Player::GetPlayerHand() {
     return playerHand;
 };
 
-OrdersList* Player::GetPlayerOrders() {
+OrdersList* Player::GetPlayerOrders() const{
     return playersOrders;
 };
 
