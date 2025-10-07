@@ -187,11 +187,7 @@ ostream& operator<<(ostream& os, const Player& p) {
 // Clean up dynamically allocated Orders
 // Note: Territories are not deleted here as they may be shared among players
 Player::~Player() {
-    delete playersOrders;
-    delete playerHand;
-    playersOrders = nullptr;
-    playerHand = nullptr;
-
+    
     playerTerritories.clear();
 }
 
