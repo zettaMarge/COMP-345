@@ -43,45 +43,44 @@ void testOrdersLists() {
     advanceValid->SetNbUnits(3);
     advanceValid->SetSrc(canada);
     advanceValid->SetTarget(usa);
-    std::cout << "----- advanceValid done -----" << std::endl;
 
     Advance* advanceInvalid = new Advance(*advanceValid);
     advanceInvalid->SetTarget(mexico);
-    std::cout << "----- advanceInvalid done -----" << std::endl;
 
     Airlift* airlift = new Airlift(p1, 3, canada, mexico);
-    std::cout << "----- airlift done -----" << std::endl;
 
-    Blockade* blockade;
-    blockade->SetOwningPlayer(p1);
-    blockade->SetTarget(canada);
-    std::cout << "----- blockade done -----" << std::endl;
+    Blockade* blockade = new Blockade(p1, canada);
 
-    Bomb* bomb;
-    bomb->SetOwningPlayer(p1);
-    bomb->SetTarget(mexico);
-    std::cout << "----- bomb done -----" << std::endl;
+    Bomb* bomb = new Bomb(p1, mexico);
 
-    Deploy* deploy;
-    deploy->SetOwningPlayer(p1);
-    deploy->SetNbUnits(3);
-    deploy->SetTarget(canada);
-    std::cout << "----- deploy done -----" << std::endl;
+    Deploy* deploy = new Deploy(p1, 3, canada);
 
-    Negotiate* negotiate;
-    negotiate->SetOwningPlayer(p1);
-    negotiate->SetOwningPlayer(p2);
-    std::cout << "----- negotiate done -----" << std::endl;
+    Negotiate* negotiate = new Negotiate(p1, p2);
 
 
     std::cout << "----- Adding orders to p1's list -----" << std::endl;
     p1->IssueOrder(advanceValid);
+    std::cout << "----- advanceValid done -----" << std::endl;
+
     p1->IssueOrder(advanceInvalid);
+    std::cout << "----- advanceInvalid done -----" << std::endl;
+
     p1->IssueOrder(airlift);
+    std::cout << "----- airlift done -----" << std::endl;
+
     p1->IssueOrder(blockade);
+    std::cout << "----- blockade done -----" << std::endl;
+
     p1->IssueOrder(bomb);
+    std::cout << "----- bomb done -----" << std::endl;
+
     p1->IssueOrder(deploy);
+    std::cout << "----- deploy done -----" << std::endl;
+
     p1->IssueOrder(negotiate);
+    std::cout << "----- negotiate done -----" << std::endl;
+    
+    std::cout << "----- printing list -----" << std::endl;
     std::cout << p1->GetPlayerOrders() << std::endl;
 
     

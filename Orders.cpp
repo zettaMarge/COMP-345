@@ -57,6 +57,7 @@ vector<Order*> OrdersList::GetListItems() {
 
 // Add a new order to the list
 void OrdersList::Add(Order* newOrder) {
+    std::cout << "----- Adding order -----" << std::endl;
     orders.push_back(newOrder);
 }
 
