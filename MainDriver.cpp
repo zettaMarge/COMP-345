@@ -1,15 +1,15 @@
 #include "GameEngine.h"
 
 int TestMaps();
-int testPlayers();
+int TestPlayers();
 int TestCards();
-void testOrdersLists();
+void TestOrdersLists();
 
 int main() {
 	TestMaps();
 	TestPlayers();
 	TestCards();
-	testOrdersLists();
+	TestOrdersLists();
     TestGameEngine();
 	return 0;
 }

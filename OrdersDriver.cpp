@@ -3,7 +3,7 @@
 #include "Player.h"
 #include <iostream>
 
-void testOrdersLists() {
+void TestOrdersLists() {
     std::cout << "------------------------" << std::endl;
     std::cout << "- OrdersDriver started -" << std::endl;
     std::cout << "------------------------" << std::endl;
