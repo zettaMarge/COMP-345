@@ -33,8 +33,8 @@ void testOrdersLists() {
     p1->AddTerritory(usa);
 
     Player* p2 = new Player();
-    p1->SetName("Player2");
-    p1->AddTerritory(mexico);
+    p2->SetName("Player2");
+    p2->AddTerritory(mexico);
 
 
     std::cout << "----- Creating Orders -----" << std::endl;
@@ -48,57 +48,40 @@ void testOrdersLists() {
     advanceInvalid->SetTarget(mexico);
 
     Airlift* airlift = new Airlift(p1, 3, canada, mexico);
-
     Blockade* blockade = new Blockade(p1, canada);
-
     Bomb* bomb = new Bomb(p1, mexico);
-
     Deploy* deploy = new Deploy(p1, 3, canada);
-
     Negotiate* negotiate = new Negotiate(p1, p2);
 
 
     std::cout << "----- Adding orders to p1's list -----" << std::endl;
     p1->IssueOrder(advanceValid);
-    std::cout << "----- advanceValid done -----" << std::endl;
-
     p1->IssueOrder(advanceInvalid);
-    std::cout << "----- advanceInvalid done -----" << std::endl;
-
     p1->IssueOrder(airlift);
-    std::cout << "----- airlift done -----" << std::endl;
-
     p1->IssueOrder(blockade);
-    std::cout << "----- blockade done -----" << std::endl;
-
     p1->IssueOrder(bomb);
-    std::cout << "----- bomb done -----" << std::endl;
-
     p1->IssueOrder(deploy);
-    std::cout << "----- deploy done -----" << std::endl;
-
     p1->IssueOrder(negotiate);
-    std::cout << "----- negotiate done -----" << std::endl;
-    
-    std::cout << "----- printing list -----" << std::endl;
+
     std::cout << *p1->GetPlayerOrders() << std::endl;
 
     
-    std::cout << "----- Executing orders -----" << std::endl;
+    std::cout << "----- Validating & Executing orders -----" << std::endl;
     // Fix: Store the result of GetListItems() in a local variable of type vector<Order*>
     std::vector<Order*> orders = p1->GetPlayerOrders()->GetListItems();
     for (const auto& order : orders) {
         order->Execute();
+        std::cout << "----------" << std::endl;
     }
 
     
-    std::cout << "----- Moving orders in list -----" << std::endl;
+    std::cout << "\n\n----- Moving orders in list -----" << std::endl;
     p1->GetPlayerOrders()->Move(1, orders.size() - 1);
-    std::cout << p1->GetPlayerOrders() << std::endl;
+    std::cout << *p1->GetPlayerOrders() << std::endl;
 
     std::cout << "----- Removing orders from list -----" << std::endl;
     p1->GetPlayerOrders()->Remove(p1->GetPlayerOrders()->GetListItems().size() - 1);
-    std::cout << p1->GetPlayerOrders() << std::endl;
+    std::cout << *p1->GetPlayerOrders() << std::endl;
 
     std::cout << "-------------------------" << std::endl;
     std::cout << "- OrdersDriver complete -" << std::endl;

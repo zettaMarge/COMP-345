@@ -47,7 +47,7 @@ ostream& operator<<(ostream& stream, const OrdersList& obj) {
 
     for (const auto& order : obj.orders)
     {
-        stream << *order << "\n----------\n";
+        stream << *order << "----------" << std::endl;
     }
 
     stream << endl;
@@ -61,7 +61,6 @@ vector<Order*> OrdersList::GetListItems() {
 
 // Add a new order to the list
 void OrdersList::Add(Order* newOrder) {
-    std::cout << "----- Adding order -----" << std::endl;
     orders.push_back(newOrder);
 }
 
@@ -81,9 +80,7 @@ void OrdersList::Move(int fromId, int toId) {
     }
     else
     {
-        Order* temp = orders[fromId];
-        orders[fromId] = orders[toId];
-        orders[toId] = orders[fromId];
+        std::iter_swap(orders.begin() + fromId, orders.begin() + toId);
     }
 }
 
@@ -140,10 +137,10 @@ Advance::Advance() {}
 
 // Parameterized constructor
 Advance::Advance(Player* owningPlayer, int nbUnits, Territory* src, Territory* target) {
-    owningPlayer = owningPlayer;
-    nbUnits = nbUnits;
-    src = src;
-    target = target;
+    this->owningPlayer = owningPlayer;
+    this->nbUnits = nbUnits;
+    this->src = src;
+    this->target = target;
 }
 
 // Copy constructor
@@ -242,10 +239,10 @@ Airlift::Airlift() {}
 
 // Parameterized constructor
 Airlift::Airlift(Player* owningPlayer, int nbUnits, Territory* src, Territory* target) {
-    owningPlayer = owningPlayer;
-    nbUnits = nbUnits;
-    src = src;
-    target = target;
+    this->owningPlayer = owningPlayer;
+    this->nbUnits = nbUnits;
+    this->src = src;
+    this->target = target;
 }
 
 // Copy constructor
@@ -342,8 +339,8 @@ Blockade::Blockade() {}
 
 // Parameterized constructor
 Blockade::Blockade(Player* owningPlayer, Territory* target) {
-    owningPlayer = owningPlayer;
-    target = target;
+    this->owningPlayer = owningPlayer;
+    this->target = target;
 }
 
 // Copy constructor
@@ -412,8 +409,8 @@ Bomb::Bomb() {}
 
 // Parameterized constructor
 Bomb::Bomb(Player* owningPlayer, Territory* target) {
-    owningPlayer = owningPlayer;
-    target = target;
+    this->owningPlayer = owningPlayer;
+    this->target = target;
 }
 
 // Copy constructor
@@ -450,7 +447,7 @@ Territory* Bomb::GetTarget() {
 
 // Prints the order to the specified stream
 ostream& Bomb::Print(ostream& stream) const {
-    stream << "Bomb: " << std::endl;  
+    stream << "Bomb: " << GetEffect() << std::endl;  
     return stream;
 }
 
@@ -474,6 +471,7 @@ void Bomb::Execute() {
 bool Bomb::Validate() {
     std::string ownerName = owningPlayer->GetName();
     std::vector<Territory *> adj = target->AdjacentTerritories();
+
     return target->GetOwner()->GetName() != owningPlayer->GetName() &&
         std::find_if(adj.begin(), adj.end(), [&ownerName](Territory* t) { return t->GetOwner()->GetName() == ownerName; }) != adj.end();
 }
@@ -486,9 +484,9 @@ Deploy::Deploy() {}
 
 // Parameterized constructor
 Deploy::Deploy(Player* owningPlayer, int nbUnits, Territory* target) {
-    owningPlayer = owningPlayer;
-    nbUnits = nbUnits;
-    target = target;
+    this->owningPlayer = owningPlayer;
+    this->nbUnits = nbUnits;
+    this->target = target;
 }
 
 // Copy constructor
@@ -570,8 +568,8 @@ Negotiate::Negotiate() {}
 
 // Parameterized constructor
 Negotiate::Negotiate(Player* owningPlayer, Player* otherPlayer) {
-    owningPlayer = owningPlayer;
-    otherPlayer = otherPlayer;
+    this->owningPlayer = owningPlayer;
+    this->otherPlayer = otherPlayer;
 }
 
 // Copy constructor
