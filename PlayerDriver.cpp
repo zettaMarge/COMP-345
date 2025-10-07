@@ -50,7 +50,7 @@ int TestPlayers() {
     }
 
     cout << endl;
-    vector<Territory*> attackList = p1.ToAttack(); // why doesnt this work
+    vector<Territory*> attackList = p1.ToAttack();
     cout << "Territories to attack: ";
     if (attackList.size() == 0) {
         cout << "None";
@@ -64,7 +64,7 @@ int TestPlayers() {
     p1.IssueOrder(&order1);
     Advance order2(p1.GetName(), 4, t1, t2);
     p1.IssueOrder(&order2);
-    cout << "Orders issued by " << p1.GetName()  << " "  ;// << ":\n" *p1.GetPlayerOrders() << endl;
+    cout << "Orders issued by " << p1.GetName()  << " "  ;
     for (Order* o : p1.GetPlayerOrders()->GetListItems()) {
         cout << *o;
     }
@@ -75,7 +75,7 @@ int TestPlayers() {
     hand1->AddCard();
     p1.SetPlayerHand(hand1);
     
-    cout << "" << p1.GetName() << " "; //<< ":\n" << *p1.GetPlayerHand() << endl;
+    cout << "" << p1.GetName() << " "; 
     p1.GetPlayerHand()->Print();
     return 0;
 }
