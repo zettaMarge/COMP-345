@@ -39,7 +39,7 @@ void SimpleState::OnExit() { std::cout << exitMessage << "\n"; }
 // ===== Concrete States =====
 //construction of all the main states and their current functionality which is only messages lol
 MainMenuState::MainMenuState()
-    : SimpleState("MainMenu", "Welcome to the game!",
+    : SimpleState("MainMenu", "Welcome to the game(engine)!",
         "Leaving Main Menu...") {}
 
 MapLoadedState::MapLoadedState()
@@ -239,12 +239,21 @@ std::ostream& operator<<(std::ostream& os, const GameEngine& engine) {
 //using a while true loop Ive found no reason not to
 //prompts user for input and processes it
 int GameEngine::Run() {
-	std::string input; // user input
+    std::string input; // user input
+
+    // clean input stream from previous tests
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
     while (true) {
         std::cout << "> ";
-        if (!std::getline(std::cin, input)) break;
 
-        // If ProcessInput returns false, break out of the loop (quit game).
+        if (!std::getline(std::cin, input)) {
+            std::cout << "\nExiting game.\n";
+            break;
+        }
+
+        // If ProcessInput returns false, break out of the loop 
         if (!ProcessInput(input)) {
             break;
         }
