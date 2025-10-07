@@ -134,25 +134,19 @@ bool Order::TerritoryBelongsToPlayer(Territory* territory) {
 Advance::Advance() {}
 
 // Parameterized constructor
-Advance::Advance(Player* _owningPlayer, int _nbUnits, Territory* _src, Territory* _target) {
-    owningPlayer = _owningPlayer;
-    nbUnits = _nbUnits;
-    src = _src;
-    target = _target;
+Advance::Advance(Player* owningPlayer, int nbUnits, Territory* src, Territory* target) {
+    owningPlayer = owningPlayer;
+    nbUnits = nbUnits;
+    src = src;
+    target = target;
 }
 
 // Copy constructor
 Advance::Advance(const Advance& obj) {
-    owningPlayer = new Player;
-    *owningPlayer = *obj.owningPlayer;
-
+    owningPlayer = obj.owningPlayer;
     nbUnits = obj.nbUnits;
-
-    src = new Territory(obj.src->GetName(), obj.src->GetContinentByTerritory());
-    *src = *obj.src;
-
-    target = new Territory(obj.target->GetName(), obj.target->GetContinentByTerritory());
-    *target = *obj.target;
+    src = obj.src;
+    target = obj.target;
 }
 
 // Destructor
@@ -167,16 +161,10 @@ Advance::~Advance() {
 // Assignment operator
 Advance& Advance::operator= (const Advance& obj) {
     if (this != &obj) {
-        owningPlayer = new Player;
-        *owningPlayer = *obj.owningPlayer;
-
+        owningPlayer = obj.owningPlayer;
         nbUnits = obj.nbUnits;
-
-        src = new Territory(obj.src->GetName(), obj.src->GetContinentByTerritory());
-        *src = *obj.src;
-
-        target = new Territory(obj.target->GetName(), obj.target->GetContinentByTerritory());
-        *target = *obj.target;
+        src = obj.src;
+        target = obj.target;
     }
 
     return *this;
@@ -257,16 +245,10 @@ Airlift::Airlift(Player* owningPlayer, int nbUnits, Territory* src, Territory* t
 
 // Copy constructor
 Airlift::Airlift(const Airlift& obj) {
-    owningPlayer = new Player;
-    *owningPlayer = *obj.owningPlayer;
-
+    owningPlayer = obj.owningPlayer;
     nbUnits = obj.nbUnits;
-
-    src = new Territory(obj.src->GetName(), obj.src->GetContinentByTerritory());
-    *src = *obj.src;
-
-    target = new Territory(obj.target->GetName(), obj.target->GetContinentByTerritory());
-    *target = *obj.target;
+    src = obj.src;
+    target = obj.target;
 }
 
 // Destructor
@@ -281,16 +263,10 @@ Airlift::~Airlift() {
 // Assignment operator
 Airlift& Airlift::operator= (const Airlift& obj) {
     if (this != &obj) {
-        owningPlayer = new Player;
-        *owningPlayer = *obj.owningPlayer;
-
+        owningPlayer = obj.owningPlayer;
         nbUnits = obj.nbUnits;
-
-        src = new Territory(obj.src->GetName(), obj.src->GetContinentByTerritory());
-        *src = *obj.src;
-
-        target = new Territory(obj.target->GetName(), obj.target->GetContinentByTerritory());
-        *target = *obj.target;
+        src = obj.src;
+        target = obj.target;
     }
 
     return *this;
@@ -367,11 +343,8 @@ Blockade::Blockade(Player* owningPlayer, Territory* target) {
 
 // Copy constructor
 Blockade::Blockade(const Blockade& obj) {
-    owningPlayer = new Player;
-    *owningPlayer = *obj.owningPlayer;
-
-    target = new Territory(obj.target->GetName(), obj.target->GetContinentByTerritory());
-    *target = *obj.target;
+    owningPlayer = obj.owningPlayer;
+    target = obj.target;
 }
 
 // Destructor
@@ -383,11 +356,8 @@ Blockade::~Blockade() {
 // Assignment operator
 Blockade& Blockade::operator= (const Blockade& obj) {
     if (this != &obj) {
-        owningPlayer = new Player;
-        *owningPlayer = *obj.owningPlayer;
-
-        target = new Territory(obj.target->GetName(), obj.target->GetContinentByTerritory());
-        *target = *obj.target;
+        owningPlayer = obj.owningPlayer;
+        target = obj.target;
     }
 
     return *this;
@@ -443,11 +413,8 @@ Bomb::Bomb(Player* owningPlayer, Territory* target) {
 
 // Copy constructor
 Bomb::Bomb(const Bomb& obj) {
-    owningPlayer = new Player;
-    *owningPlayer = *obj.owningPlayer;
-
-    target = new Territory(obj.target->GetName(), obj.target->GetContinentByTerritory());
-    *target = *obj.target;
+    owningPlayer = obj.owningPlayer;
+    target = obj.target;
 }
 
 // Destructor
@@ -459,11 +426,8 @@ Bomb::~Bomb() {
 // Assignment operator
 Bomb& Bomb::operator= (const Bomb& obj) {
     if (this != &obj) {
-        owningPlayer = new Player;
-        *owningPlayer = *obj.owningPlayer;
-
-        target = new Territory(obj.target->GetName(), obj.target->GetContinentByTerritory());
-        *target = *obj.target;
+        owningPlayer = obj.owningPlayer;
+        target = obj.target;
     }
 
     return *this;
@@ -524,13 +488,9 @@ Deploy::Deploy(Player* owningPlayer, int nbUnits, Territory* target) {
 
 // Copy constructor
 Deploy::Deploy(const Deploy& obj) {
-    owningPlayer = new Player;
-    *owningPlayer = *obj.owningPlayer;
-
+    owningPlayer = obj.owningPlayer;
     nbUnits = obj.nbUnits;
-
-    target = new Territory(obj.target->GetName(), obj.target->GetContinentByTerritory());
-    *target = *obj.target;
+    target = obj.target;
 }
 
 // Destructor
@@ -542,13 +502,9 @@ Deploy::~Deploy() {
 // Assignment operator
 Deploy& Deploy::operator=(const Deploy& obj) {
     if (this != &obj) {
-        owningPlayer = new Player;
-        *owningPlayer = *obj.owningPlayer;
-
+        owningPlayer = obj.owningPlayer;
         nbUnits = obj.nbUnits;
-
-        target = new Territory(obj.target->GetName(), obj.target->GetContinentByTerritory());
-        *target = *obj.target;
+        target = obj.target;
     }
 
     return *this;
@@ -615,11 +571,8 @@ Negotiate::Negotiate(Player* owningPlayer, Player* otherPlayer) {
 
 // Copy constructor
 Negotiate::Negotiate(const Negotiate& obj) {
-    owningPlayer = new Player;
-    *owningPlayer = *obj.owningPlayer;
-
-    otherPlayer = new Player;
-    *otherPlayer = *obj.otherPlayer;
+    owningPlayer = obj.owningPlayer;
+    otherPlayer = obj.otherPlayer;
 }
 
 // Destructor
@@ -631,11 +584,8 @@ Negotiate::~Negotiate() {
 // Assignment operator
 Negotiate& Negotiate::operator= (const Negotiate& obj) {
     if (this != &obj) {
-        owningPlayer = new Player;
-        *owningPlayer = *obj.owningPlayer;
-
-        otherPlayer = new Player;
-        *otherPlayer = *obj.otherPlayer;
+        owningPlayer = obj.owningPlayer;
+        otherPlayer = obj.otherPlayer;
     }
 
     return *this;
