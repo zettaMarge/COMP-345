@@ -243,7 +243,7 @@ int GameEngine::Run() {
 
     // clean input stream from previous tests
     std::cin.clear();
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cin.ignore(10000, '\n');
 
     while (true) {
         std::cout << "> ";
