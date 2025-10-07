@@ -53,8 +53,10 @@ vector<Territory*> Player::ToAttack() {
     vector<Territory*> toAttackList;
     for (Territory* territory : playerTerritories) {
         for (Territory* neighbor : territory->AdjacentTerritories()) {
-            if (neighbor->GetOwner() != this) { 
-                toAttackList.push_back(neighbor);
+            if (std::find(toAttackList.begin(), toAttackList.end(), neighbor) == toAttackList.end()) {
+                if (neighbor->GetOwner() != this) { 
+                    toAttackList.push_back(neighbor);
+                }   
             }
         }
     } 
