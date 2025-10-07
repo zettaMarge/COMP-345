@@ -7,7 +7,7 @@ void testOrdersLists();
 
 int main() {
 	TestMaps();
-	testPlayers();
+	TestPlayers();
 	TestCards();
 	testOrdersLists();
     TestGameEngine();
