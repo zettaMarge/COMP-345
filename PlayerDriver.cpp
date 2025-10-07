@@ -64,7 +64,7 @@ int TestPlayers() {
     p1.IssueOrder(&order1);
     Advance order2(p1.GetName(), 4, t1, t2);
     p1.IssueOrder(&order2);
-    cout << "Orders issued by " << p1.GetName() ;// << ":\n" *p1.GetPlayerOrders() << endl;
+    cout << "Orders issued by " << p1.GetName()  << " "  ;// << ":\n" *p1.GetPlayerOrders() << endl;
     for (Order* o : p1.GetPlayerOrders()->GetListItems()) {
         cout << *o;
     }
