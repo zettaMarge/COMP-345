@@ -1,3 +1,12 @@
+//-----------------------------------------------------
+    //Sara Vargas Aceves 40349399
+    //COMP-345-D 2252 Assignment 1 Map.cpp
+    //Dr. Hamed Jafarpour
+    //Submitted: TBD
+    //Due: October 7, 2025 
+    //I certify that this submission is my original work and meets the Faculty’s Expectations of Originality 
+    //Sara Vargas Aceves
+//----------------------------------------------------- 
 #include "Map.h"
 #include "Player.h"
 
@@ -6,23 +15,27 @@
 #include <algorithm>
 #include <sstream>
 
-// Territory
+//  ----- Territory class -----
 
+// Constructor
 Territory::Territory(const std::string& _name, Continent* _continent){
     owner = nullptr;
-    name = _name;
     continent = _continent;
+    adj = std::vector<Territory*>();
+    name = _name;
     numUnits = 0;
 }
 
+// Copy constructor
 Territory::Territory(const Territory& _territory){
     owner = _territory.owner;
-    name = _territory.name;
     continent = _territory.continent;
-    numUnits = _territory.numUnits;
     adj = _territory.adj;
+    name = _territory.name;
+    numUnits = _territory.numUnits;
 }
 
+// Assignment operator
 Territory& Territory::operator=(const Territory& _territory){
     if(this == &_territory) return *this;
     owner = _territory.owner;
@@ -33,20 +46,14 @@ Territory& Territory::operator=(const Territory& _territory){
     return *this;
 }
 
+// Stream insertion operator
 std::ostream& operator<<(std::ostream& os, const Territory& _territory){
     os << "Territory: " << _territory.name
     << " (Owner: " << (_territory.owner ? _territory.owner->GetName() : "No owner")
-    << ", Continent: " << _territory.continent
+    << ", Continent: " << _territory.continent->GetName()
     << ", Units: " << _territory.numUnits
     << ", Adjacent territories: " << _territory.adj.size() << ")";
     return os;
-}
-
-// Return the vector of adjacent territories
-// Returns:
-// - adj: vector of Territories that are adjacent to said Territory.
-const std::vector<Territory*>& Territory::AdjacentTerritories() const{
-    return adj;
 }
 
 // Checks if a territory is already in the adjacent territories list.
@@ -58,24 +65,71 @@ bool Territory::IsAdjacent(Territory* a) const{
     return std::find(adj.begin(), adj.end(), a) != adj.end();
 }
 
+// Sets the territory's owner
+// Parameters:
+// - _owner: Pointer to a Player.
+void Territory::SetOwner(Player* _owner){
+    if(owner == _owner) return; // return if no need to update
+    Player* oldOwner = owner; // get pointer to old owner to check later
+    owner = _owner;
+    if(oldOwner != nullptr && oldOwner->IsTerritoryOwned(this)) oldOwner->RemoveTerritory(this); // remove from old owner
+    if(_owner != nullptr && !_owner->IsTerritoryOwned(this)) _owner->AddTerritory(this); // add to new owner
+}
+
+// Gets the territory's owner
+// Returns a pointer to a Player
+Player* Territory::GetOwner(){
+    return owner;
+}
+
+// Gets the Continent the territory belongs to
+// Returns a pointer to a Continent
+Continent* Territory::GetContinentByTerritory() const{
+    return continent;
+}
+
+// Return the vector of adjacent territories
+// Returns:
+// - adj: vector of Territories that are adjacent to said Territory.
+const std::vector<Territory*>& Territory::AdjacentTerritories() const{
+    return adj;
+}
+
 // Sets the territory's numUnits
 // Parameters:
-// - numUnits: Number of units
+// - _numUnits: Number of units
 void Territory::SetUnits(int _numUnits){
     numUnits = _numUnits;
 }
 
+// Gets the territory's numUnits
+// Returns an integer, number of units.
+int Territory::GetUnits() const{
+    return numUnits;
+}
+
+// Gets the Territory's name
+// Returns a string of the name.
+const std::string& Territory::GetName() const{
+    return name;
+}
+//  ----- Continent class -----
+
+// Constructor
 Continent::Continent(const std::string& _name, int _points){
     name = _name;
     points = _points;
+    territories = std::vector<Territory*>();
 }
 
+// Copy constructor
 Continent::Continent(const Continent& _continent){
     name = _continent.name;
     points = _continent.points;
     territories = _continent.territories;
 }
 
+// Assignment operator
 Continent& Continent::operator=(const Continent& _continent){
     if(this == &_continent) return *this;
     name = _continent.name;
@@ -84,6 +138,7 @@ Continent& Continent::operator=(const Continent& _continent){
     return *this;
 }
 
+// Stream insertion operator
 std::ostream& operator<<(std::ostream& os, const Continent& _continent){
     os << "Continent: " << _continent.name 
     << " (Points: " << _continent.points 
@@ -91,21 +146,47 @@ std::ostream& operator<<(std::ostream& os, const Continent& _continent){
     return os;
 }
 
-// MAP CLASS IMPLEMENTATION
+// Gets the Continent's name
+// Returns a string of the name.
+const std::string& Continent::GetName() const{
+    return name;
+}
+
+// Gets the Continent's bonus points
+// Returns an integer of the points earned by owning the entire Continent.
+int Continent::GetPoints() const{
+    return points;
+}
+
+// Gets the Continent's vector of pointers to Territories that belong to it.
+// Returns a vector of pointers to Territories.
+const std::vector<Territory*>& Continent::GetTerritories() const{
+    return territories;
+}
+
+void Continent::AddTerritory(Territory* _territory){
+    territories.push_back(_territory);
+}
+
+// ----- Map class -----
+
+// Constructor
 Map::Map(){}
 
+// Destructor
 Map::~Map(){
     for (auto c : continents) delete c;
     for (auto t : territories) delete t;
 }
 
+// Copy constructor
 Map::Map(const Map& _map){
     for(int i = 0; i < _map.continents.size(); i++){
-        AddContinent(_map.continents[i]->name, _map.continents[i]->points);
+        AddContinent(_map.continents[i]->GetName(), _map.continents[i]->GetPoints());
     }
 
     for(int i = 0; i < _map.territories.size(); i++){
-        Continent* newContinent = GetContinentByName(_map.territories[i]->continent->name);
+        Continent* newContinent = GetContinentByName(_map.territories[i]->continent->GetName());
         Territory* newTerritory = AddTerritory(_map.territories[i]->name, newContinent);
         newTerritory->numUnits = _map.territories[i]->numUnits;
     }
@@ -119,6 +200,7 @@ Map::Map(const Map& _map){
     }
 }
 
+// Assignment operator
 Map& Map::operator=(const Map& _map){
     if(this == &_map) return *this;
 
@@ -130,13 +212,13 @@ Map& Map::operator=(const Map& _map){
     territoryByName.clear();
 
     for(int i = 0; i < _map.continents.size(); i++){
-        AddContinent(_map.continents[i]->name, _map.continents[i]->points);
+        AddContinent(_map.continents[i]->GetName(), _map.continents[i]->GetPoints());
     }
 
     for(int i = 0; i < _map.territories.size(); i++){
-        Continent* newContinent = GetContinentByName(_map.territories[i]->continent->name);
+        Continent* newContinent = GetContinentByName(_map.territories[i]->continent->GetName());
         Territory* newTerritory = AddTerritory(_map.territories[i]->name, newContinent);
-        newTerritory->numUnits = _map.territories[i]->numUnits;
+        newTerritory->SetUnits(_map.territories[i]->numUnits);
     }
 
     for(int i = 0; i < _map.territories.size(); i++){
@@ -187,7 +269,7 @@ Territory* Map::AddTerritory(const std::string& name, Continent* continent){
     Territory* territory = new Territory(name, continent);
     territories.push_back(territory);
     territoryByName[name] = territory;
-    continent->territories.push_back(territory);
+    continent->AddTerritory(territory);
     return territory;
 }
 
@@ -283,35 +365,40 @@ bool Map::Validate() {
 
     // Each continent is a connected subgraph
     for(int i = 0; i < continents.size(); i++){
-        if(continents[i]->territories.empty()){
-            std::cerr << "Continent " << continents[i]->name << " has no territories." << std::endl;
+        const std::vector<Territory*>& territories = continents[i]->GetTerritories();
+        if(territories.empty()){
+            std::cerr << "Continent " << continents[i]->GetName() << " has no territories." << std::endl;
             return false;
         }
         std::unordered_set<Territory*> visited;
-        DfsContinent(continents[i]->territories[0], visited, continents[i]);
+        DfsContinent(territories[0], visited, continents[i]);
 
-        if(visited.size() != continents[i]->territories.size()){
-            std::cerr << "Continent " << continents[i]->name << " is not connected." << std::endl;
+        if(visited.size() != territories.size()){
+            std::cerr << "Continent " << continents[i]->GetName() << " is not connected." << std::endl;
             return false;
         }
     }
-
     return true;
 }
 
-// MAP LOADER IMPLEMENTATION
+// ----- Map Loader class -----
+
+// Constructor
 MapLoader::MapLoader(){}
 
+// Copy constructor
 MapLoader::MapLoader(const MapLoader& _mapLoader){
     content = _mapLoader.content;
 }
 
+// Assignment operator
 MapLoader& MapLoader::operator=(const MapLoader& _mapLoader){
     if(this == &_mapLoader) return *this;
     content = _mapLoader.content;
     return *this;
 }
 
+// Stream insertion operator
 std::ostream& operator<<(std::ostream& os, const MapLoader& _mapLoader){
     os << "MapLoader: " << _mapLoader.content.size() << " lines loaded";
     return os;
@@ -341,7 +428,7 @@ bool MapLoader::LoadFile(const std::string& filename){
 
     std::string line;
     while(std::getline(file, line)){
-        if(!line.empty() && !std::all_of(line.begin(), line.end(), isspace)){
+        if(!line.empty() && !std::all_of(line.begin(), line.end(), [](unsigned char c){ return std::isspace(c); })){
             content.push_back(line);
         }
     }

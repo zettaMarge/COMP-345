@@ -3,7 +3,7 @@
 #include "Player.h"
 #include <iostream>
 
-void testOrdersLists() {
+void TestOrdersLists() {
     std::cout << "------------------------" << std::endl;
     std::cout << "- OrdersDriver started -" << std::endl;
     std::cout << "------------------------" << std::endl;
@@ -27,71 +27,61 @@ void testOrdersLists() {
 
 
     std::cout << "----- Creating players -----" << std::endl;
-    Player* p1;
+    Player* p1 = new Player();
     p1->SetName("Player1");
     p1->AddTerritory(canada);
     p1->AddTerritory(usa);
 
-    Player* p2;
-    p1->SetName("Player2");
-    p1->AddTerritory(mexico);
+    Player* p2 = new Player();
+    p2->SetName("Player2");
+    p2->AddTerritory(mexico);
 
 
     std::cout << "----- Creating Orders -----" << std::endl;
-    Advance* advanceValid;
-    advanceValid->SetOwningPlayer(p1);
+    Advance* advanceValid = new Advance();
+    advanceValid->SetOwningPlayer(p1->GetName());
     advanceValid->SetNbUnits(3);
     advanceValid->SetSrc(canada);
     advanceValid->SetTarget(usa);
 
-    Advance* advanceInvalid = new Advance(advanceValid);
+    Advance* advanceInvalid = new Advance(*advanceValid);
     advanceInvalid->SetTarget(mexico);
 
-    Airlift* airlift = new Airlift(p1, 3, canada, mexico);
-
-    Blockade* blockade;
-    blockade->SetOwningPlayer(p1);
-    blockade->SetTarget(canada);
-
-    Bomb* bomb;
-    bomb->SetOwningPlayer(p1);
-    bomb->SetTarget(mexico);
-
-    Deploy* deploy;
-    deploy->SetOwningPlayer(p1);
-    deploy->SetNbUnits(3);
-    deploy->SetTarget(canada);
-
-    Negotiate* negotiate;
-    negotiate->SetOwningPlayer(p1);
-    negotiate->SetOwningPlayer(p2);
+    Airlift* airlift = new Airlift(p1->GetName(), 3, canada, mexico);
+    Blockade* blockade = new Blockade(p1->GetName(), canada);
+    Bomb* bomb = new Bomb(p1->GetName(), mexico);
+    Deploy* deploy = new Deploy(p1->GetName(), 3, canada);
+    Negotiate* negotiate = new Negotiate(p1->GetName(), p2->GetName());
 
 
     std::cout << "----- Adding orders to p1's list -----" << std::endl;
-    p1->GetPlayerOrders()->Add(advanceValid);
-    p1->GetPlayerOrders()->Add(advanceInvalid);
-    p1->GetPlayerOrders()->Add(airlift);
-    p1->GetPlayerOrders()->Add(blockade);
-    p1->GetPlayerOrders()->Add(bomb);
-    p1->GetPlayerOrders()->Add(deploy);
-    p1->GetPlayerOrders()->Add(negotiate);
-    std::cout << p1->GetPlayerOrders() << std::endl;
+    p1->IssueOrder(advanceValid);
+    p1->IssueOrder(advanceInvalid);
+    p1->IssueOrder(airlift);
+    p1->IssueOrder(blockade);
+    p1->IssueOrder(bomb);
+    p1->IssueOrder(deploy);
+    p1->IssueOrder(negotiate);
+
+    std::cout << *p1->GetPlayerOrders() << std::endl;
 
     
-    std::cout << "----- Executing orders -----" << std::endl;
-    for (const auto& order : p1->GetPlayerOrders()->GetListItems())
-    {
-        order.Execute();
+    std::cout << "----- Validating & Executing orders -----" << std::endl;
+    // Fix: Store the result of GetListItems() in a local variable of type vector<Order*>
+    std::vector<Order*> orders = p1->GetPlayerOrders()->GetListItems();
+    for (const auto& order : orders) {
+        order->Execute();
+        std::cout << "----------" << std::endl;
     }
 
     
-    std::cout << "----- Moving orders in list -----" << std::endl;
-    p1->GetPlayerOrders()->Move(1, p1->GetPlayerOrders()->GetListItems().size - 1)
-    std::cout << p1->GetPlayerOrders() << std::endl;
+    std::cout << "\n\n----- Moving orders in list -----" << std::endl;
+    p1->GetPlayerOrders()->Move(1, orders.size() - 1);
+    std::cout << *p1->GetPlayerOrders() << std::endl;
 
     std::cout << "----- Removing orders from list -----" << std::endl;
-    p1->GetPlayerOrders()->Remove(p1->GetPlayerOrders()->GetListItems().size - 1)
-    std::cout << p1->GetPlayerOrders() << std::endl;
+    p1->GetPlayerOrders()->Remove(p1->GetPlayerOrders()->GetListItems().size() - 1);
+    std::cout << *p1->GetPlayerOrders() << std::endl;
 
     std::cout << "-------------------------" << std::endl;
     std::cout << "- OrdersDriver complete -" << std::endl;

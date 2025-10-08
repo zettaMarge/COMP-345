@@ -10,9 +10,8 @@
 
 #include <iostream>
 #include "Cards.h"
-#include "Cards.cpp"
 
-int main() {
+int TestCards() {
     // index of card to play
     int cardIndex;
 
@@ -28,12 +27,12 @@ int main() {
     std::cout << "Creating a hand and drawing cards..." << std::endl;
     Hand hand(deck);
     for (int i = 0; i < 5; ++i) {
-        hand.addCard();
+        hand.AddCard();
     }
 
     //prints hand
     std::cout << "Hand after drawing cards:" << std::endl;
-    hand.print();
+    hand.Print();
 
     std::cout << "---------------------------------------------" << std::endl;
 
@@ -41,10 +40,10 @@ int main() {
     for (int i = 0; i < 3; ++i) {
         std::cout << "Please select a card to play: ";
         std::cin >> cardIndex;
-        hand.playCard(cardIndex);
+        hand.PlayCard(cardIndex);
         std::cout << "---------------------------------------------" << std::endl;
         std::cout << "Hand after playing card:" << std::endl;
-        hand.print();
+        hand.Print();
     }
 
     std::cout << "Card test complete." << std::endl;

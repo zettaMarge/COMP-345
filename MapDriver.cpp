@@ -1,3 +1,12 @@
+//-----------------------------------------------------
+    //Sara Vargas Aceves 40349399
+    //COMP-345-D 2252 Assignment 1 MapDriver.cpp
+    //Dr. Hamed Jafarpour
+    //Submitted: TBD
+    //Due: October 7, 2025 
+    //I certify that this submission is my original work and meets the Faculty’s Expectations of Originality 
+    //Sara Vargas Aceves
+//-----------------------------------------------------
 #include "Map.h"
 
 #include <iostream>
@@ -28,13 +37,13 @@ std::vector<Map*> TestLoadMaps(const std::vector<std::string>& mapFiles){
     return validMaps;
 }
 
-int main(){
+int TestMaps(){
     std::vector<std::string> mapFiles = {
-        "../Maps/_11_ Against All Odds.map",
-        "../Maps/001_I72_Ghtroc 720.map",
-        "../Maps/005_I72_V-22.map",
-        "../Maps/READ FIRST.txt",
-        "../Maps/_64_ BIG BLUE.map"
+        "./Maps/_11_ Against All Odds.map",
+        "./Maps/001_I72_Ghtroc 720.map",
+        "./Maps/005_I72_V-22.map",
+        "./Maps/READ FIRST.txt",
+        "./Maps/_64_ BIG BLUE.map"
     };
 
     std::vector<Map*> validMaps = TestLoadMaps(mapFiles);

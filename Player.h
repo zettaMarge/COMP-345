@@ -8,8 +8,7 @@
 //I certify that this submission is my original work and meets the Faculty’s Expectations of Originality 
 //Mia Letendre
 //-----------------------------------------------------
-#ifndef PLAYERS_H
-#define PLAYERS_H
+#pragma once
 #include <vector>
 #include <iostream>
 #include <string>
@@ -20,8 +19,8 @@
 using namespace std;
 class Player{
 public:
-    vector<Territory*> ToAttack(); //returns list of territories to attack
-    vector<Territory*> ToDefend(); //returns list of territories to defend
+    vector<Territory*> ToAttack() const; //returns list of territories to attack
+    vector<Territory*> ToDefend() const ; //returns list of territories to defend
     void AddTerritory(Territory* t); //adds territory to players list of territories
     void RemoveTerritory(Territory* t); //removes territory from players list of territories
    
@@ -39,12 +38,12 @@ public:
     string GetName();
     vector<Territory*> GetPlayerTerritories();
     Hand* GetPlayerHand();
-    OrdersList* GetPlayerOrders();
+    OrdersList* GetPlayerOrders() const;
     void SetName(string name);
     void setPlayerTerritories(vector<Territory*> territories);
     void SetPlayerHand(Hand* hand);
     void SetPlayerOrders(OrdersList* orders);
-
+    bool IsTerritoryOwned(Territory* t);
 
 private:
     string name; //name of player, used to identify who owns territory
@@ -53,6 +52,3 @@ private:
     OrdersList* playersOrders; //list of orders owned by player
     
 };
-
-
-#endif

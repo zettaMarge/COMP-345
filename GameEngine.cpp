@@ -1,4 +1,5 @@
 #include "GameEngine.h"
+#include <iomanip>
 
 // ===== SimpleState implementation =====
 // SimpleState constructor
@@ -38,7 +39,7 @@ void SimpleState::OnExit() { std::cout << exitMessage << "\n"; }
 // ===== Concrete States =====
 //construction of all the main states and their current functionality which is only messages lol
 MainMenuState::MainMenuState()
-    : SimpleState("MainMenu", "Welcome to the game!",
+    : SimpleState("MainMenu", "Welcome to the game(engine)!",
         "Leaving Main Menu...") {}
 
 MapLoadedState::MapLoadedState()
@@ -204,16 +205,55 @@ GameEngine& GameEngine::operator=(const GameEngine& other) {
 	return *this; // return this instance if theyre the same
 }
 
+//stream insertion for GameEngine
+//returns output stream of current state and available commands
+std::ostream& operator<<(std::ostream& os, const GameEngine& engine) {
+    os << "==== Current State of the Game Engine:\n";
+
+    if (!engine.currentState) {
+        os << "Current state: [none]\n";
+        return os;
+    }
+
+    os << "Current state: " << engine.currentState->name << "\n";
+    os << "Available commands:\n";
+
+    if (engine.currentState->availableCommands.empty()) {
+        os << "  (no commands available)\n";
+    }
+    else {
+        for (const auto& cmd : engine.currentState->availableCommands) {
+            os << "  - " << std::left << std::setw(15) << cmd->name;
+            if (cmd->nextState)
+                os << " -> " << cmd->nextState->name;
+            else
+                os << " (no transition)";
+            os << "\n";
+        }
+    }
+
+    return os;
+}
+
 //main game loop
 //using a while true loop Ive found no reason not to
 //prompts user for input and processes it
 int GameEngine::Run() {
-	std::string input; // user input
+    std::string input; // user input
+
+    // clean input stream from previous tests
+    std::cin.clear();
+    std::cin.ignore(10000, '\n');
+
     while (true) {
         std::cout << "> ";
-        if (!std::getline(std::cin, input)) break;
 
-        // If ProcessInput returns false, break out of the loop (quit game).
+        if (!std::getline(std::cin, input)) {
+            std::cout << "\nExiting game.\n";
+            break;
+        }
+
+        // If ProcessInput returns false, break out of the loop 
         if (!ProcessInput(input)) {
             break;
         }

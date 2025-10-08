@@ -10,7 +10,7 @@
 #include "Cards.h"
 #include "Map.h"
 #include "Orders.h"
-#include "Players.h"
+#include "Player.h"
 #include <vector>
 #include <iostream>
 #include <unordered_set>
@@ -27,7 +27,7 @@ Player::Player(){
     
     name = "Luara Palmer";
     playerTerritories = vector<Territory*>();
-    playerHand = new Hand();
+    playerHand = nullptr;
     playersOrders = new OrdersList();
 
 }
@@ -49,12 +49,14 @@ Player::Player(std::string& name, vector<Territory*> playerTerritories, Hand &pl
 //assumes that adjacentTerritories() returns a list of territories adjacent to the territory
 //aslo assumes that the territories var hold all the territories owned by the player
 // Compares Owner pointer to this Player instance
-vector<Territory*> Player::ToAttack() {
+vector<Territory*> Player::ToAttack() const{
     vector<Territory*> toAttackList;
     for (Territory* territory : playerTerritories) {
         for (Territory* neighbor : territory->AdjacentTerritories()) {
-            if (neighbor->owner != this) { 
-                toAttackList.push_back(neighbor);
+            if (std::find(toAttackList.begin(), toAttackList.end(), neighbor) == toAttackList.end()) {
+                if (neighbor->GetOwner() != this) { 
+                    toAttackList.push_back(neighbor);
+                }   
             }
         }
     } 
@@ -67,7 +69,7 @@ vector<Territory*> Player::ToAttack() {
 //This is a stub meant to be able to code players class
 //will return all the territiories that are owned by the player and can be defended
 // Compares Owner pointer to this Player instance
-vector<Territory*> Player::ToDefend() {
+vector<Territory*> Player::ToDefend() const{
 
     if (playerTerritories.empty()) {
         cout << "No territories to defend." << endl;
@@ -82,20 +84,24 @@ void Player::IssueOrder(Order* x) {
     playersOrders->Add(x);
 };
 
+//Returns true when a Territory is found in a Player's owned territories
+bool Player::IsTerritoryOwned(Territory* t) {
+    return std::find(playerTerritories.begin(), playerTerritories.end(), t) != playerTerritories.end();
+}
+
 //Adds territory to players list of territories
 //temporarally tracks index for temp adjacent territories fucntion
 //assumes in territory that owner is public
 void Player::AddTerritory(Territory* t) {
-    for (Territory* territory : playerTerritories) {
-        if (territory == t) {
-            cout << "Territory already exists in player's list." << endl;
-            return;
-        }
+    if (IsTerritoryOwned(t)) {
+        cout << "Territory already exists in player's list." << endl;
+        return;
     }
+
    playerTerritories.push_back(t);
     
-    if (t->owner != this) {
-        t->owner = this;
+    if (t->GetOwner() != this) {
+        t->SetOwner(this);
     }
 }
 
@@ -104,9 +110,8 @@ void Player::AddTerritory(Territory* t) {
 void Player::RemoveTerritory(Territory* t) {
     auto it = std::remove(playerTerritories.begin(), playerTerritories.end(), t);
     if (it != playerTerritories.end()) {
-        playerTerritories.erase(it, playerTerritories.end());
-        if (t->owner == this) {
-            t->owner = nullptr;
+        if (t->GetOwner() == this) {
+            t->SetOwner(nullptr);
         }
     } else {
         cout << "Territory not found in player's list." << endl;
@@ -145,25 +150,44 @@ ostream& operator<<(ostream& os, const Player& p) {
     for (const Territory* t : p.playerTerritories) {
         os << t << " ";
     }
+     vector<Territory*> defendList = p.ToDefend();
+    cout << "Territories to defend: ";
+    if (defendList.size() == 0) {
+        cout << "None";
+    }
+    for (Territory* t : defendList) {
+        cout << t->GetName() << " ";
+    }
+
+    cout << endl;
+    vector<Territory*> attackList = p.ToAttack();
+    cout << "Territories to attack: ";
+    if (attackList.size() == 0) {
+        cout << "None";
+    }
+    for (Territory* t : attackList) {
+        cout << t->GetName() << " ";
+    }
+    cout << endl;
     os << endl;
     os << "Cards in hand: " << endl;
     if (p.playerHand) {
-        p.playerHand->print();
+        p.playerHand->Print();
     } else {
         os << "No hand assigned." << endl;
     }
-    os << "Orders issued: " << p.playersOrders << endl;
+    os << "Orders issued: " ;
+    for (Order* o : p.GetPlayerOrders()->GetListItems()) {
+        cout << *o;
+    }
     return os;
 }
+
 
 // Clean up dynamically allocated Orders
 // Note: Territories are not deleted here as they may be shared among players
 Player::~Player() {
-    delete playersOrders;
-    delete playerHand;
-    playersOrders = nullptr;
-    playerHand = nullptr;
-
+    
     playerTerritories.clear();
 }
 
@@ -179,7 +203,7 @@ Hand* Player::GetPlayerHand() {
     return playerHand;
 };
 
-OrdersList* Player::GetPlayerOrders() {
+OrdersList* Player::GetPlayerOrders() const{
     return playersOrders;
 };
 

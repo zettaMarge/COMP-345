@@ -319,7 +319,7 @@ Deck::~Deck() {
 void Deck::Print() const {
     std::cout << "Deck contains " << cards.size() << " cards." << std::endl;
     for (const auto& card : cards) {
-        card.print();
+        card.Print();
     }
 }
 
@@ -382,7 +382,7 @@ void Hand::Print() const {
     std::cout << "Hand contains " << hand.size() << " cards." << std::endl;
     for (size_t i = 0; i < hand.size(); ++i) {
         std::cout << i << "- ";
-        hand[i].print();
+        hand[i].Print();
     }
 }
 
