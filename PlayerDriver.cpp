@@ -60,10 +60,10 @@ int TestPlayers() {
     }
     cout << endl;
 
-    Deploy order1(p1.GetName(), 5, t1);
-    p1.IssueOrder(&order1);
-    Advance order2(p1.GetName(), 4, t1, t2);
-    p1.IssueOrder(&order2);
+    Order* order1 = new Deploy(&p1, 5, t1);
+    p1.IssueOrder(order1);
+    Order* order2 = new Advance(&p1, 4, t1, t2);
+    p1.IssueOrder(order2);
     cout << "Orders issued by " << p1.GetName()  << " "  ;
     for (Order* o : p1.GetPlayerOrders()->GetListItems()) {
         cout << *o;
