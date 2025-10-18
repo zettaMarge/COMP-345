@@ -305,3 +305,102 @@ int TestGameEngine() {
     GameEngine::instance = nullptr;
     return 0;
 }
+
+// Code for assignment 2
+// Part 3: Game play: main game loop
+
+//Main game loop that cycles through the three phases
+void GameEngine::mainGameLoop() {
+    bool gameWon = false;
+    while (!gameWon) {
+        reinforcementPhase();
+        issueOrdersPhase();
+        executeOrdersPhase();
+        // checkPlayerElimination();
+        // gameWon = checkWinCondition();
+    }
+}
+
+// Reinforcement phase - Players are given a number of army units that depends on the number of
+// territories they own
+void GameEngine::reinforcementPhase() {
+    std::cout << "Reinforcement Phase started.\n";
+
+    // Iterate through each player and calculate reinforcements
+    for (int i = 0; i < players.size(); i++) {
+        //initiates the player for every iteration
+        Player* player = players[i]; // players vector needs to be defined somewhere in GameEngine
+        int numTerritories = player->GetPlayerTerritories().size();
+        int reinforcementUnits = numTerritories / 3; // 1 unit per 3 territories owned
+        if (reinforcementUnits < 3) { // minimum of 3 units
+            reinforcementUnits = 3;
+        }
+
+        // Check for continent control bonuses
+        std::vector<Continent*> continents = player->GetOwnedContinents();
+        for (int j = 0; j < continents.size(); j++) {
+            reinforcementUnits += continents[j]->GetPoints();
+        }
+        
+        //add reinforcements to player's pool
+        player->AddReinforcements(reinforcementUnits);
+        std::cout << "Player " << player->GetName() << " receives " << reinforcementUnits << " reinforcement units.\n";
+    }
+    
+    // Implement reinforcement logic here
+    std::cout << "Reinforcement Phase ended.\n";
+}
+
+// Issue Orders phase - Players issue orders such as deploying armies, attacking other players,
+// and fortifying their positions
+void GameEngine::issueOrdersPhase() {
+    std::cout << "Issue Orders Phase started.\n";
+    // Implement order issuing logic here
+    std::cout << "Issue Orders Phase ended.\n";
+}
+
+// Execute Orders phase - The issued orders are executed in the order they were issued
+void GameEngine::executeOrdersPhase() {
+    std::cout << "Execute Orders Phase started.\n";
+    // Implement order execution logic here
+    std::cout << "Execute Orders Phase ended.\n";
+}
+
+// Check for win condition - returns true if a player has won the game
+bool GameEngine::checkWinCondition() {
+    if (players.size() == 1) {
+        std::cout << "Player " << players[0]->GetName() << " has won the game!\n";
+        return true;
+    }
+    return false;
+}
+
+// Check for player elimination - returns the number of players eliminated in the current turn
+void GameEngine::checkPlayerElimination() {
+
+    // Check for player elimination
+    std::vector<Player*> eliminatedPlayers;
+    for (int i = 0; i < players.size(); i++) {
+        Player* player = players[i]; // players vector needs to be defined somewhere in GameEngine
+        if (player->GetPlayerTerritories().empty()) {
+            eliminatedPlayers.push_back(player);
+            std::cout << "Player " << player->GetName() << " has been eliminated from the game.\n";
+
+            //removes player from memory
+            delete player;
+
+            //removes player from players vector
+            for (int j = i; j < players.size() - 1; j++) {
+                players[j] = players[j + 1];
+            }
+            players.pop_back();
+            i--; // Adjust index after removal
+        }
+    }
+
+    // Remove eliminated players from the game
+    for (Player* eliminatedPlayer : eliminatedPlayers) {
+        players.erase(std::remove(players.begin(), players.end(), eliminatedPlayer), players.end());
+        delete eliminatedPlayer; // Assuming ownership of Player pointers
+    }
+}

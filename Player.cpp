@@ -40,7 +40,7 @@ Player::Player(std::string& name, vector<Territory*> playerTerritories, Hand &pl
     for (Territory* t : playerTerritories) { 
         this->AddTerritory(t);
     }
-    this->playerHand = new Hand(playerHand);;
+    this->playerHand = new Hand(playerHand);
     this->playersOrders = new OrdersList(playerOrders);
 }
 

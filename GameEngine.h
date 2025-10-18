@@ -202,4 +202,15 @@ public:
 
 	int Run(); // main game loop
 	bool ProcessInput(const std::string& input); // process user input
+
+    // Code for assignment 2
+    // Part 3: Game play: main game loop
+    private void mainGameLoop();
+    private void reinforcementPhase();
+    private void issueOrdersPhase();
+    private void executeOrdersPhase();
+
+    //Additional methods to check for win condition and player count
+    private bool checkWinCondition();
+    private void checkPlayerElimination();
 };
