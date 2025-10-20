@@ -105,13 +105,12 @@ void Player::AddTerritory(Territory* t) {
     }
 }
 
-//Removes territory from players list of territories
-//also sets territory owner to nullptr if this player owns it
-void Player::RemoveTerritory(Territory* t) {
+//switches territory from this player to p
+void Player::SwitchTerritory(Territory* t, Player* p) {
     auto it = std::remove(playerTerritories.begin(), playerTerritories.end(), t);
     if (it != playerTerritories.end()) {
         if (t->GetOwner() == this) {
-            t->SetOwner(nullptr);
+            p->AddTerritory(t);
         }
     } else {
         cout << "Territory not found in player's list." << endl;
