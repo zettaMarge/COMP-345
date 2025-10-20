@@ -22,8 +22,8 @@ public:
     vector<Territory*> ToAttack() const; //returns list of territories to attack
     vector<Territory*> ToDefend() const ; //returns list of territories to defend
     void AddTerritory(Territory* t); //adds territory to players list of territories
-    void RemoveTerritory(Territory* t); //removes territory from players list of territories
-   
+    void SwitchTerritory(Territory* t, Player* p); //swicthes territory from current player to p
+
     void IssueOrder(Order* x);//creates order and puts in players list of orders
     bool Equals(Player* p); //checks if two players are the same
 
