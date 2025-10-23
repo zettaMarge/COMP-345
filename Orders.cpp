@@ -251,7 +251,11 @@ void SimulateBattle(Player* attackingPlayer, int attackingUnits, int defendingUn
         target->SetUnits(remainingUnits);
         target->SetOwner(attackingPlayer);
 
-        //TODO if no previous conquer, get card + set conquer
+        if (!attackingPlayer->HasConqueredThisTurn()) {
+            attackingPlayer->SetConqueredThisTurn(true);
+            //TODO get card
+        }
+
         std::cout << "TERRITORY was successfully conquered by PLAYER." << std::endl;
     }
     else {

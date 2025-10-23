@@ -44,11 +44,13 @@ public:
     void SetPlayerHand(Hand* hand);
     void SetPlayerOrders(OrdersList* orders);
     bool IsTerritoryOwned(Territory* t);
+    bool HasConqueredThisTurn();
+    void SetConqueredThisTurn(bool state);
 
 private:
     string name; //name of player, used to identify who owns territory
     vector<Territory*> playerTerritories; //list of territories owned by player
     Hand* playerHand; //list of cards owned by player or their hand
     OrdersList* playersOrders; //list of orders owned by player
-    
+    bool conqueredThisTurn; //whether the player conquered a territory this turn or not
 };

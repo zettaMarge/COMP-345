@@ -29,7 +29,7 @@ Player::Player(){
     playerTerritories = vector<Territory*>();
     playerHand = nullptr;
     playersOrders = new OrdersList();
-
+    conqueredThisTurn = false;
 }
 
 // Parameterized constructor
@@ -42,6 +42,7 @@ Player::Player(std::string& name, vector<Territory*> playerTerritories, Hand &pl
     }
     this->playerHand = new Hand(playerHand);;
     this->playersOrders = new OrdersList(playerOrders);
+    this->conqueredThisTurn = false;
 }
 
 //This is a stub meant to be able to code players class
@@ -125,6 +126,7 @@ Player::Player(const Player& p) {
     playerTerritories = p.playerTerritories;
     playerHand = new Hand(*(p.playerHand));
     playersOrders = new OrdersList(*(p.playersOrders));
+    conqueredThisTurn = p.conqueredThisTurn;
 }
     
 // Assignment operator
@@ -230,3 +232,10 @@ void Player::SetPlayerOrders(OrdersList* orders) {
     this->playersOrders = new OrdersList(*orders);
 };
 
+bool Player::HasConqueredThisTurn() {
+    return conqueredThisTurn;
+}
+
+void Player::SetConqueredThisTurn(bool state) {
+    conqueredThisTurn = state;
+}
