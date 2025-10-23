@@ -2,6 +2,8 @@
 #include "Map.h"
 #include "Player.h"
 #include <algorithm>
+#include <cmath>
+#include <stdlib.h>
 
 using std::endl;
 
@@ -220,10 +222,81 @@ std::string Advance::GetEffect() const {
 // another territory that is adjacent to the source territory
 void Advance::Execute() {
     if (Validate()) {
-        std::cout << "Advance order successful in " << GetEffect() << std::endl;
+        if (TerritoryBelongsToPlayer(target)) {
+            src->SetUnits(src->GetUnits() - nbUnits);
+            target->SetUnits(target->GetUnits() + nbUnits);
+
+            std::cout << "Advance order successful in " << GetEffect() << std::endl;
+        }
+        else if (true) {
+            //IF not negotiating w other
+            SimulateBattle(owningPlayer, nbUnits, target->GetUnits(), src, target);
+        }
+        else {
+            std::cout << "Unable to attack TERRITORY; NAME is currently in negotiations with NAME" << std::endl;
+        }
     }
     else {
         std::cout << "This Advance order is invalid." << std::endl;
+    }
+}
+
+// Simulate a territory battle
+void SimulateBattle(std::string attackingPlayer, int attackingUnits, int defendingUnits, Territory* src, Territory* target) {
+    int attackersKilled = 0;
+    int defendersKilled = 0;
+
+    // Attacking phase result
+    for (int i = 0; i < attackingUnits; ++i) {
+        if ((rand() % 100) < 60) {
+            ++defendersKilled;
+        }
+
+        if (defendersKilled >= defendingUnits) {
+            break;
+        }
+    }
+
+    // Defending phase result
+    for (int i = 0; i < defendingUnits; ++i) {
+        if ((rand() % 100) < 70) {
+            ++attackersKilled;
+        }
+
+        if (attackersKilled >= attackingUnits) {
+            break;
+        }
+    }
+
+    if (attackersKilled < attackingUnits && defendersKilled >= defendingUnits) {
+        int remainingUnits = attackingUnits - attackersKilled;
+        src->SetUnits(src->GetUnits() - attackingUnits);
+        target->SetUnits(remainingUnits);
+        target->SetOwner();
+
+        //TODO if no previous conquer, get card + set conquer
+        std::cout << "TERRITORY was successfully conquered by PLAYER." << std::endl;
+    }
+    else {
+        std::cout << "PLAYER failed to conquer TERRITORY; ";
+
+        if (attackersKilled < attackingUnits) {
+            std::cout << "UNITS returned to SRC; ";
+            src->SetUnits(src->GetUnits() - attackersKilled);
+        }
+        else {
+            std::cout << "All attacking units lost in combat; ";
+            src->SetUnits(src->GetUnits() - attackingUnits);
+        }
+
+        if (defendersKilled < defendingUnits) {
+            std::cout << "UNITS remaining on TARGET" << std::endl;
+            target->SetUnits(target->GetUnits() - defendersKilled);
+        }
+        else {
+            std::cout << "All defending units lost in combat." << std::endl;
+            target->SetUnits(0);
+        }
     }
 }
 
@@ -321,6 +394,8 @@ std::string Airlift::GetEffect() const {
 // Advance a certain number of army units from one of the current player’s territories to any another territory
 void Airlift::Execute() {
     if (Validate()) {
+        src->SetUnits(src->GetUnits() - nbUnits);
+        target->SetUnits(target->GetUnits() + nbUnits);
         std::cout << "Airlift order successful in " << GetEffect() << std::endl;
     }
     else {
@@ -328,9 +403,9 @@ void Airlift::Execute() {
     }
 }
 
-// Check if the source territory belongs to the same player as the order and has enough units to move
+// Check if the source and target territories belong to the same player as the order, and the source has enough units to move
 bool Airlift::Validate() {
-    return TerritoryBelongsToPlayer(src) && src->GetUnits() >= nbUnits;
+    return TerritoryBelongsToPlayer(src) && TerritoryBelongsToPlayer(target) && src->GetUnits() >= nbUnits;
 }
 // ----- Airlift -----
 
@@ -388,9 +463,11 @@ std::string Blockade::GetEffect() const {
     return "tripling the number of units on " + target->GetName();
 }
 
-// Triple the number of army units on one of the current player’s territories and make it a neutral territory.
+// Triple?? Double?? the number of army units on one of the current player’s territories and make it a neutral territory.
 void Blockade::Execute() {
     if (Validate()) {
+        target->SetUnits(target->GetUnits() * 2);
+        //TODO territory becomes Neutral (create if doesnt exist yet)
         std::cout << "Blockade order successful in " << GetEffect() << std::endl;
     }
     else {
@@ -461,6 +538,8 @@ std::string Bomb::GetEffect() const {
 // Destroy half of the army units located on an opponent’s territory that is adjacent to one of the current player’s territories
 void Bomb::Execute() {
     if (Validate()) {
+        int halfNb = round(static_cast<double>(target->GetUnits()) / 2); //If odd number of units, then this half is bigger
+        target->SetUnits(target->GetUnits() - halfNb);
         std::cout << "Bomb order successful in " << GetEffect() << std::endl;
     }
     else {
@@ -549,6 +628,7 @@ std::string Deploy::GetEffect() const {
 // Move a certain number of army units from the current player’s reinforcement pool to one of the current player’s territories
 void Deploy::Execute() {
     if (Validate()) {
+        target->SetUnits(target->GetUnits() + nbUnits);
         std::cout << "Deploy order successful in " << GetEffect() << std::endl;
     }
     else {
@@ -614,6 +694,7 @@ std::string Negotiate::GetEffect() const {
 // Prevent attacks between the current player and the player targeted by the negotiate order until the end of the turn.
 void Negotiate::Execute() {
     if (Validate()) {
+        //TODO notify other player of negotiations, set negotiating state
         std::cout << "Negotiate order successful in " << GetEffect() << std::endl;
     }
     else {
