@@ -1,5 +1,118 @@
 #include "GameEngine.h"
 #include <iomanip>
+#include <iostream>
+#include "Map.h"
+#include "Player.h"
+
+
+void LoadMapCommand::Execute() {
+    if (argument.empty()) {
+        std::cout << "Please specify a map to load (e.g., 'loadmap world.map').\n";
+		std::getline(std::cin, argument);
+    }
+    MapLoader mapLoader = MapLoader();
+    if (mapLoader.LoadMapFile(argument)) {
+        std::cout << "Loading map: " << argument << "\n";
+        std::cout << "Map loaded successfully.\n";
+    }
+    else {
+        std::cout << "\nFailed to load map: " << argument << "\n";
+      //  return; just so I can test the next states
+    }
+    if(GameEngine::instance->currentState->name == GameEngine::instance->mainMenuState->name) {
+        GameEngine::instance->changeState(GameEngine::instance->mapLoadedState.get());
+	}
+    else if (GameEngine::instance->currentState->name != GameEngine::instance->mapLoadedState.get()->name) {
+		std::cout << "Error: trying to execute loadmap from invalid state\n";
+        return;
+    }
+};
+
+void ValidateMapCommand::Execute() {
+    std::cout << "Validating map...\n";
+	//code to validate map would go here
+    std::cout << "Map validated successfully.\n";
+    if(GameEngine::instance->currentState == GameEngine::instance->mapLoadedState.get()) {
+        GameEngine::instance->changeState(GameEngine::instance->mapValidatedState.get());
+    }
+    else {
+        std::cout << "Error: trying to execute validatemap from invalid state\n";
+        return;
+    }
+};
+
+void AddPlayerCommand::Execute() {
+    if (argument.empty()) {
+        std::cout << "Please specify a player name to add (e.g., 'addplayer Alice').\n";
+        std::getline(std::cin, argument);
+    }
+    std::cout << "Adding player: " << argument << "\n";
+    //code to add player would go here
+    std::cout << "Player " << argument << " added successfully.\n";
+    if(GameEngine::instance->currentState == GameEngine::instance->mapValidatedState.get()) {
+        GameEngine::instance->changeState(GameEngine::instance->playersAddedState.get());
+    }
+    else if(GameEngine::instance->currentState != GameEngine::instance->playersAddedState.get()) {
+        std::cout << "Error: trying to execute addplayer from invalid state\n";
+        return;
+    }
+};
+
+void GameStartCommand::Execute() {
+    std::cout << "Starting game...\n";
+	GameEngine::instance->mainGameLoop();
+    std::cout << "Game started successfully.\n";
+    if(GameEngine::instance->currentState == GameEngine::instance->playersAddedState.get()) {
+        GameEngine::instance->changeState(GameEngine::instance->assignReinforcementState.get());
+    }
+    else {
+        std::cout << "Error: trying to execute gamestart from invalid state\n";
+        return;
+    }
+};
+
+void ReplayCommand::Execute() {
+    std::cout << "Replaying game...\n";
+    //code to reset and replay the game would go here
+    if(GameEngine::instance->currentState == GameEngine::instance->winState.get()) {
+        GameEngine::instance->changeState(GameEngine::instance->mainMenuState.get());
+        std::cout << "Game restarted successfully.\n";
+    }
+    else {
+        std::cout << "Trying to execute replay from invalid state, force replay anyway? (y/n)\n";
+		char response;
+		std::cin >> response;
+        if(response == 'y' || response == 'Y') {
+			GameEngine::instance->changeState(GameEngine::instance->mainMenuState.get());
+            std::cout << "Game restarted successfully.\n";
+		}
+        else {
+			std::cout << "Okay, replay command ignored.\n";
+        }
+        return;
+	}   
+};
+
+void QuitCommand::Execute() {
+    if (GameEngine::instance->currentState == GameEngine::instance->winState.get()) {
+        std::cout << "Quitting game...\n";
+    }
+    else {
+        std::cout << "Trying to execute quit mid game, force quit anyway? (y/n)\n";
+        char response;
+        std::cin >> response;
+        if (response == 'y' || response == 'Y') {
+            std::cout << "Quitting game...\n";
+        }
+        else {
+            std::cout << "Okay, quit command ignored.\n";
+            return;
+        }
+    }
+    //code to cleanly exit the game would go here
+    std::cout << "Game quit successfully.\n";
+    exit(0); //terminate program
+};
 
 // ===== SimpleState implementation =====
 // SimpleState constructor
@@ -20,7 +133,7 @@ SimpleState& SimpleState::operator=(const SimpleState& other) {
         name = other.name;
         enterMessage = other.enterMessage;
         exitMessage = other.exitMessage;
-        availableCommands.clear();
+        availableCommands.clear(); 
         for (const auto& cmd : other.availableCommands) {
             availableCommands.emplace_back(std::make_unique<SimpleCommand>(cmd->name, cmd->nextState));
         }
@@ -39,7 +152,7 @@ void SimpleState::OnExit() { std::cout << exitMessage << "\n"; }
 // ===== Concrete States =====
 //construction of all the main states and their current functionality which is only messages lol
 MainMenuState::MainMenuState()
-    : SimpleState("MainMenu", "Welcome to the game(engine)!",
+    : SimpleState("MainMenu", "Welcome to the game! This is the main menu state",
         "Leaving Main Menu...") {}
 
 MapLoadedState::MapLoadedState()
@@ -71,10 +184,13 @@ WinGameState::WinGameState()
         "Exiting win state") {}
 
 
+
+
 // ===== GameEngine Implementation =====
 GameEngine* GameEngine::instance = nullptr; // initialize singleton instance to nullptr
 
 GameEngine::GameEngine() {
+    instance = this;
     // Create all states
 	//unique pointers to manage state lifetimes that way I dont have do worry about memory leaks
     mainMenuState = std::make_unique<MainMenuState>();
@@ -89,13 +205,13 @@ GameEngine::GameEngine() {
     // Hook commands with automatic transitions
 	//I feel like there's probably a more elegant way to do this but whatever
     mainMenuState->availableCommands.emplace_back(
-        std::make_unique<SimpleCommand>("loadmap", mapLoadedState.get()));
+        std::make_unique<LoadMapCommand>("", mapLoadedState.get()));
 
     mapLoadedState->availableCommands.emplace_back(
-        std::make_unique<SimpleCommand>("validatemap", mapValidatedState.get()));
+        std::make_unique<ValidateMapCommand>("validatemap", mapValidatedState.get()));
 
     mapLoadedState->availableCommands.emplace_back(
-        std::make_unique<SimpleCommand>("loadmap", nullptr));
+        std::make_unique<LoadMapCommand>("loadmap", nullptr));
 
     mapValidatedState->availableCommands.emplace_back(
         std::make_unique<SimpleCommand>("addplayer", playersAddedState.get()));
@@ -291,6 +407,46 @@ bool GameEngine::ProcessInput(const std::string& input) {
     return true; // return true so the loop continues
 }
 
+//execute command
+void GameEngine::ExecuteCommand(const std::shared_ptr<ICommand>& cmd) {
+    if (!cmd) return;
+    if (!currentState) {
+        std::cout << "Error: No current state.\n";
+        return;
+    }
+    if (IsValidCommand(cmd->name)) cmd->Execute();
+    else if(cmd->name == "replay") {
+		ExecuteCommand(std::make_shared<ReplayCommand>());
+	}
+    else {
+        std::cout << "Invalid command. Available commands:\n";
+        for (auto& cmd : currentState->availableCommands) {
+            std::cout << " - " << cmd->name << "\n";
+        }
+    }
+}
+
+//validate command
+bool GameEngine::IsValidCommand(const std::string& cmd) {
+    for (const auto& command : currentState->availableCommands) {
+        if (command->name == cmd) {
+            return true;
+        }
+    }
+    return false;
+}
+
+//change current state
+void GameEngine::changeState(IState* next) {
+    if (!next) {
+        std::cout << "Error: Cannot change to null state.\n";
+        return;
+    }
+    currentState->OnExit();
+    currentState = next;
+    currentState->OnEnter();
+}
+
 // ===== Entry point =====
 //using main for now
 //I'll rename this to testgameegine or whatever when its time
@@ -304,4 +460,103 @@ int TestGameEngine() {
     delete GameEngine::instance;   
     GameEngine::instance = nullptr;
     return 0;
+}
+
+// Code for assignment 2
+// Part 3: Game play: main game loop
+
+//Main game loop that cycles through the three phases
+void GameEngine::mainGameLoop() {
+    bool gameWon = false;
+    while (!gameWon) {
+      //  reinforcementPhase();
+      //  issueOrdersPhase();
+      //  executeOrdersPhase();
+        // checkPlayerElimination();
+        // gameWon = checkWinCondition();
+    }
+}
+
+// Reinforcement phase - Players are given a number of army units that depends on the number of
+// territories they own
+void GameEngine::reinforcementPhase() {
+    std::cout << "Reinforcement Phase started.\n";
+
+    // Iterate through each player and calculate reinforcements
+    for (int i = 0; i < players.size(); i++) {
+        //initiates the player for every iteration
+        Player* player = players[i]; // players vector needs to be defined somewhere in GameEngine
+        int numTerritories = player->GetPlayerTerritories().size();
+        int reinforcementUnits = numTerritories / 3; // 1 unit per 3 territories owned
+        if (reinforcementUnits < 3) { // minimum of 3 units
+            reinforcementUnits = 3;
+        }
+
+        // Check for continent control bonuses
+      //  std::vector<Continent*> continents = player->GetOwnedContinents();
+       // for (int j = 0; j < continents.size(); j++) {
+      //      reinforcementUnits += continents[j]->GetPoints();
+        }
+
+        //add reinforcements to player's pool
+      //  player->AddReinforcements(reinforcementUnits);
+     //   std::cout << "Player " << player->GetName() << " receives " << reinforcementUnits << " reinforcement units.\n";
+   // }
+
+    // Implement reinforcement logic here
+    std::cout << "Reinforcement Phase ended.\n";
+}
+
+// Issue Orders phase - Players issue orders such as deploying armies, attacking other players,
+// and fortifying their positions
+void GameEngine::issueOrdersPhase() {
+    std::cout << "Issue Orders Phase started.\n";
+    // Implement order issuing logic here
+    std::cout << "Issue Orders Phase ended.\n";
+}
+
+// Execute Orders phase - The issued orders are executed in the order they were issued
+void GameEngine::executeOrdersPhase() {
+    std::cout << "Execute Orders Phase started.\n";
+    // Implement order execution logic here
+    std::cout << "Execute Orders Phase ended.\n";
+}
+
+// Check for win condition - returns true if a player has won the game
+bool GameEngine::checkWinCondition() {
+    if (players.size() == 1) {
+        std::cout << "Player " << players[0]->GetName() << " has won the game!\n";
+        return true;
+    }
+    return false;
+}
+
+// Check for player elimination - returns the number of players eliminated in the current turn
+void GameEngine::checkPlayerElimination() {
+
+    // Check for player elimination
+    std::vector<Player*> eliminatedPlayers;
+    for (int i = 0; i < players.size(); i++) {
+        Player* player = players[i]; // players vector needs to be defined somewhere in GameEngine
+        if (player->GetPlayerTerritories().empty()) {
+            eliminatedPlayers.push_back(player);
+            std::cout << "Player " << player->GetName() << " has been eliminated from the game.\n";
+
+            //removes player from memory
+            delete player;
+
+            //removes player from players vector
+            for (int j = i; j < players.size() - 1; j++) {
+                players[j] = players[j + 1];
+            }
+            players.pop_back();
+            i--; // Adjust index after removal
+        }
+    }
+
+    // Remove eliminated players from the game
+    for (Player* eliminatedPlayer : eliminatedPlayers) {
+        players.erase(std::remove(players.begin(), players.end(), eliminatedPlayer), players.end());
+        delete eliminatedPlayer; // Assuming ownership of Player pointers
+    }
 }
