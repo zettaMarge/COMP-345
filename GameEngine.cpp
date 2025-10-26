@@ -403,4 +403,12 @@ void GameEngine::checkPlayerElimination() {
         players.erase(std::remove(players.begin(), players.end(), eliminatedPlayer), players.end());
         delete eliminatedPlayer; // Assuming ownership of Player pointers
     }
+
+    //Creates a new player and adds them to the players vector
+    //Requires a player name input as a string
+    void GameEngine::addPlayers(const string &playerName) {
+        Player* newPlayer = new Player();
+        newPlayer->SetName(playerName);
+        players.push_back(newPlayer);
+    }
 }

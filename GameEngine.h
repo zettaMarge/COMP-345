@@ -213,4 +213,11 @@ public:
     //Additional methods to check for win condition and player count
     private bool checkWinCondition();
     private void checkPlayerElimination();
+
+    //Code for Assignemnt 2 Part 2
+    <Player*> players; //list of players in the game
+    private void addPlayers(const string &playerName);
+    //private void gameStart();
+    //private void validateMap();
+    //private void loadMap(const string &mapFileName);
 };
