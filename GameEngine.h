@@ -216,8 +216,9 @@ public:
 
     //Code for Assignemnt 2 Part 2
     <Player*> players; //list of players in the game
-    private void addPlayers(const string &playerName);
-    //private void gameStart();
-    //private void validateMap();
-    //private void loadMap(const string &mapFileName);
+    Map *gameMap; //pointer to the map being used in the game
+    private void addPlayers(const string &playerName); //Adds a new player to the game
+    private bool validateMap(Map &map); //Validates the map according to assignment specifications
+    private void loadMap(const string &fileName); //Loads a map from a file
+    private void gameStart(); //Starts the game
 };

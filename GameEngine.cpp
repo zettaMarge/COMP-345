@@ -1,5 +1,7 @@
 #include "GameEngine.h"
 #include <iomanip>
+#include <iostream>
+#include <filesystem>
 
 // ===== SimpleState implementation =====
 // SimpleState constructor
@@ -410,5 +412,62 @@ void GameEngine::checkPlayerElimination() {
         Player* newPlayer = new Player();
         newPlayer->SetName(playerName);
         players.push_back(newPlayer);
+    }
+
+    //Loads a map from a file using MapLoader
+    //Takes map file name input as a string
+    //Assumes directory has a folder named "maps" in the current working directory
+    //Accepts the directory filename as input string
+    //default path is std::filesystem::current_path()
+    void GameEngine::loadMap(const string &fileName) {
+        std::filesystem::path mapPath = fileName / "maps";
+        vector<std::string> mapFiles;
+        int mapNumber = 1;
+        std::cout << "The following are the Maps in the inputed directory, \n";
+        for (auto & entry : std::filesystem::directory_iterator(mapPath)) {
+            std::cout << "Map " << mapNumber << entry.path().filename().string() << std::endl;
+            mapFiles.push_back(entry.path().string());
+            mapNumber++;
+        }
+        std::cout << "Please input the number associated with the map you want: \n";
+        int selectedOption = -1;
+        std::cin >> selectedOption;
+        if (selectedOption < 1 || selectedOption > mapFiles.size()) {
+            std::cout << "Invalid selection. Please try again.\n";
+             int selectedOption = -1;
+             std::cin >> selectedOption;
+             if (selectedOption < 1 || selectedOption > mapFiles.size()) {
+                std::cout << "Invalid selection. Exiting map loading.\n";
+                return;
+            }
+        }else{
+            mapPath = mapFiles[selectedOption - 1];
+        }
+
+
+        MapLoader loader();
+        bool loadedMap;
+        loadedMap = Loader->LoadMapFile(mapPath.string());
+        if (!loadedMap) {
+            std::cout << "Failed to load map from file: " << mapPath.string() << std::endl;
+            return;
+        }
+        gameMap = Loader->CreateMap();
+
+    }
+
+    //Validates the map using its Validate method
+    //Takes a map reference as input
+    bool GameEngine::validateMap(Map &map) {
+        return map->Validate();
+    }
+
+    //a) airly distribute all the territories to the players
+    //b) determine randomly the order of play of the players in the game
+    //c) give 50 initial army units to the players, which are placed in their respective reinforcement pool
+    //d) let each player draw 2 initial cards from the deck using the deck’s draw() method
+    //e) switch the game to the play phase
+    void GameEngine::gameStart() {
+        // Implement game start logic here
     }
 }
