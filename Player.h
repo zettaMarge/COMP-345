@@ -40,7 +40,7 @@ public:
     Hand* GetPlayerHand();
     OrdersList* GetPlayerOrders() const;
     void SetName(string name);
-    void setPlayerTerritories(vector<Territory*> territories);
+    void SetPlayerTerritories(vector<Territory*> territories);
     void SetPlayerHand(Hand* hand);
     void SetPlayerOrders(OrdersList* orders);
     bool IsTerritoryOwned(Territory* t);

@@ -2,6 +2,8 @@
 #include <iomanip>
 #include <iostream>
 #include <filesystem>
+#include <random>
+#include <algorithm>
 
 // ===== SimpleState implementation =====
 // SimpleState constructor
@@ -419,7 +421,7 @@ void GameEngine::checkPlayerElimination() {
     //Assumes directory has a folder named "maps" in the current working directory
     //Accepts the directory filename as input string
     //default path is std::filesystem::current_path()
-    void GameEngine::loadMap(const string &fileName) {
+    void GameEngine::LoadMap(const string &fileName) {
         std::filesystem::path mapPath = fileName / "maps";
         vector<std::string> mapFiles;
         int mapNumber = 1;
@@ -447,7 +449,7 @@ void GameEngine::checkPlayerElimination() {
 
         MapLoader loader();
         bool loadedMap;
-        loadedMap = Loader->LoadMapFile(mapPath.string());
+        loadedMap = Loader->LoadMapFile(mapPath.string()); //automatically validates the map
         if (!loadedMap) {
             std::cout << "Failed to load map from file: " << mapPath.string() << std::endl;
             return;
@@ -458,16 +460,77 @@ void GameEngine::checkPlayerElimination() {
 
     //Validates the map using its Validate method
     //Takes a map reference as input
-    bool GameEngine::validateMap(Map &map) {
-        return map->Validate();
+    bool GameEngine::ValidateMap() {
+        return gameMap->Validate();
     }
 
-    //a) airly distribute all the territories to the players
+    //a) fairly distribute all the territories to the players
     //b) determine randomly the order of play of the players in the game
     //c) give 50 initial army units to the players, which are placed in their respective reinforcement pool
     //d) let each player draw 2 initial cards from the deck using the deck’s draw() method
     //e) switch the game to the play phase
-    void GameEngine::gameStart() {
-        // Implement game start logic here
+    void GameEngine::GameStart() {
+
+        //shuffling players 
+        std::random_device rd; // seed from machines random device
+        std::mt19937 g(rd()); //random number generator 
+        std::shuffle(players.begin(), players.end(), g);
+
+        //Distributing territories
+
+        //50 initial army units to players
+
+        //each player draws 2 initial cards from the deck
+        for (int i = 0; i < players.size(); i++) {
+            Player* player = players[i];
+            player->getPlayerHand()->DrawCard();
+            player->getPlayerHand()->DrawCard();
+        }
+
+        //swicthe game to play phase
+        maingameLoop();
     }
+
+        void GameEngine::StartupPhase() {
+            std::string input;
+            std::cin >> "Starting game... Please input the name of the directory containing the maps, or press Enter to use the current directory: \n";
+            if (input.empty()) {
+                input = std::filesystem::current_path().string();
+            }
+            loadMap(input);
+            bool isMapValid = validateMap();
+            if (!isMapValid) {
+                std::cout << "Map is invalid. Please try again.\n";
+                std::cin >> input;
+                if (input.empty()) {
+                input = std::filesystem::current_path().string();
+                }
+                loadMap(input);
+                isMapValid = validateMap();
+                if (!isMapValid) {
+                    std::cout << "Map is invalid again. Exiting startup phase.\n";
+                    return;
+                }
+            }
+            std::cin >> "Please input the number of players you would like to have in this game (2-6): \n";
+            int numPlayers;
+            std::cin >> numPlayers;
+            if (numPlayer != 2 || numPlayers != 3 || numPlayers != 4 || numPlayers != 5 || numPlayers != 6) {
+                std::cout << "Invalid number of players. Please try again.\n";
+                std::cin >> numPlayers;
+                if (numPlayers != 2 || numPlayers != 3 || numPlayers != 4 || numPlayers != 5 || numPlayers != 6) {
+                    std::cout << "Invalid number of players. Exiting startup phase.\n";
+                    return;
+                }
+            }
+            for (int i = 0; i < numPlayers; i++) {
+                std::string playerName;
+                std::cout << "Please input the name of player " + std::to_string(i + 1) + ": \n";
+                std::cin >> playerName;
+                addPlayers(playerName);
+            }
+            std::cout << "Players added successfully. Starting game...\n";
+            GameStart();
+        }
+
 }

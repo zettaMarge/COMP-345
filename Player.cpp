@@ -107,6 +107,7 @@ void Player::AddTerritory(Territory* t) {
 
 //Removes territory from players list of territories
 //also sets territory owner to nullptr if this player owns it
+//needs to be updated to actually erase from vector
 void Player::RemoveTerritory(Territory* t) {
     auto it = std::remove(playerTerritories.begin(), playerTerritories.end(), t);
     if (it != playerTerritories.end()) {
@@ -211,7 +212,7 @@ void Player::SetName(string name) {
     this->name = name;
 };
 
-void Player::setPlayerTerritories(vector<Territory*> territories) {
+void Player::SetPlayerTerritories(vector<Territory*> territories) {
     for (Territory* t : playerTerritories) {
             this->RemoveTerritory(t);
     }

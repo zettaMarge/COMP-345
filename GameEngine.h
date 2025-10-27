@@ -217,8 +217,9 @@ public:
     //Code for Assignemnt 2 Part 2
     <Player*> players; //list of players in the game
     Map *gameMap; //pointer to the map being used in the game
-    private void addPlayers(const string &playerName); //Adds a new player to the game
-    private bool validateMap(Map &map); //Validates the map according to assignment specifications
-    private void loadMap(const string &fileName); //Loads a map from a file
-    private void gameStart(); //Starts the game
+    private void StartupPhase(); //Handles the startup phase of the game
+    private void AddPlayers(const string &playerName); //Adds a new player to the game
+    private bool ValidateMap(); //Validates the map according to assignment specifications
+    private void LoadMap(const string &fileName); //Loads a map from a file
+    private void GameStart(); //Starts the game
 };

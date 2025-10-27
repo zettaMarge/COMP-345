@@ -16,6 +16,7 @@
 
 struct Continent; // Forward declaration for Continent struct
 class Player; // Forward declaration for Player class
+class GameEngine; // Forward declaration for GameEngine class
 
 //  ----- Territory class -----
 // Represents a single Territory in a Map.
@@ -119,6 +120,7 @@ class Map {
 
         bool IsAdjacent(Territory* a, Territory* b);
         bool Validate();
+        friend class GameEngine;
 
     private:
         std::unordered_map<std::string, Continent*> continentByName;
