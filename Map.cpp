@@ -71,9 +71,9 @@ bool Territory::IsAdjacent(Territory* a) const{
 void Territory::SetOwner(Player* _owner){
     if(owner == _owner) return; // return if no need to update
     Player* oldOwner = owner; // get pointer to old owner to check later
+    if(oldOwner == nullptr && _owner != nullptr) _owner->AddTerritory(this); // If no previous owner, add territory to new owner
     owner = _owner;
-    if(oldOwner != nullptr && oldOwner->IsTerritoryOwned(this)) oldOwner->RemoveTerritory(this); // remove from old owner
-    if(_owner != nullptr && !_owner->IsTerritoryOwned(this)) _owner->AddTerritory(this); // add to new owner
+    if((oldOwner != nullptr && oldOwner->IsTerritoryOwned(this)) && (_owner != nullptr && !_owner->IsTerritoryOwned(this))) oldOwner->SwitchTerritory(this, owner); // Swicthes territoy from old owner to new
 }
 
 // Gets the territory's owner

@@ -84,6 +84,10 @@ void Player::IssueOrder(Order* x) {
     playersOrders->Add(x);
 };
 
+void Player::AddReinforcements(int num) {
+   reinforcements += num;
+}
+
 //Returns true when a Territory is found in a Player's owned territories
 bool Player::IsTerritoryOwned(Territory* t) {
     return std::find(playerTerritories.begin(), playerTerritories.end(), t) != playerTerritories.end();
@@ -105,18 +109,19 @@ void Player::AddTerritory(Territory* t) {
     }
 }
 
-//Removes territory from players list of territories
+//Swicthes territory from this player to another player
 //also sets territory owner to nullptr if this player owns it
 //needs to be updated to actually erase from vector
-void Player::RemoveTerritory(Territory* t) {
+void Player::SwitchTerritory(Territory* t, Player* p) {
     auto it = std::remove(playerTerritories.begin(), playerTerritories.end(), t);
+    
     if (it != playerTerritories.end()) {
-        if (t->GetOwner() == this) {
-            t->SetOwner(nullptr);
-        }
+        std::erase(it, playerTerritories.end());
+        p->AddTerritory(t);
     } else {
         cout << "Territory not found in player's list." << endl;
     }
+    std::erase(it, playerTerritories.end());
 }
 
 // Copy constructor
@@ -208,6 +213,10 @@ OrdersList* Player::GetPlayerOrders() const{
     return playersOrders;
 };
 
+int* Player::GetReinforcements() {
+    return reinforcements;
+};
+
 void Player::SetName(string name) {
     this->name = name;
 };
@@ -231,3 +240,6 @@ void Player::SetPlayerOrders(OrdersList* orders) {
     this->playersOrders = new OrdersList(*orders);
 };
 
+void Player::SetReinforcements(int* reinforcements) {
+    this->reinforcements = reinforcements;
+};

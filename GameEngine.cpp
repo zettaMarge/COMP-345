@@ -407,10 +407,11 @@ void GameEngine::checkPlayerElimination() {
         players.erase(std::remove(players.begin(), players.end(), eliminatedPlayer), players.end());
         delete eliminatedPlayer; // Assuming ownership of Player pointers
     }
+}
 
     //Creates a new player and adds them to the players vector
     //Requires a player name input as a string
-    void GameEngine::addPlayers(const string &playerName) {
+void GameEngine::addPlayers(const string &playerName) {
         Player* newPlayer = new Player();
         newPlayer->SetName(playerName);
         players.push_back(newPlayer);
@@ -421,7 +422,7 @@ void GameEngine::checkPlayerElimination() {
     //Assumes directory has a folder named "maps" in the current working directory
     //Accepts the directory filename as input string
     //default path is std::filesystem::current_path()
-    void GameEngine::LoadMap(const string &fileName) {
+void GameEngine::LoadMap(const string &fileName) {
         std::filesystem::path mapPath = fileName / "maps";
         vector<std::string> mapFiles;
         int mapNumber = 1;
@@ -469,7 +470,7 @@ void GameEngine::checkPlayerElimination() {
     //c) give 50 initial army units to the players, which are placed in their respective reinforcement pool
     //d) let each player draw 2 initial cards from the deck using the deck’s draw() method
     //e) switch the game to the play phase
-    void GameEngine::GameStart() {
+void GameEngine::GameStart() {
 
         //shuffling players 
         std::random_device rd; // seed from machines random device
@@ -477,8 +478,19 @@ void GameEngine::checkPlayerElimination() {
         std::shuffle(players.begin(), players.end(), g);
 
         //Distributing territories
+        vector<Territory*> territories = gameMap->territories;
+        int numPlayers = players.size();
+        for (int i = 0; i < territories.size(); i++) {
+            Player* currentPlayer = players[i % numPlayers];
+            Territory* currentTerritory = territories[i];
+            currentPlayer->AddTerritory(currentTerritory);
+        }
 
         //50 initial army units to players
+        for (int i = 0; i < players.size(); i++) {
+            Player* player = players[i];
+            player->AddReinforcements(50);
+        }
 
         //each player draws 2 initial cards from the deck
         for (int i = 0; i < players.size(); i++) {
@@ -491,7 +503,7 @@ void GameEngine::checkPlayerElimination() {
         maingameLoop();
     }
 
-        void GameEngine::StartupPhase() {
+void GameEngine::StartupPhase() {
             std::string input;
             std::cin >> "Starting game... Please input the name of the directory containing the maps, or press Enter to use the current directory: \n";
             if (input.empty()) {
@@ -533,4 +545,3 @@ void GameEngine::checkPlayerElimination() {
             GameStart();
         }
 
-}
