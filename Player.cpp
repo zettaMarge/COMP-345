@@ -116,12 +116,12 @@ void Player::SwitchTerritory(Territory* t, Player* p) {
     auto it = std::remove(playerTerritories.begin(), playerTerritories.end(), t);
     
     if (it != playerTerritories.end()) {
-        std::erase(it, playerTerritories.end());
+        playerTerritories.erase(it, playerTerritories.end());
         p->AddTerritory(t);
     } else {
         cout << "Territory not found in player's list." << endl;
     }
-    std::erase(it, playerTerritories.end());
+    playerTerritories.erase(it, playerTerritories.end());
 }
 
 // Copy constructor
@@ -213,7 +213,7 @@ OrdersList* Player::GetPlayerOrders() const{
     return playersOrders;
 };
 
-int* Player::GetReinforcements() {
+int Player::GetReinforcements() {
     return reinforcements;
 };
 
@@ -222,9 +222,6 @@ void Player::SetName(string name) {
 };
 
 void Player::SetPlayerTerritories(vector<Territory*> territories) {
-    for (Territory* t : playerTerritories) {
-            this->RemoveTerritory(t);
-    }
     playerTerritories.clear();
     for (Territory* t : territories) {
         this->AddTerritory(t);
@@ -240,6 +237,6 @@ void Player::SetPlayerOrders(OrdersList* orders) {
     this->playersOrders = new OrdersList(*orders);
 };
 
-void Player::SetReinforcements(int* reinforcements) {
+void Player::SetReinforcements(int reinforcements) {
     this->reinforcements = reinforcements;
 };

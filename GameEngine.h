@@ -4,6 +4,9 @@
 #include <vector>
 #include <memory>
 
+#include "Map.h"
+#include "Player.h"
+
 // ===== Forward declarations =====
 class IState;
 
@@ -205,21 +208,35 @@ public:
 
     // Code for assignment 2
     // Part 3: Game play: main game loop
-    private void mainGameLoop();
-    private void reinforcementPhase();
-    private void issueOrdersPhase();
-    private void executeOrdersPhase();
+    private:
+    void mainGameLoop();
+    void reinforcementPhase();
+    void issueOrdersPhase();
+    void executeOrdersPhase();
 
     //Additional methods to check for win condition and player count
-    private bool checkWinCondition();
-    private void checkPlayerElimination();
+    bool checkWinCondition();
+    void checkPlayerElimination();
 
     //Code for Assignemnt 2 Part 2
-    <Player*> players; //list of players in the game
+//-----------------------------------------------------
+//Mia Letendre 40274681
+//COMP-345-D 2252 Assignment 2 Game Startup Phase
+//Dr. Hamed Jafarpour
+//Submitted: TBD
+//Due: November 11, 2025 
+//I certify that this submission is my original work and meets the Faculty’s Expectations of Originality 
+//Mia Letendre
+//-----------------------------------------------------
+    private:
+    std::vector<Player*> players; //list of players in the game
     Map *gameMap; //pointer to the map being used in the game
-    private void StartupPhase(); //Handles the startup phase of the game
-    private void AddPlayers(const string &playerName); //Adds a new player to the game
-    private bool ValidateMap(); //Validates the map according to assignment specifications
-    private void LoadMap(const string &fileName); //Loads a map from a file
-    private void GameStart(); //Starts the game
+    void StartupPhase(); //Handles the startup phase of the game
+    void AddPlayers(const string &playerName); //Adds a new player to the game
+    bool ValidateMap(); //Validates the map according to assignment specifications
+    void LoadMap(const string &fileName); //Loads a map from a file
+    void GameStart(); //Starts the game
+
+    public: 
+    void TestStartupPhase(); //Tests the startup phase
 };

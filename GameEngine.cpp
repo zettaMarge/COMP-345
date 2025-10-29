@@ -409,6 +409,15 @@ void GameEngine::checkPlayerElimination() {
     }
 }
 
+//-----------------------------------------------------
+//Mia Letendre 40274681
+//COMP-345-D 2252 Assignment 2 Game Startup Phase
+//Dr. Hamed Jafarpour
+//Submitted: TBD
+//Due: November 11, 2025 
+//I certify that this submission is my original work and meets the Faculty’s Expectations of Originality 
+//Mia Letendre
+//-----------------------------------------------------
     //Creates a new player and adds them to the players vector
     //Requires a player name input as a string
 void GameEngine::addPlayers(const string &playerName) {
@@ -544,4 +553,9 @@ void GameEngine::StartupPhase() {
             std::cout << "Players added successfully. Starting game...\n";
             GameStart();
         }
+
+void GameEngine::TestStartupPhase() {
+    GameEngine engine;
+    engine.StartupPhase();
+}
 

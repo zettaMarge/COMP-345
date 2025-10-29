@@ -22,10 +22,10 @@ public:
     vector<Territory*> ToAttack() const; //returns list of territories to attack
     vector<Territory*> ToDefend() const ; //returns list of territories to defend
     void AddTerritory(Territory* t); //adds territory to players list of territories
-    void SwitchTerritory(Territory* t); //removes territory from players list of territories
+    void SwitchTerritory(Territory* t, Player* p); //removes territory from players list of territories
    
     void IssueOrder(Order* x);//creates order and puts in players list of orders
-    AddReinforcements(int num); //adds num reinforcements to player
+    void AddReinforcements(int num); //adds num reinforcements to player
 
     bool Equals(Player* p); //checks if two players are the same
     Player(); // Default constructor
@@ -40,12 +40,12 @@ public:
     vector<Territory*> GetPlayerTerritories();
     Hand* GetPlayerHand();
     OrdersList* GetPlayerOrders() const;
-    int* GetReinforcements() { return reinforcements; };
+    int GetReinforcements();
     void SetName(string name);
     void SetPlayerTerritories(vector<Territory*> territories);
     void SetPlayerHand(Hand* hand);
     void SetPlayerOrders(OrdersList* orders);
-    void SetReinforcements(int* reinforcements);
+    void SetReinforcements(int reinforcements);
     bool IsTerritoryOwned(Territory* t);
 
 
@@ -54,5 +54,5 @@ private:
     vector<Territory*> playerTerritories; //list of territories owned by player
     Hand* playerHand; //list of cards owned by player or their hand
     OrdersList* playersOrders; //list of orders owned by player
-    int* reinforcements; //number of reinforcements the player has available
+    int reinforcements; //number of reinforcements the player has available
 };
