@@ -150,7 +150,7 @@ class MapLoader{
         friend std::ostream& operator<<(std::ostream& os, const MapLoader& _mapLoader);
 
         bool LoadMapFile(const std::string& filename);
-        Map CreateMap();
+        Map* CreateMap();
     private:
         std::vector<std::string> content;
         bool LoadFile(const std::string& filename);

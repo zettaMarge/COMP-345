@@ -327,8 +327,10 @@ void GameEngine::mainGameLoop() {
 
 // Reinforcement phase - Players are given a number of army units that depends on the number of
 // territories they own
+
 void GameEngine::reinforcementPhase() {
-    std::cout << "Reinforcement Phase started.\n";
+    /*
+       std::cout << "Reinforcement Phase started.\n";
 
     // Iterate through each player and calculate reinforcements
     for (int i = 0; i < players.size(); i++) {
@@ -353,6 +355,7 @@ void GameEngine::reinforcementPhase() {
     
     // Implement reinforcement logic here
     std::cout << "Reinforcement Phase ended.\n";
+    */
 }
 
 // Issue Orders phase - Players issue orders such as deploying armies, attacking other players,
@@ -420,7 +423,7 @@ void GameEngine::checkPlayerElimination() {
 //-----------------------------------------------------
     //Creates a new player and adds them to the players vector
     //Requires a player name input as a string
-void GameEngine::addPlayers(const string &playerName) {
+void GameEngine::AddPlayers(const string &playerName) {
         Player* newPlayer = new Player();
         newPlayer->SetName(playerName);
         players.push_back(newPlayer);
@@ -432,12 +435,12 @@ void GameEngine::addPlayers(const string &playerName) {
     //Accepts the directory filename as input string
     //default path is std::filesystem::current_path()
 void GameEngine::LoadMap(const string &fileName) {
-        std::filesystem::path mapPath = fileName / "maps";
+        std::filesystem::path mapPath = std::filesystem::path(fileName) / "maps";
         vector<std::string> mapFiles;
         int mapNumber = 1;
         std::cout << "The following are the Maps in the inputed directory, \n";
         for (auto & entry : std::filesystem::directory_iterator(mapPath)) {
-            std::cout << "Map " << mapNumber << entry.path().filename().string() << std::endl;
+            std::cout << "Map " << mapNumber << " " << entry.path().filename().string() << std::endl;
             mapFiles.push_back(entry.path().string());
             mapNumber++;
         }
@@ -456,15 +459,17 @@ void GameEngine::LoadMap(const string &fileName) {
             mapPath = mapFiles[selectedOption - 1];
         }
 
-
-        MapLoader loader();
+        MapLoader *loader = new MapLoader();
         bool loadedMap;
-        loadedMap = Loader->LoadMapFile(mapPath.string()); //automatically validates the map
+        loadedMap = loader->LoadMapFile(mapPath.string()); //automatically validates the map
         if (!loadedMap) {
             std::cout << "Failed to load map from file: " << mapPath.string() << std::endl;
             return;
         }
-        gameMap = Loader->CreateMap();
+        gameMap = loader->CreateMap();
+        std::cout << "Hello2";
+        //not making it to this point
+
 
     }
 
@@ -504,39 +509,40 @@ void GameEngine::GameStart() {
         //each player draws 2 initial cards from the deck
         for (int i = 0; i < players.size(); i++) {
             Player* player = players[i];
-            player->getPlayerHand()->DrawCard();
-            player->getPlayerHand()->DrawCard();
+            player->GetPlayerHand()->AddCard();
+            player->GetPlayerHand()->AddCard();
         }
 
         //swicthe game to play phase
-        maingameLoop();
+        mainGameLoop();
     }
 
 void GameEngine::StartupPhase() {
             std::string input;
-            std::cin >> "Starting game... Please input the name of the directory containing the maps, or press Enter to use the current directory: \n";
-            if (input.empty()) {
+            std::cout << "Starting game... Please input the name of the directory containing the maps, or input \"default\" to use the current directory: \n";
+            std::cin >> input;
+            if (input == "default") {
                 input = std::filesystem::current_path().string();
             }
-            loadMap(input);
-            bool isMapValid = validateMap();
+            LoadMap(input);
+            bool isMapValid = ValidateMap();
             if (!isMapValid) {
                 std::cout << "Map is invalid. Please try again.\n";
                 std::cin >> input;
                 if (input.empty()) {
                 input = std::filesystem::current_path().string();
                 }
-                loadMap(input);
-                isMapValid = validateMap();
+                LoadMap(input);
+                isMapValid = ValidateMap();
                 if (!isMapValid) {
                     std::cout << "Map is invalid again. Exiting startup phase.\n";
                     return;
                 }
             }
-            std::cin >> "Please input the number of players you would like to have in this game (2-6): \n";
+            std::cout << "Please input the number of players you would like to have in this game (2-6): \n";
             int numPlayers;
             std::cin >> numPlayers;
-            if (numPlayer != 2 || numPlayers != 3 || numPlayers != 4 || numPlayers != 5 || numPlayers != 6) {
+            if (numPlayers != 2 || numPlayers != 3 || numPlayers != 4 || numPlayers != 5 || numPlayers != 6) {
                 std::cout << "Invalid number of players. Please try again.\n";
                 std::cin >> numPlayers;
                 if (numPlayers != 2 || numPlayers != 3 || numPlayers != 4 || numPlayers != 5 || numPlayers != 6) {
@@ -548,14 +554,13 @@ void GameEngine::StartupPhase() {
                 std::string playerName;
                 std::cout << "Please input the name of player " + std::to_string(i + 1) + ": \n";
                 std::cin >> playerName;
-                addPlayers(playerName);
+                AddPlayers(playerName);
             }
             std::cout << "Players added successfully. Starting game...\n";
             GameStart();
         }
 
 void GameEngine::TestStartupPhase() {
-    GameEngine engine;
-    engine.StartupPhase();
+    StartupPhase();
 }
 
