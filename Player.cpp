@@ -30,11 +30,12 @@ Player::Player(){
     playerHand = nullptr;
     playersOrders = new OrdersList();
     conqueredThisTurn = false;
+    negotiators = vector<Player*>();
 }
 
 // Parameterized constructor
 // Deep copies of everything
-Player::Player(std::string& name, vector<Territory*> playerTerritories, Hand &playerHand, OrdersList &playerOrders){
+Player::Player(std::string& name, vector<Territory*> playerTerritories, Hand &playerHand, OrdersList &playerOrders, vector<Player*>() negotiators){
     
     this->name = name;
     for (Territory* t : playerTerritories) { 
@@ -43,6 +44,10 @@ Player::Player(std::string& name, vector<Territory*> playerTerritories, Hand &pl
     this->playerHand = new Hand(playerHand);;
     this->playersOrders = new OrdersList(playerOrders);
     this->conqueredThisTurn = false;
+    this->negotiators = vector<Player*>();
+    for (Player* p : negotiators) {
+        this->AddNegotiator(p);
+    }
 }
 
 //This is a stub meant to be able to code players class
@@ -117,6 +122,27 @@ void Player::RemoveTerritory(Territory* t) {
     } else {
         cout << "Territory not found in player's list." << endl;
     }
+}
+
+//Add a player to be in negotiations with the current player, if they aren't already
+void Player::AddNegotiator(Player* p) {
+    if (!IsNegotiatingWith(p)) {
+        negotiators.push_back(p);
+    }
+    else {
+        cout << "Already in negotiations with " << p->GetName() << endl;
+    }  
+}
+
+//Checks if a given player is currently negotiating with the current player
+bool Player::IsNegotiatingWith(Player* p) {
+    return std::find(negotiators.begin(), negotiators.end(), p) != negotiators.end()
+}
+
+//Resets the list of current negotiators and whether a territory was conquered
+void Player::ResetNegotiationsAndConquer() {
+    negotiators.clear();
+    conqueredThisTurn = false;
 }
 
 // Copy constructor

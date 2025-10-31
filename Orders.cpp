@@ -253,7 +253,7 @@ void SimulateBattle(Player* attackingPlayer, int attackingUnits, int defendingUn
 
         if (!attackingPlayer->HasConqueredThisTurn()) {
             attackingPlayer->SetConqueredThisTurn(true);
-            //TODO get card
+            attackingPlayer->GetPlayerHand()->AddCard();
         }
 
         std::cout << "TERRITORY was successfully conquered by PLAYER." << std::endl;
@@ -291,12 +291,11 @@ void Advance::Execute() {
 
             std::cout << "Advance order successful in " << GetEffect() << std::endl;
         }
-        else if (true) {
-            //IF not negotiating w other
+        else if (!owningPlayer->IsNegotiatingWith(target->GetOwner())) {
             SimulateBattle(owningPlayer, nbUnits, target->GetUnits(), src, target);
         }
         else {
-            std::cout << "Unable to attack TERRITORY; NAME is currently in negotiations with NAME" << std::endl;
+            std::cout << "Unable to attack " target->GetName() << "; Currently in negotiations with "<< target->GetOwner()->GetName() << std::endl;
         }
     }
     else {
@@ -464,10 +463,10 @@ ostream& Blockade::Print(ostream& stream) const {
 
 // Returns the effect of the order as a string
 std::string Blockade::GetEffect() const {
-    return "tripling the number of units on " + target->GetName();
+    return "doubling the number of units on " + target->GetName();
 }
 
-// Triple?? Double?? the number of army units on one of the current player’s territories and make it a neutral territory.
+// Double the number of army units on one of the current player’s territories and make it a neutral territory.
 void Blockade::Execute() {
     if (Validate()) {
         target->SetUnits(target->GetUnits() * 2);
@@ -698,7 +697,8 @@ std::string Negotiate::GetEffect() const {
 // Prevent attacks between the current player and the player targeted by the negotiate order until the end of the turn.
 void Negotiate::Execute() {
     if (Validate()) {
-        //TODO notify other player of negotiations, set negotiating state
+        owningPlayer->AddNegotiator(otherPlayer);
+        otherPlayer->AddNegotiator(owningPlayer);
         std::cout << "Negotiate order successful in " << GetEffect() << std::endl;
     }
     else {

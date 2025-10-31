@@ -23,6 +23,8 @@ public:
     vector<Territory*> ToDefend() const ; //returns list of territories to defend
     void AddTerritory(Territory* t); //adds territory to players list of territories
     void RemoveTerritory(Territory* t); //removes territory from players list of territories
+    void AddNegotiator(Player* p);
+    void ResetNegotiationsAndConquer();
    
     void IssueOrder(Order* x);//creates order and puts in players list of orders
     bool Equals(Player* p); //checks if two players are the same
@@ -46,6 +48,7 @@ public:
     bool IsTerritoryOwned(Territory* t);
     bool HasConqueredThisTurn();
     void SetConqueredThisTurn(bool state);
+    bool IsNegotiatingWith(Player* p);
 
 private:
     string name; //name of player, used to identify who owns territory
@@ -53,4 +56,5 @@ private:
     Hand* playerHand; //list of cards owned by player or their hand
     OrdersList* playersOrders; //list of orders owned by player
     bool conqueredThisTurn; //whether the player conquered a territory this turn or not
+    vector<Player*> negotiators; //list of players currently in negotiations with
 };
