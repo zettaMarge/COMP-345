@@ -467,7 +467,6 @@ void GameEngine::LoadMap(const string &fileName) {
             return;
         }
         gameMap = loader->CreateMap();
-        std::cout << "Hello2";
         //not making it to this point
 
 
@@ -513,6 +512,7 @@ void GameEngine::GameStart() {
             player->GetPlayerHand()->AddCard();
         }
 
+        
         //swicthe game to play phase
         mainGameLoop();
     }
@@ -541,11 +541,11 @@ void GameEngine::StartupPhase() {
             }
             std::cout << "Please input the number of players you would like to have in this game (2-6): \n";
             int numPlayers;
-            std::cin >> numPlayers;
-            if (numPlayers != 2 || numPlayers != 3 || numPlayers != 4 || numPlayers != 5 || numPlayers != 6) {
+            std::cin >> (numPlayers);
+            if (numPlayers < 2 || numPlayers > 6) {
                 std::cout << "Invalid number of players. Please try again.\n";
-                std::cin >> numPlayers;
-                if (numPlayers != 2 || numPlayers != 3 || numPlayers != 4 || numPlayers != 5 || numPlayers != 6) {
+                std::cin >> (numPlayers);
+                if (numPlayers < 2 || numPlayers > 6) {
                     std::cout << "Invalid number of players. Exiting startup phase.\n";
                     return;
                 }

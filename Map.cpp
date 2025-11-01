@@ -71,7 +71,6 @@ bool Territory::IsAdjacent(Territory* a) const{
 void Territory::SetOwner(Player* _owner){
     if(owner == _owner) return; // return if no need to update
     Player* oldOwner = owner; // get pointer to old owner to check later
-    if(oldOwner == nullptr && _owner != nullptr) _owner->AddTerritory(this); // If no previous owner, add territory to new owner
     owner = _owner;
     if((oldOwner != nullptr && oldOwner->IsTerritoryOwned(this)) && (_owner != nullptr && !_owner->IsTerritoryOwned(this))) oldOwner->SwitchTerritory(this, owner); // Swicthes territoy from old owner to new
 }
@@ -491,11 +490,12 @@ bool MapLoader::ValidateMap(){
 // Returns:
 // - Map object
 Map* MapLoader::CreateMap(){
+
     std::string checking = "None";
     std::vector<std::pair<std::string, std::vector<std::string>>> pending;
-    Map *gameMap;
+    Map *gameMap = new Map();  
 
-
+    
     // Check the map's headers
     for(int i = 0; i < content.size(); i++){
         if(content[i] == "[Continents]"){
@@ -505,7 +505,6 @@ Map* MapLoader::CreateMap(){
             checking = "Territories";
             continue;
         }
-        std::cout << "Hello01";
         // Create and add the continents
         
         if(checking == "Continents"){
@@ -523,7 +522,6 @@ Map* MapLoader::CreateMap(){
             // Ignore the x and y coordinates
             std::getline(ss, token, ',');
             std::getline(ss, token, ',');
-            std::cout << "Hello002";
             std::getline(ss, token, ',');
             std::string continent = token;
 
@@ -534,12 +532,10 @@ Map* MapLoader::CreateMap(){
             while(std::getline(ss, token, ',')){
                 adjTerr.push_back(token);
             }
-            std::cout << "Hello02";
             // Add territory with its adjacent territories to "pending" vector
             pending.push_back({name, adjTerr});
         }
     }
-    std::cout << "Hello03";
 
     // Add adjacencies of each territory by going through the "pending" vector
     for(int i = 0; i < pending.size(); i++){
@@ -551,7 +547,6 @@ Map* MapLoader::CreateMap(){
             }
         }
     }
-    std::cout << "Hello04";
-
+    
     return gameMap;
 }
