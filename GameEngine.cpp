@@ -116,6 +116,7 @@ void GameStartCommand::Execute() {
     std::random_device rd; // seed from machines random device
     std::mt19937 g(rd()); //random number generator 
     std::shuffle(GameEngine::instance->players.begin(), GameEngine::instance->players.end(), g);
+    std::cout << "2Starting game...\n";
 
     //Distributing territories
     vector<Territory*> territories = GameEngine::instance->gameMap->territories;
@@ -125,19 +126,23 @@ void GameStartCommand::Execute() {
         Territory* currentTerritory = territories[i];
         currentPlayer->AddTerritory(currentTerritory);
     }
+    std::cout << "3Starting game...\n";
 
     //50 initial army units to players
     for (int i = 0; i < GameEngine::instance->players.size(); i++) {
         Player* player = GameEngine::instance->players[i];
-        //player->AddReinforcements(50);
+       // player->AddReinforcements(50);
     }
+    std::cout << "4Starting game...\n";
 
     //each player draws 2 initial cards from the deck
     for (int i = 0; i < GameEngine::instance->players.size(); i++) {
         Player* player = GameEngine::instance->players[i];
-        //player->getPlayerHand()->DrawCard();
-        //player->getPlayerHand()->DrawCard();
+       // player->GetPlayerHand()->AddCard();
+        //player->GetPlayerHand()->AddCard();
     }
+    std::cout << "5Starting game...\n";
+
 	GameEngine::instance->mainGameLoop();
     std::cout << "Game started successfully.\n";
     if(GameEngine::instance->currentState == GameEngine::instance->playersAddedState.get()) {
@@ -298,7 +303,7 @@ GameEngine::GameEngine() {
         std::make_unique<AddPlayerCommand>("addplayer", nullptr));
 
     playersAddedState->availableCommands.emplace_back(
-        std::make_unique<SimpleCommand>("assigncountries", assignReinforcementState.get()));
+        std::make_unique<SimpleCommand>("gamestart", assignReinforcementState.get()));
 
     assignReinforcementState->availableCommands.emplace_back(
         std::make_unique<SimpleCommand>("issueorder", issueOrdersState.get()));
