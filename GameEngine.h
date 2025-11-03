@@ -278,7 +278,7 @@ public:
 	friend std::ostream& operator<<(std::ostream& os, const GameEngine& engine); // stream insertion
 
 	int Run(); // main game loop
-	bool ProcessInput(const std::string& input); // process user input
+//	bool ProcessInput(const std::string& input); // process user input
 	void ExecuteCommand(const std::shared_ptr<ICommand>& cmd); // execute command
     bool IsValidCommand(const std::string& cmd); // validate command
 	void changeState(IState* next); // change current state
@@ -294,5 +294,6 @@ public:
      void checkPlayerElimination();
 
     public:
+    Map* gameMap = nullptr; // Pointer to the loaded game map
     std::vector<Player*> players; // List of players in the game
 };

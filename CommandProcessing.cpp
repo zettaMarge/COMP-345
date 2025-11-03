@@ -17,7 +17,7 @@ CommandRegistrar<QuitCommand> QuitCommand::registrar("quit");
 // CommandProcessor base
 // ----------------------
 
-CommandProcessor::CommandProcessor(GameEngine* engine)
+CommandProcessor::CommandProcessor(GameEngine* engine)  
     : gameEngine(engine) {
 }
 
@@ -83,7 +83,11 @@ void ConsoleCommandProcessor::readCommands(GameEngine& engine) {
             engine.ExecuteCommand(std::move(cmd));
         }
         else {
-            engine.ProcessInput(commandName);
+            //engine.ProcessInput(commandName);
+            std::cout << "Invalid command. Available commands:\n";
+                for (auto& cmd : GameEngine::instance->currentState->availableCommands) {
+                    std::cout << " - " << cmd->name << "\n";
+                }
         }
     }
 }
