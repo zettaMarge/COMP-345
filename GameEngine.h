@@ -238,6 +238,9 @@ public:
     void LoadMap(const string &fileName); //Loads a map from a file
     void GameStart(); //Starts the game
 
+    public: 
+    void TestStartupPhase(); //Tests the startup phase
+
     enum OrderNames {
         Advance,
         Airlift,
@@ -246,7 +249,4 @@ public:
         Deploy,
         Negotiate
     }
-
-    public: 
-    void TestStartupPhase(); //Tests the startup phase
 };
