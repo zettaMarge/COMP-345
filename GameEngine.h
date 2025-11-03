@@ -217,6 +217,7 @@ public:
     //Additional methods to check for win condition and player count
     bool checkWinCondition();
     void checkPlayerElimination();
+    std::vector<OrderNames> availableOrders(int playerID);
 
     //Code for Assignemnt 2 Part 2
 //-----------------------------------------------------
@@ -236,6 +237,15 @@ public:
     bool ValidateMap(); //Validates the map according to assignment specifications
     void LoadMap(const string &fileName); //Loads a map from a file
     void GameStart(); //Starts the game
+
+    enum OrderNames {
+        Advance,
+        Airlift,
+        Blockade,
+        Bomb,
+        Deploy,
+        Negotiate
+    }
 
     public: 
     void TestStartupPhase(); //Tests the startup phase
