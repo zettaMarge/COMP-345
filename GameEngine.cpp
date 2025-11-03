@@ -424,12 +424,12 @@ void GameEngine::issueOrdersPhase() {
             std::cin >> choice;
             // Issue the selected order
             switch (orders[choice]) {
-                case -1:
+                case -1:{
                     isFinished[i] = true;
                     finishedPlayers++;
                     std::cout << "Player " << player->GetName() << " has ended their turn.\n";
                     break;
-                case Advance:
+                }case Advance:{
                     string startTerritory;
                     string targetTerritory;
                     int numUnits;
@@ -449,7 +449,7 @@ void GameEngine::issueOrdersPhase() {
                     std::cout << "Advance order issued.\n";
                     break;
 
-                case Airlift:
+            }case Airlift:{
                     string startTerritory;
                     string targetTerritory;
                     int numUnits = 5;  // Example number of units to airlift    
@@ -469,7 +469,7 @@ void GameEngine::issueOrdersPhase() {
                     std::cout << "Airlift order issued.\n";
                     break;
 
-                case Blockade:
+            }case Blockade:{
                     string targetTerritory;
 
                     //getting user input for blockade order
@@ -483,7 +483,7 @@ void GameEngine::issueOrdersPhase() {
                     std::cout << "Blockade order issued.\n";
                     break;
 
-                case Bomb:
+                }case Bomb:{
                     string targetTerritory;
 
                     //getting user input for bomb order
@@ -497,7 +497,7 @@ void GameEngine::issueOrdersPhase() {
                     std::cout << "Bomb order issued.\n";
                     break;
 
-                case Deploy:
+            }   case Deploy:{
                     string targetTerritory;
                     int numUnits;
 
@@ -527,10 +527,11 @@ void GameEngine::issueOrdersPhase() {
 
                     std::cout << "Negotiate order issued.\n";
                     break;
-                default:
+                } default:{
                     std::cout << "Invalid choice. Please try again.\n";
                     i--; // Repeat this player's turn
                     break;
+                }
             }
         }
     }

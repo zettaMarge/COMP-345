@@ -6,6 +6,8 @@
 
 #include "Map.h"
 #include "Player.h"
+#include "Orders.h"
+#include "Cards.h"
 
 // ===== Forward declarations =====
 class IState;
@@ -229,7 +231,7 @@ public:
 //I certify that this submission is my original work and meets the Faculty’s Expectations of Originality 
 //Mia Letendre
 //-----------------------------------------------------
-    private:
+private:
     std::vector<Player*> players; //list of players in the game
     Map *gameMap; //pointer to the map being used in the game
     Player* nuetralPlayer; //pointer to the nuetral player
@@ -248,6 +250,6 @@ public:
         Negotiate
     }
 
-    public: 
+public: 
     void TestStartupPhase(); //Tests the startup phase
 };
