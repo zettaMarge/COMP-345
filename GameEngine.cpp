@@ -570,7 +570,32 @@ std::vector<OrderNames> GameEngine::availableOrders(int playerID) {
 // Execute Orders phase - The issued orders are executed in the order they were issued
 void GameEngine::executeOrdersPhase() {
     std::cout << "Execute Orders Phase started.\n";
-    // Implement order execution logic here
+    std::vector<bool> isFinished(players.size(), false);
+    int finishedPlayers = 0;
+    while (finishedPlayers < players.size()) {
+        for (int i = 0; i < players.size(); i++) {
+            if (isFinished[i]) {
+                continue; // Skip players who have finished executing orders
+            }
+
+            Player* player = players[i]; // players vector needs to be defined somewhere in GameEngine
+            OrdersList* ordersList = player->GetPlayerOrders();
+            if (ordersList->IsEmpty()) {
+                std::cout << "No more orders for player " << player->GetName() << ". Ending turn.\n";
+                isFinished[i] = true;
+                finishedPlayers++;
+                continue;
+            }
+
+            std::cout << "Player " << player->GetName() << "'s turn to execute an order.\n";
+            Order* order = ordersList->GetNextOrder();
+            if (order) {
+                order->Execute();
+                ordersList->RemoveOrder(0); // Remove the executed order from the list
+                delete order; // Assuming ownership of Order pointers
+            }
+        }
+    }
     std::cout << "Execute Orders Phase ended.\n";
 }
 
