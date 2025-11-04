@@ -21,11 +21,12 @@ public:
     vector<Territory*> ToAttack() const; //returns list of territories to attack
     vector<Territory*> ToDefend() const ; //returns list of territories to defend
     void AddTerritory(Territory* t); //adds territory to players list of territories
-    void RemoveTerritory(Territory* t); //removes territory from players list of territories
+    void SwitchTerritory(Territory* t, Player* p); //removes territory from players list of territories
    
     void IssueOrder(Order* x);//creates order and puts in players list of orders
-    bool Equals(Player* p); //checks if two players are the same
+    void AddReinforcements(int num); //adds num reinforcements to player
 
+    bool Equals(Player* p); //checks if two players are the same
     Player(); // Default constructor
     Player(std::string& name, vector<Territory*> playerTerritories, Hand &playerHand, OrdersList &playerOrders); // Parameterized constructor
     Player(const Player& p); // Copy constructor
@@ -38,16 +39,19 @@ public:
     vector<Territory*> GetPlayerTerritories();
     Hand* GetPlayerHand();
     OrdersList* GetPlayerOrders() const;
+    int GetReinforcements();
     void SetName(string name);
-    void setPlayerTerritories(vector<Territory*> territories);
+    void SetPlayerTerritories(vector<Territory*> territories);
     void SetPlayerHand(Hand* hand);
     void SetPlayerOrders(OrdersList* orders);
+    void SetReinforcements(int reinforcements);
     bool IsTerritoryOwned(Territory* t);
+
 
 private:
     string name; //name of player, used to identify who owns territory
     vector<Territory*> playerTerritories; //list of territories owned by player
     Hand* playerHand; //list of cards owned by player or their hand
     OrdersList* playersOrders; //list of orders owned by player
-    
+    int reinforcements; //number of reinforcements the player has available
 };

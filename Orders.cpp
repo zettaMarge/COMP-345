@@ -59,6 +59,14 @@ vector<Order*> OrdersList::GetListItems() {
     return orders;
 }
 
+Order* OrdersList::GetNextOrder() {
+    if (!orders.empty()) {
+        return orders.front();
+    }
+    return nullptr;
+}
+
+
 // Add a new order to the list
 void OrdersList::Add(Order* newOrder) {
     orders.push_back(newOrder);

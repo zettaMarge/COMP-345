@@ -40,7 +40,7 @@ Player::Player(std::string& name, vector<Territory*> playerTerritories, Hand &pl
     for (Territory* t : playerTerritories) { 
         this->AddTerritory(t);
     }
-    this->playerHand = new Hand(playerHand);;
+    this->playerHand = new Hand(playerHand);
     this->playersOrders = new OrdersList(playerOrders);
 }
 
@@ -84,6 +84,10 @@ void Player::IssueOrder(Order* x) {
     playersOrders->Add(x);
 };
 
+void Player::AddReinforcements(int num) {
+   reinforcements += num;
+}
+
 //Returns true when a Territory is found in a Player's owned territories
 bool Player::IsTerritoryOwned(Territory* t) {
     return std::find(playerTerritories.begin(), playerTerritories.end(), t) != playerTerritories.end();
@@ -105,17 +109,19 @@ void Player::AddTerritory(Territory* t) {
     }
 }
 
-//Removes territory from players list of territories
+//Swicthes territory from this player to another player
 //also sets territory owner to nullptr if this player owns it
-void Player::RemoveTerritory(Territory* t) {
+//needs to be updated to actually erase from vector
+void Player::SwitchTerritory(Territory* t, Player* p) {
     auto it = std::remove(playerTerritories.begin(), playerTerritories.end(), t);
+    
     if (it != playerTerritories.end()) {
-        if (t->GetOwner() == this) {
-            t->SetOwner(nullptr);
-        }
+        playerTerritories.erase(it, playerTerritories.end());
+        p->AddTerritory(t);
     } else {
         cout << "Territory not found in player's list." << endl;
     }
+    playerTerritories.erase(it, playerTerritories.end());
 }
 
 // Copy constructor
@@ -207,14 +213,15 @@ OrdersList* Player::GetPlayerOrders() const{
     return playersOrders;
 };
 
+int Player::GetReinforcements() {
+    return reinforcements;
+};
+
 void Player::SetName(string name) {
     this->name = name;
 };
 
-void Player::setPlayerTerritories(vector<Territory*> territories) {
-    for (Territory* t : playerTerritories) {
-            this->RemoveTerritory(t);
-    }
+void Player::SetPlayerTerritories(vector<Territory*> territories) {
     playerTerritories.clear();
     for (Territory* t : territories) {
         this->AddTerritory(t);
@@ -230,3 +237,6 @@ void Player::SetPlayerOrders(OrdersList* orders) {
     this->playersOrders = new OrdersList(*orders);
 };
 
+void Player::SetReinforcements(int reinforcements) {
+    this->reinforcements = reinforcements;
+};

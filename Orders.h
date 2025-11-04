@@ -34,6 +34,7 @@ class OrdersList{
         friend ostream& operator<<(ostream& stream, const OrdersList& obj);
 
         vector<Order*> GetListItems();
+        Order* GetNextOrder();
         void Add(Order* newOrder);
         void Move(int fromId, int toId);
         void Remove(int id);

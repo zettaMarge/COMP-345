@@ -196,6 +196,8 @@ void QuitCommand::Execute() {
     std::cout << "Game quit successfully.\n";
     exit(0); //terminate program
 };
+#include <random>
+#include <algorithm>
 
 // ===== SimpleState implementation =====
 // SimpleState constructor
@@ -546,6 +548,16 @@ int TestGameEngine() {
 }
 
 // Code for assignment 2
+// Code for assignment 2//-----------------------------------------------------
+//Alexandre Godfroy 40300165
+//COMP-345-D 2252 Assignment 2 Game play: main game Loop
+//Dr. Hamed Jafarpour
+//Submitted: TBD
+//Due: November 11, 2025 
+//I certify that this submission is my original work and meets the Faculty’s Expectations of Originality 
+//Alexandre Godfroy
+//-----------------------------------------------------
+
 // Part 3: Game play: main game loop
 
 //Main game loop that cycles through the three phases
@@ -555,6 +567,9 @@ void GameEngine::mainGameLoop() {
       //  reinforcementPhase();
       //  issueOrdersPhase();
       //  executeOrdersPhase();
+        reinforcementPhase();
+        issueOrdersPhase();
+        executeOrdersPhase();
         // checkPlayerElimination();
         // gameWon = checkWinCondition();
     }
@@ -564,6 +579,10 @@ void GameEngine::mainGameLoop() {
 // territories they own
 void GameEngine::reinforcementPhase() {
     std::cout << "Reinforcement Phase started.\n";
+
+void GameEngine::reinforcementPhase() {
+    /*
+       std::cout << "Reinforcement Phase started.\n";
 
     // Iterate through each player and calculate reinforcements
     for (int i = 0; i < players.size(); i++) {
@@ -576,32 +595,250 @@ void GameEngine::reinforcementPhase() {
         }
 
         // Check for continent control bonuses
-      //  std::vector<Continent*> continents = player->GetOwnedContinents();
-       // for (int j = 0; j < continents.size(); j++) {
-      //      reinforcementUnits += continents[j]->GetPoints();
+        std::vector<Continent*> continents = player->GetOwnedContinents();
+        for (int j = 0; j < continents.size(); j++) {
+            reinforcementUnits += continents[j]->GetPoints();
         }
-
+        
         //add reinforcements to player's pool
-      //  player->AddReinforcements(reinforcementUnits);
-     //   std::cout << "Player " << player->GetName() << " receives " << reinforcementUnits << " reinforcement units.\n";
-   // }
-
-    // Implement reinforcement logic here
+        player->AddReinforcements(reinforcementUnits);
+        std::cout << "Player " << player->GetName() << " receives " << reinforcementUnits << " reinforcement units.\n";
+    }
+    
     std::cout << "Reinforcement Phase ended.\n";
+    */
 }
 
 // Issue Orders phase - Players issue orders such as deploying armies, attacking other players,
 // and fortifying their positions
 void GameEngine::issueOrdersPhase() {
     std::cout << "Issue Orders Phase started.\n";
-    // Implement order issuing logic here
+    std::vector<bool> isFinished(players.size(), false);
+    int finishedPlayers = 0;
+    while (finishedPlayers < players.size()) {
+        for (int i = 0; i < players.size(); i++) {
+            if (isFinished[i]) {
+                continue; // Skip players who have finished issuing orders
+            }
+
+            Player* player = players[i]; // players vector needs to be defined somewhere in GameEngine
+            std::cout << "Player " << player->GetName() << "'s turn to issue an order.\n";
+            std::vector<OrderNames> orders = availableOrders(i);
+            if (orders.empty()) {
+                std::cout << "No available orders for player " << player->GetName() << ". Ending turn.\n";
+                isFinished[i] = true;
+                finishedPlayers++;
+                continue;
+            }
+            std::cout << "Available orders:\n";
+            for (int j = 0; j < orders.size(); j++) {
+                switch (orders[j]) {
+                case Deploy:
+                    std::cout << j << " - Deploy\n";
+                    break;
+
+                case Advance:
+                    std::cout << j << " - Advance\n";
+                    break;
+
+                case Bomb:
+                    std::cout << j << " - Bomb\n";
+                    break;
+
+                case Airlift:
+                    std::cout << j << " - Airlift\n";
+                    break;
+
+                case Blockade:
+                    std::cout << j << " - Blockade\n";
+                    break;
+
+                case Negotiate:
+                    std::cout << j << " - Negotiate\n";
+                    break;
+
+                default:
+                    break;
+                }
+            }
+
+            std::cout << "Enter the number of the order to issue, or -1 to end your turn: ";
+            int choice;
+            std::cin >> choice;
+            // Issue the selected order
+            switch (orders[choice]) {
+                case -1:{
+                    isFinished[i] = true;
+                    finishedPlayers++;
+                    std::cout << "Player " << player->GetName() << " has ended their turn.\n";
+                    break;
+                }case Advance:{
+                    string startTerritory;
+                    string targetTerritory;
+                    int numUnits;
+
+                    //getting user input for advance order
+                    std::cout << "You chose to issue an Advance order.\nPlease enter the starting territory: "<< std::endl;
+                    cin >> startTerritory;
+                    std::cout << "Please enter the target territory: "<< std::endl;
+                    cin >> targetTerritory;
+                    std::cout << "Please enter the number of units to move: "<< std::endl;
+                    cin >> numUnits;
+                
+                    //creating and issuing the advance order
+                    Order* advanceOrder = new Advance(player->GetName(), numUnits, gameMap->GetTerritoryByName(startTerritory), gameMap->GetTerritoryByName(targetTerritory));
+                    player->IssueOrder(advanceOrder);
+
+                    std::cout << "Advance order issued.\n";
+                    break;
+
+            }case Airlift:{
+                    string startTerritory;
+                    string targetTerritory;
+                    int numUnits = 5;  // Example number of units to airlift    
+
+                    //getting user input for airlift order
+                    std::cout << "You chose to issue an Airlift order.\nPlease enter the starting territory: "<< std::endl;
+                    cin >> startTerritory;
+                    std::cout << "Please enter the target territory: "<< std::endl;
+                    cin >> targetTerritory;
+                    std::cout << "Please enter the number of units to move: "<< std::endl;
+                    cin >> numUnits;
+
+                    //creating and issuing the airlift order
+                    Order* airliftOrder = new Airlift(player->GetName(), numUnits, gameMap->GetTerritoryByName(startTerritory), gameMap->GetTerritoryByName(targetTerritory));
+                    player->IssueOrder(airliftOrder);
+
+                    std::cout << "Airlift order issued.\n";
+                    break;
+
+            }case Blockade:{
+                    string targetTerritory;
+
+                    //getting user input for blockade order
+                    std::cout << "You chose to issue a Blockade order.\nPlease enter the target territory: "<< std::endl;
+                    cin >> targetTerritory;
+
+                    //creating and issuing the blockade order
+                    Order* blockadeOrder = new Blockade(player->GetName(), gameMap->GetTerritoryByName(targetTerritory));
+                    player->IssueOrder(blockadeOrder);
+
+                    std::cout << "Blockade order issued.\n";
+                    break;
+
+                }case Bomb:{
+                    string targetTerritory;
+
+                    //getting user input for bomb order
+                    std::cout << "You chose to issue a Bomb order.\nPlease enter the target territory: "<< std::endl;
+                    cin >> targetTerritory;
+
+                    //creating and issuing the bomb order
+                    Order* bombOrder = new Bomb(player->GetName(), gameMap->GetTerritoryByName(targetTerritory));
+                    player->IssueOrder(bombOrder);
+
+                    std::cout << "Bomb order issued.\n";
+                    break;
+
+            }   case Deploy:{
+                    string targetTerritory;
+                    int numUnits;
+
+                   //getting user input for deploy order
+                    std::cout << "You chose to issue a Deploy order.\nPlease enter the target territory: "<< std::endl;
+                    cin >> targetTerritory;
+                    std::cout << "Please enter the number of units to deploy: "<< std::endl;
+                    cin >> numUnits;
+
+                    //creating and issuing the deploy order
+                    Order* deployOrder = new Deploy(player->GetName(), numUnits, gameMap->GetTerritoryByName(targetTerritory));
+                    player->IssueOrder(deployOrder);
+
+                    std::cout << "Deploy order issued.\n";
+                    break;
+
+                    case Negotiate:
+                    string targetPlayerName;
+
+                    //getting user input for negotiate order
+                    std::cout << "You chose to issue a Negotiate order.\nPlease enter the target player name: "<< std::endl;
+                    cin >> targetPlayerName;
+
+                    //creating and issuing the negotiate order
+                    Order* negotiateOrder = new Negotiate(player->GetName(), targetPlayerName);
+                    player->IssueOrder(negotiateOrder);
+
+                    std::cout << "Negotiate order issued.\n";
+                    break;
+                } default:{
+                    std::cout << "Invalid choice. Please try again.\n";
+                    i--; // Repeat this player's turn
+                    break;
+                }
+            }
+        }
+    }
     std::cout << "Issue Orders Phase ended.\n";
+}
+
+std::vector<OrderNames> GameEngine::availableOrders(int playerID) {
+    std::vector<OrderNames> orders;
+    //while there are still reinforcements, deploy is the only available order
+    if (players[playerID]->GetReinforcements() > 0) {
+        orders.push_back(Deploy);
+    } else {
+        orders.push_back(Advance);
+        for (Card* card : players[playerID]->GetPlayerHand()->GetCards()) {
+            switch (card->GetType()) {
+                case Card::Airlift:
+                    orders.push_back(Airlift);
+                    break;
+                case Card::Bomb:
+                    orders.push_back(Bomb);
+                    break;
+                case Card::Blockade:
+                    orders.push_back(Blockade);
+                    break;
+                case Card::Negotiate:
+                    orders.push_back(Negotiate);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    return orders;
 }
 
 // Execute Orders phase - The issued orders are executed in the order they were issued
 void GameEngine::executeOrdersPhase() {
     std::cout << "Execute Orders Phase started.\n";
-    // Implement order execution logic here
+    std::vector<bool> isFinished(players.size(), false);
+    int finishedPlayers = 0;
+    while (finishedPlayers < players.size()) {
+        for (int i = 0; i < players.size(); i++) {
+            if (isFinished[i]) {
+                continue; // Skip players who have finished executing orders
+            }
+
+            Player* player = players[i]; // players vector needs to be defined somewhere in GameEngine
+            OrdersList* ordersList = player->GetPlayerOrders();
+            if (ordersList->IsEmpty()) {
+                std::cout << "No more orders for player " << player->GetName() << ". Ending turn.\n";
+                isFinished[i] = true;
+                finishedPlayers++;
+                continue;
+            }
+
+            std::cout << "Player " << player->GetName() << "'s turn to execute an order.\n";
+            Order* order = ordersList->GetNextOrder();
+            if (order) {
+                order->Execute();
+                ordersList->RemoveOrder(0); // Remove the executed order from the list
+                delete order; // Assuming ownership of Order pointers
+            }
+        }
+    }
     std::cout << "Execute Orders Phase ended.\n";
 }
 
@@ -643,3 +880,156 @@ void GameEngine::checkPlayerElimination() {
         delete eliminatedPlayer; // Assuming ownership of Player pointers
     }
 }
+
+//-----------------------------------------------------
+//Mia Letendre 40274681
+//COMP-345-D 2252 Assignment 2 Game Startup Phase
+//Dr. Hamed Jafarpour
+//Submitted: TBD
+//Due: November 11, 2025 
+//I certify that this submission is my original work and meets the Faculty’s Expectations of Originality 
+//Mia Letendre
+//-----------------------------------------------------
+    //Creates a new player and adds them to the players vector
+    //Requires a player name input as a string
+void GameEngine::AddPlayers(const string &playerName) {
+        Player* newPlayer = new Player();
+        newPlayer->SetName(playerName);
+        players.push_back(newPlayer);
+    }
+
+    //Loads a map from a file using MapLoader
+    //Takes map file name input as a string
+    //Assumes directory has a folder named "maps" in the current working directory
+    //Accepts the directory filename as input string
+    //default path is std::filesystem::current_path()
+void GameEngine::LoadMap(const string &fileName) {
+        std::filesystem::path mapPath = std::filesystem::path(fileName) / "maps";
+        vector<std::string> mapFiles;
+        int mapNumber = 1;
+        std::cout << "The following are the Maps in the inputed directory, \n";
+        for (auto & entry : std::filesystem::directory_iterator(mapPath)) {
+            std::cout << "Map " << mapNumber << " " << entry.path().filename().string() << std::endl;
+            mapFiles.push_back(entry.path().string());
+            mapNumber++;
+        }
+        std::cout << "Please input the number associated with the map you want: \n";
+        int selectedOption = -1;
+        std::cin >> selectedOption;
+        if (selectedOption < 1 || selectedOption > mapFiles.size()) {
+            std::cout << "Invalid selection. Please try again.\n";
+             int selectedOption = -1;
+             std::cin >> selectedOption;
+             if (selectedOption < 1 || selectedOption > mapFiles.size()) {
+                std::cout << "Invalid selection. Exiting map loading.\n";
+                return;
+            }
+        }else{
+            mapPath = mapFiles[selectedOption - 1];
+        }
+
+        MapLoader *loader = new MapLoader();
+        bool loadedMap;
+        loadedMap = loader->LoadMapFile(mapPath.string()); //automatically validates the map
+        if (!loadedMap) {
+            std::cout << "Failed to load map from file: " << mapPath.string() << std::endl;
+            return;
+        }
+        gameMap = loader->CreateMap();
+        //not making it to this point
+
+
+    }
+
+    //Validates the map using its Validate method
+    //Takes a map reference as input
+    bool GameEngine::ValidateMap() {
+        return gameMap->Validate();
+    }
+
+    //a) fairly distribute all the territories to the players
+    //b) determine randomly the order of play of the players in the game
+    //c) give 50 initial army units to the players, which are placed in their respective reinforcement pool
+    //d) let each player draw 2 initial cards from the deck using the deck’s draw() method
+    //e) switch the game to the play phase
+void GameEngine::GameStart() {
+
+        //shuffling players 
+        std::random_device rd; // seed from machines random device
+        std::mt19937 g(rd()); //random number generator 
+        std::shuffle(players.begin(), players.end(), g);
+
+        //Distributing territories
+        vector<Territory*> territories = gameMap->territories;
+        int numPlayers = players.size();
+        for (int i = 0; i < territories.size(); i++) {
+            Player* currentPlayer = players[i % numPlayers];
+            Territory* currentTerritory = territories[i];
+            currentPlayer->AddTerritory(currentTerritory);
+        }
+
+        //50 initial army units to players
+        for (int i = 0; i < players.size(); i++) {
+            Player* player = players[i];
+            player->AddReinforcements(50);
+        }
+
+        //each player draws 2 initial cards from the deck
+        for (int i = 0; i < players.size(); i++) {
+            Player* player = players[i];
+            player->GetPlayerHand()->AddCard();
+            player->GetPlayerHand()->AddCard();
+        }
+
+        
+        //swicthe game to play phase
+        mainGameLoop();
+    }
+
+void GameEngine::StartupPhase() {
+            std::string input;
+            std::cout << "Starting game... Please input the name of the directory containing the maps, or input \"default\" to use the current directory: \n";
+            std::cin >> input;
+            if (input == "default") {
+                input = std::filesystem::current_path().string();
+            }
+            LoadMap(input);
+            bool isMapValid = ValidateMap();
+            if (!isMapValid) {
+                std::cout << "Map is invalid. Please try again.\n";
+                std::cin >> input;
+                if (input.empty()) {
+                input = std::filesystem::current_path().string();
+                }
+                LoadMap(input);
+                isMapValid = ValidateMap();
+                if (!isMapValid) {
+                    std::cout << "Map is invalid again. Exiting startup phase.\n";
+                    return;
+                }
+            }
+            std::cout << "Please input the number of players you would like to have in this game (2-6): \n";
+            int numPlayers;
+            std::cin >> (numPlayers);
+            if (numPlayers < 2 || numPlayers > 6) {
+                std::cout << "Invalid number of players. Please try again.\n";
+                std::cin >> (numPlayers);
+                if (numPlayers < 2 || numPlayers > 6) {
+                    std::cout << "Invalid number of players. Exiting startup phase.\n";
+                    return;
+                }
+            }
+            for (int i = 0; i < numPlayers; i++) {
+                std::string playerName;
+                std::cout << "Please input the name of player " + std::to_string(i + 1) + ": \n";
+                std::cin >> playerName;
+                AddPlayers(playerName);
+            }
+            std::cout << "Players added successfully. Starting game...\n";
+            GameStart();
+        }
+
+void GameEngine::TestStartupPhase() {
+    StartupPhase();
+}
+

@@ -5,6 +5,12 @@
 #include <memory>
 #include "CommandProcessing.h"
 #include "Player.h"
+
+#include "Map.h"
+#include "Player.h"
+#include "Orders.h"
+#include "Cards.h"
+
 // ===== Forward declarations =====
 class IState;
 template <typename T>
