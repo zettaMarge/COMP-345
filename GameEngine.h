@@ -3,14 +3,15 @@
 #include <string>
 #include <vector>
 #include <memory>
-
-#include "Map.h"
+#include "CommandProcessing.h"
 #include "Player.h"
-#include "Orders.h"
+#include "Map.h"
 #include "Cards.h"
-
+#include "Orders.h"
 // ===== Forward declarations =====
 class IState;
+template <typename T>
+class CommandRegistrar;
 
 int TestGameEngine(); // test the game engine
 
@@ -23,28 +24,34 @@ int TestGameEngine(); // test the game engine
 class ICommand {
 public:
     std::string name;
+    std::string argument;   
+    std::string effect; //idek but it says I have to add this
     IState* nextState;   // optional state to transition into
 
-    ICommand(const std::string& n, IState* next = nullptr)
-        : name(n), nextState(next) {
+    ICommand(const std::string& n, const std::string& arg = "", IState* next = nullptr)
+        : name(n), argument(arg), nextState(next) {
     }
 
     virtual void Execute() = 0;
     virtual ~ICommand() = default;
 
     // Copy / assign
-    ICommand(const ICommand& other) : name(other.name), nextState(other.nextState) {}
+    ICommand(const ICommand& other)
+        : name(other.name), argument(other.argument), nextState(other.nextState) {
+    }
+
     ICommand& operator=(const ICommand& other) {
         if (this != &other) {
             name = other.name;
+            argument = other.argument;
             nextState = other.nextState;
         }
         return *this;
     }
 
-    // Stream insertion
     friend std::ostream& operator<<(std::ostream& os, const ICommand& cmd) {
         os << "Command: " << cmd.name;
+        if (!cmd.argument.empty()) os << " " << cmd.argument;
         return os;
     }
 };
@@ -54,10 +61,79 @@ public:
 //later on each command will just inherit from ICommand and implement their own Execute method
 class SimpleCommand : public ICommand {
 public:
-    SimpleCommand(const std::string& n, IState* next = nullptr)
-        : ICommand(n, next) {
+    SimpleCommand(const std::string& name, const std::string& argument = "", IState* next = nullptr)
+        : ICommand(name, argument, next) {
     }
-    void Execute() override { std::cout << "Executing " << name << "\n"; }
+    SimpleCommand(const std::string& name, IState* next)
+        : ICommand(name, "", next) {
+    }
+    void Execute() override { std::cout << "Executing " << name << argument <<"\n"; }
+};
+
+class LoadMapCommand : public ICommand {
+public:
+    // Normal constructor
+    explicit LoadMapCommand(const std::string& arg = "", IState* next = nullptr)
+        : ICommand("loadmap", arg, next) {
+    }
+
+    void Execute() override;
+
+private:
+    // Self-registration
+    static CommandRegistrar<LoadMapCommand> registrar;
+};
+
+class ValidateMapCommand : public ICommand {
+    public:
+    explicit ValidateMapCommand(const std::string& arg = "", IState* next = nullptr)
+        : ICommand("validatemap", arg, next) {
+    }
+    void Execute() override;
+private:
+    static CommandRegistrar<ValidateMapCommand> registrar; // only declare
+};
+
+class AddPlayerCommand : public ICommand {
+public:
+    explicit AddPlayerCommand(const std::string& arg = "", IState* next = nullptr)
+        : ICommand("addplayer", arg, next) {
+    }
+
+    void Execute() override;
+
+private:
+    static CommandRegistrar<AddPlayerCommand> registrar; // only declare
+};
+
+class GameStartCommand : public ICommand {
+    public:
+    explicit GameStartCommand(const std::string& arg = "", IState* next = nullptr)
+        : ICommand("gamestart", arg, next) {
+    }
+    void Execute() override;
+private:
+    static CommandRegistrar<GameStartCommand> registrar; // only declare
+};
+
+class ReplayCommand : public ICommand {
+    public:
+    explicit ReplayCommand(const std::string& arg = "", IState* next = nullptr)
+        : ICommand("replay", arg, next) {
+    }
+	void Execute() override;
+    private:
+		static CommandRegistrar<ReplayCommand> registrar; // only declare
+};
+
+class QuitCommand : public ICommand {
+public:
+    explicit QuitCommand(const std::string& arg = "", IState* next = nullptr)
+        : ICommand("quit", arg, next) {
+    }
+    void Execute() override;
+private:
+    static CommandRegistrar<QuitCommand> registrar; // only declare
 };
 
 // ===== IState =====
@@ -175,7 +251,6 @@ public:
     }
 };
 
-
 // ===== GameEngine =====
 // Singleton class that manages the game states and transitions
 // Owns all states and manages the current state
@@ -206,53 +281,39 @@ public:
 	friend std::ostream& operator<<(std::ostream& os, const GameEngine& engine); // stream insertion
 
 	int Run(); // main game loop
-	bool ProcessInput(const std::string& input); // process user input
+//	bool ProcessInput(const std::string& input); // process user input
+	void ExecuteCommand(const std::shared_ptr<ICommand>& cmd); // execute command
+    bool IsValidCommand(const std::string& cmd); // validate command
+	void changeState(IState* next); // change current state
 
     // Code for assignment 2
     // Part 3: Game play: main game loop
-    private:
-    void mainGameLoop();
-    void reinforcementPhase();
-    void issueOrdersPhase();
-    void executeOrdersPhase();
+     void mainGameLoop();
+     void reinforcementPhase();
+     void issueOrdersPhase();
+     void executeOrdersPhase();
 
+     enum OrderNames {
+         Advance,
+         Airlift,
+         Blockade,
+         Bomb,
+         Deploy,
+         Negotiate
+     };
+     void TestStartupPhase(); //Tests the startup phase
     //Additional methods to check for win condition and player count
-    bool checkWinCondition();
-    void checkPlayerElimination();
-    std::vector<OrderNames> availableOrders(int playerID);
+     bool checkWinCondition();
+     void checkPlayerElimination();
+     std::vector<GameEngine::OrderNames> availableOrders(int playerID);
 
-    //Code for Assignemnt 2 Part 2
-//-----------------------------------------------------
-//Mia Letendre 40274681
-//COMP-345-D 2252 Assignment 2 Game Startup Phase
-//Dr. Hamed Jafarpour
-//Submitted: TBD
-//Due: November 11, 2025 
-//I certify that this submission is my original work and meets the Faculty’s Expectations of Originality 
-//Mia Letendre
-//-----------------------------------------------------
-private:
-    std::vector<Player*> players; //list of players in the game
-    Map *gameMap; //pointer to the map being used in the game
-    Player* nuetralPlayer; //pointer to the nuetral player
-    void StartupPhase(); //Handles the startup phase of the game
-    void AddPlayers(const string &playerName); //Adds a new player to the game
-    bool ValidateMap(); //Validates the map according to assignment specifications
-    void LoadMap(const string &fileName); //Loads a map from a file
-    void GameStart(); //Starts the game
-
-    public: 
-    void TestStartupPhase(); //Tests the startup phase
-
-    enum OrderNames {
-        Advance,
-        Airlift,
-        Blockade,
-        Bomb,
-        Deploy,
-        Negotiate
-    }
-
-public: 
-    void TestStartupPhase(); //Tests the startup phase
+    public:
+        std::vector<Player*> players; //list of players in the game
+        Map* gameMap; //pointer to the map being used in the game
+        Player* nuetralPlayer; //pointer to the nuetral player
+        void StartupPhase(); //Handles the startup phase of the game
+        void AddPlayers(const string& playerName); //Adds a new player to the game
+        bool ValidateMap(); //Validates the map according to assignment specifications
+        void LoadMap(const string& fileName); //Loads a map from a file
+        void GameStart(); //Starts the game   
 };

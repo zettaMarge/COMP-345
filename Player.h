@@ -17,19 +17,19 @@
 #include "Orders.h"
 
 using namespace std;
-class Player{
+class Player {
 public:
     vector<Territory*> ToAttack() const; //returns list of territories to attack
-    vector<Territory*> ToDefend() const ; //returns list of territories to defend
+    vector<Territory*> ToDefend() const; //returns list of territories to defend
     void AddTerritory(Territory* t); //adds territory to players list of territories
     void SwitchTerritory(Territory* t, Player* p); //removes territory from players list of territories
-   
+
     void IssueOrder(Order* x);//creates order and puts in players list of orders
     void AddReinforcements(int num); //adds num reinforcements to player
 
     bool Equals(Player* p); //checks if two players are the same
     Player(); // Default constructor
-    Player(std::string& name, vector<Territory*> playerTerritories, Hand &playerHand, OrdersList &playerOrders); // Parameterized constructor
+    Player(std::string& name, vector<Territory*> playerTerritories, Hand& playerHand, OrdersList& playerOrders); // Parameterized constructor
     Player(const Player& p); // Copy constructor
     Player& operator=(const Player& p); // Assignment operator
     friend ostream& operator<<(ostream& os, const Player& p); // Stream insertion operator

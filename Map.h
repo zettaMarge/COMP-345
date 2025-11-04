@@ -16,7 +16,6 @@
 
 struct Continent; // Forward declaration for Continent struct
 class Player; // Forward declaration for Player class
-class GameEngine; // Forward declaration for GameEngine class
 
 //  ----- Territory class -----
 // Represents a single Territory in a Map.
@@ -120,14 +119,13 @@ class Map {
 
         bool IsAdjacent(Territory* a, Territory* b);
         bool Validate();
-        friend class GameEngine;
+        std::vector<Territory*> territories;
 
     private:
         std::unordered_map<std::string, Continent*> continentByName;
         std::unordered_map<std::string, Territory*> territoryByName;
 
         std::vector<Continent*> continents;
-        std::vector<Territory*> territories;
 
         void Dfs(Territory* current, std::unordered_set<Territory*>& visited);
         void DfsContinent(Territory* current, std::unordered_set<Territory*>& visited, Continent* continent);
@@ -150,7 +148,7 @@ class MapLoader{
         friend std::ostream& operator<<(std::ostream& os, const MapLoader& _mapLoader);
 
         bool LoadMapFile(const std::string& filename);
-        Map* CreateMap();
+        Map CreateMap();
     private:
         std::vector<std::string> content;
         bool LoadFile(const std::string& filename);

@@ -23,8 +23,8 @@ bool Player::Equals(Player* p) {
 };
 
 // Default constructor
-Player::Player(){
-    
+Player::Player() {
+
     name = "Luara Palmer";
     playerTerritories = vector<Territory*>();
     playerHand = nullptr;
@@ -34,10 +34,10 @@ Player::Player(){
 
 // Parameterized constructor
 // Deep copies of everything
-Player::Player(std::string& name, vector<Territory*> playerTerritories, Hand &playerHand, OrdersList &playerOrders){
-    
+Player::Player(std::string& name, vector<Territory*> playerTerritories, Hand& playerHand, OrdersList& playerOrders) {
+
     this->name = name;
-    for (Territory* t : playerTerritories) { 
+    for (Territory* t : playerTerritories) {
         this->AddTerritory(t);
     }
     this->playerHand = new Hand(playerHand);
@@ -49,31 +49,31 @@ Player::Player(std::string& name, vector<Territory*> playerTerritories, Hand &pl
 //assumes that adjacentTerritories() returns a list of territories adjacent to the territory
 //aslo assumes that the territories var hold all the territories owned by the player
 // Compares Owner pointer to this Player instance
-vector<Territory*> Player::ToAttack() const{
+vector<Territory*> Player::ToAttack() const {
     vector<Territory*> toAttackList;
     for (Territory* territory : playerTerritories) {
         for (Territory* neighbor : territory->AdjacentTerritories()) {
             if (std::find(toAttackList.begin(), toAttackList.end(), neighbor) == toAttackList.end()) {
-                if (neighbor->GetOwner() != this) { 
+                if (neighbor->GetOwner() != this) {
                     toAttackList.push_back(neighbor);
-                }   
+                }
             }
         }
-    } 
+    }
     if (toAttackList.empty()) {
         cout << "No territories to attack." << endl;
-    } 
+    }
     return toAttackList;
 };
 
 //This is a stub meant to be able to code players class
 //will return all the territiories that are owned by the player and can be defended
 // Compares Owner pointer to this Player instance
-vector<Territory*> Player::ToDefend() const{
+vector<Territory*> Player::ToDefend() const {
 
     if (playerTerritories.empty()) {
         cout << "No territories to defend." << endl;
-    } 
+    }
     return playerTerritories;
 };
 
@@ -85,7 +85,7 @@ void Player::IssueOrder(Order* x) {
 };
 
 void Player::AddReinforcements(int num) {
-   reinforcements += num;
+    reinforcements += num;
 }
 
 //Returns true when a Territory is found in a Player's owned territories
@@ -102,8 +102,8 @@ void Player::AddTerritory(Territory* t) {
         return;
     }
 
-   playerTerritories.push_back(t);
-    
+    playerTerritories.push_back(t);
+
     if (t->GetOwner() != this) {
         t->SetOwner(this);
     }
@@ -114,11 +114,12 @@ void Player::AddTerritory(Territory* t) {
 //needs to be updated to actually erase from vector
 void Player::SwitchTerritory(Territory* t, Player* p) {
     auto it = std::remove(playerTerritories.begin(), playerTerritories.end(), t);
-    
+
     if (it != playerTerritories.end()) {
         playerTerritories.erase(it, playerTerritories.end());
         p->AddTerritory(t);
-    } else {
+    }
+    else {
         cout << "Territory not found in player's list." << endl;
     }
     playerTerritories.erase(it, playerTerritories.end());
@@ -132,7 +133,7 @@ Player::Player(const Player& p) {
     playerHand = new Hand(*(p.playerHand));
     playersOrders = new OrdersList(*(p.playersOrders));
 }
-    
+
 // Assignment operator
 // Clear existing territories and shallow copies, because otherwise there would be two owners of the same territory
 Player& Player::operator=(const Player& p) {
@@ -148,7 +149,7 @@ Player& Player::operator=(const Player& p) {
     return *this;
 
 }
-    
+
 // Stream insertion operator
 ostream& operator<<(ostream& os, const Player& p) {
     os << "Player Name: " << p.name << endl;
@@ -156,7 +157,7 @@ ostream& operator<<(ostream& os, const Player& p) {
     for (const Territory* t : p.playerTerritories) {
         os << t << " ";
     }
-     vector<Territory*> defendList = p.ToDefend();
+    vector<Territory*> defendList = p.ToDefend();
     cout << "Territories to defend: ";
     if (defendList.size() == 0) {
         cout << "None";
@@ -179,10 +180,11 @@ ostream& operator<<(ostream& os, const Player& p) {
     os << "Cards in hand: " << endl;
     if (p.playerHand) {
         p.playerHand->Print();
-    } else {
+    }
+    else {
         os << "No hand assigned." << endl;
     }
-    os << "Orders issued: " ;
+    os << "Orders issued: ";
     for (Order* o : p.GetPlayerOrders()->GetListItems()) {
         cout << *o;
     }
@@ -193,7 +195,7 @@ ostream& operator<<(ostream& os, const Player& p) {
 // Clean up dynamically allocated Orders
 // Note: Territories are not deleted here as they may be shared among players
 Player::~Player() {
-    
+
     playerTerritories.clear();
 }
 
@@ -209,7 +211,7 @@ Hand* Player::GetPlayerHand() {
     return playerHand;
 };
 
-OrdersList* Player::GetPlayerOrders() const{
+OrdersList* Player::GetPlayerOrders() const {
     return playersOrders;
 };
 
@@ -229,7 +231,7 @@ void Player::SetPlayerTerritories(vector<Territory*> territories) {
 };
 void Player::SetPlayerHand(Hand* hand) {
     delete playerHand;
-    playerHand = new Hand(*hand); 
+    playerHand = new Hand(*hand);
 };
 
 void Player::SetPlayerOrders(OrdersList* orders) {
