@@ -210,16 +210,16 @@ public:
 
     // Code for assignment 2
     // Part 3: Game play: main game loop
-    private:
+private:
     void mainGameLoop();
     void reinforcementPhase();
     void issueOrdersPhase();
     void executeOrdersPhase();
 
-    //Additional methods to check for win condition and player count
+    //Additional methods
     bool checkWinCondition();
     void checkPlayerElimination();
-    std::vector<OrderNames> availableOrders(int playerID);
+    std::vector<int> availableOrders(int playerID);
 
     //Code for Assignemnt 2 Part 2
 //-----------------------------------------------------
@@ -231,7 +231,6 @@ public:
 //I certify that this submission is my original work and meets the Faculty’s Expectations of Originality 
 //Mia Letendre
 //-----------------------------------------------------
-private:
     std::vector<Player*> players; //list of players in the game
     Map *gameMap; //pointer to the map being used in the game
     Player* nuetralPlayer; //pointer to the nuetral player
@@ -241,7 +240,7 @@ private:
     void LoadMap(const string &fileName); //Loads a map from a file
     void GameStart(); //Starts the game
 
-    public: 
+public: 
     void TestStartupPhase(); //Tests the startup phase
 
     enum OrderNames {
@@ -251,8 +250,5 @@ private:
         Bomb,
         Deploy,
         Negotiate
-    }
-
-public: 
-    void TestStartupPhase(); //Tests the startup phase
+    };
 };

@@ -380,7 +380,7 @@ void GameEngine::issueOrdersPhase() {
 
             Player* player = players[i]; // players vector needs to be defined somewhere in GameEngine
             std::cout << "Player " << player->GetName() << "'s turn to issue an order.\n";
-            std::vector<OrderNames> orders = availableOrders(i);
+            std::vector<int> orders = availableOrders(i);
             if (orders.empty()) {
                 std::cout << "No available orders for player " << player->GetName() << ". Ending turn.\n";
                 isFinished[i] = true;
@@ -538,7 +538,7 @@ void GameEngine::issueOrdersPhase() {
     std::cout << "Issue Orders Phase ended.\n";
 }
 
-std::vector<OrderNames> GameEngine::availableOrders(int playerID) {
+std::vector<int> GameEngine::availableOrders(int playerID) {
     std::vector<OrderNames> orders;
     //while there are still reinforcements, deploy is the only available order
     if (players[playerID]->GetReinforcements() > 0) {

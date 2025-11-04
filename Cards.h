@@ -134,8 +134,8 @@ public:
     Hand(Deck& deck);
     void AddCard();
     void PlayCard(int index);
-    std::vector<Card*> GetCards();
+    std::vector<Card> GetCards();
 private:
-    std::vector<Card*> hand;
+    std::vector<Card> hand;
     Deck& deck;
 };

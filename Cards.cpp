@@ -402,6 +402,6 @@ void Hand::PlayCard(int index) {
     deck.AddCard(card);
 }
 
-std::vector<Card*> Hand::GetCards() {
+std::vector<Card> Hand::GetCards() {
     return hand;
 }
