@@ -374,7 +374,13 @@ Hand::~Hand() {
 
 // Function to add a card to the hand by drawing from the deck
 void Hand::AddCard() {
+    std::cout << "Before the draw:" << std::endl;
+    Print();
+
     hand.push_back(deck.Draw());
+
+    std::cout << "After the draw:" << std::endl;
+    Print();
 }
 
 // Function to print the contents of the hand and its indexes

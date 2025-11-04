@@ -1,9 +1,9 @@
 //-----------------------------------------------------
     //Marjorie Dudemaine 40287779
-    //COMP-345-D 2252 Assignment 1 Orders.h
+    //COMP-345-D 2252 Assignment 2 Orders.h
     //Dr. Hamed Jafarpour
     //Submitted: TBD
-    //Due: October 7, 2025 
+    //Due: November 11, 2025 
     //I certify that this submission is my original work and meets the Faculty’s Expectations of Originality 
     //Marjorie Dudemaine
 //-----------------------------------------------------

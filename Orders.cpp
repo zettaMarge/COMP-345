@@ -218,7 +218,7 @@ std::string Advance::GetEffect() const {
         std::string(" units from ") + src->GetName() + std::string(" to ") + target->GetName();
 }
 
-// Simulate a territory battle
+// Simulates a territory battle
 void SimulateBattle(Player* attackingPlayer, int attackingUnits, int defendingUnits, Territory* src, Territory* target) {
     int attackersKilled = 0;
     int defendersKilled = 0;
@@ -249,20 +249,27 @@ void SimulateBattle(Player* attackingPlayer, int attackingUnits, int defendingUn
         int remainingUnits = attackingUnits - attackersKilled;
         src->SetUnits(src->GetUnits() - attackingUnits);
         target->SetUnits(remainingUnits);
-        target->SetOwner(attackingPlayer);
+
+        std::cout << "Target was successfully conquered." << std::endl;
+        std::cout << "Owner before conquest: " << target->GetOwner()->GetName() << std::endl;
+        target->GetOwner()->SwitchTerritory(target, attackingPlayer);
+        std::cout << "Owner after conquest: " << target->GetOwner()->GetName() << std::endl;
 
         if (!attackingPlayer->HasConqueredThisTurn()) {
+            std::cout << "Attacking player is awarded a card." << std::endl;
             attackingPlayer->SetConqueredThisTurn(true);
             attackingPlayer->GetPlayerHand()->AddCard();
         }
-
-        std::cout << "TERRITORY was successfully conquered by PLAYER." << std::endl;
+        else {
+            std::cout << "A card was already awarded to this player on this turn." << std::endl;
+        }
     }
     else {
-        std::cout << "PLAYER failed to conquer TERRITORY; ";
+        std::cout << "Attacker failed to conquer target; ";
 
         if (attackersKilled < attackingUnits) {
-            std::cout << "UNITS returned to SRC; ";
+            int nb = attackingUnits - attackersKilled;
+            std::cout << std::to_string(nb) << " units returned to source territory; ";
             src->SetUnits(src->GetUnits() - attackersKilled);
         }
         else {
@@ -271,7 +278,8 @@ void SimulateBattle(Player* attackingPlayer, int attackingUnits, int defendingUn
         }
 
         if (defendersKilled < defendingUnits) {
-            std::cout << "UNITS remaining on TARGET" << std::endl;
+            int nb = defendingUnits - defendersKilled;
+            std::cout << std::to_string(nb) << " units remaining on target territory" << std::endl;
             target->SetUnits(target->GetUnits() - defendersKilled);
         }
         else {
@@ -286,12 +294,14 @@ void SimulateBattle(Player* attackingPlayer, int attackingUnits, int defendingUn
 void Advance::Execute() {
     if (Validate()) {
         if (TerritoryBelongsToPlayer(target)) {
+            std::cout << "Both source and target territories belong to the player."
             src->SetUnits(src->GetUnits() - nbUnits);
             target->SetUnits(target->GetUnits() + nbUnits);
 
             std::cout << "Advance order successful in " << GetEffect() << std::endl;
         }
         else if (!owningPlayer->IsNegotiatingWith(target->GetOwner())) {
+            std::cout << "Target belongs to another player, initiating battle." << std::endl;
             SimulateBattle(owningPlayer, nbUnits, target->GetUnits(), src, target);
         }
         else {
@@ -306,7 +316,15 @@ void Advance::Execute() {
 // Check if the source territory belongs to the same player as the order, has enough units to move,
 // and that the target is adjacent to it
 bool Advance::Validate() {
-    return TerritoryBelongsToPlayer(src) && src->GetUnits() >= nbUnits && src->IsAdjacent(target);
+    bool playerOwnsSrc = TerritoryBelongsToPlayer(src);
+    bool srcAdjacentTarget = src->IsAdjacent(target);
+    bool hasEnoughUnits = src->GetUnits() >= nbUnits;
+    
+    std::cout << "Source territory belongs to this order's player? " << (playerOwnsSrc ? "Yes." : "No.") << std::endl;
+    std::cout << "Source territory adjacent to target territory? " << (srcAdjacentTarget ? "Yes." : "No.") << std::endl;
+    std::cout << "Source territory has enough units? " << (hasEnoughUnits ? "Yes." : "No.") << std::endl;
+
+    return playerOwnsSrc && hasEnoughUnits && srcAdjacentTarget;
 }
 // ----- Advance -----
 
@@ -408,7 +426,15 @@ void Airlift::Execute() {
 
 // Check if the source and target territories belong to the same player as the order, and the source has enough units to move
 bool Airlift::Validate() {
-    return TerritoryBelongsToPlayer(src) && TerritoryBelongsToPlayer(target) && src->GetUnits() >= nbUnits;
+    bool playerOwnsSrc = TerritoryBelongsToPlayer(src);
+    bool playerOwnsTarget = TerritoryBelongsToPlayer(target);
+    bool hasEnoughUnits = src->GetUnits() >= nbUnits;
+    
+    std::cout << "Source territory belongs to this order's player? " << (playerOwnsSrc ? "Yes." : "No.") << std::endl;
+    std::cout << "Target territory belongs to this order's player? " << (playerOwnsTarget ? "Yes." : "No.") << std::endl;
+    std::cout << "Source territory has enough units? " << (hasEnoughUnits ? "Yes." : "No.") << std::endl;
+
+    return playerOwnsSrc && playerOwnsTarget && hasEnoughUnits;
 }
 // ----- Airlift -----
 
@@ -470,7 +496,11 @@ std::string Blockade::GetEffect() const {
 void Blockade::Execute() {
     if (Validate()) {
         target->SetUnits(target->GetUnits() * 2);
-        //TODO territory becomes Neutral (create if doesnt exist yet)
+
+        std::cout << "Owner before blockade: " << target->GetOwner()->GetName() << std::endl;
+        //target->GetOwner()->SwitchTerritory(target, x);
+        std::cout << "Owner after blockade: " << target->GetOwner()->GetName() << std::endl;
+        
         std::cout << "Blockade order successful in " << GetEffect() << std::endl;
     }
     else {
@@ -480,7 +510,10 @@ void Blockade::Execute() {
 
 // Check if the target territory belongs to the same player as the order
 bool Blockade::Validate() {
-    return TerritoryBelongsToPlayer(target);
+    bool playerOwnsTarget = TerritoryBelongsToPlayer(target);
+    std::cout << "Target territory belongs to this order's player? " << (playerOwnsTarget ? "Yes." : "No.") << std::endl;
+
+    return playerOwnsTarget;
 }
 // ----- Blockade -----
 
@@ -555,9 +588,13 @@ void Bomb::Execute() {
 bool Bomb::Validate() {
     std::string ownerName = owningPlayer->GetName();
     std::vector<Territory *> adj = target->AdjacentTerritories();
+    bool playerOwnsTarget = TerritoryBelongsToPlayer(target);
+    bool targetAdjacentToPlayer = std::find_if(adj.begin(), adj.end(), [&ownerName](Territory* t) { return t->GetOwner()->GetName() == ownerName; }) != adj.end();
+    
+    std::cout << "Target territory belongs to this order's player? " << (playerOwnsTarget ? "Yes." : "No.") << std::endl;
+    std::cout << "Target territory adjacent to one of this order's player territories? " << (targetAdjacentToPlayer ? "Yes." : "No.") << std::endl;
 
-    return target->GetOwner()->GetName() != ownerName &&
-        std::find_if(adj.begin(), adj.end(), [&ownerName](Territory* t) { return t->GetOwner()->GetName() == ownerName; }) != adj.end();
+    return playerOwnsTarget && targetAdjacentToPlayer;
 }
 // ----- Bomb -----
 
@@ -641,6 +678,9 @@ void Deploy::Execute() {
 
 // Check if the target belongs to the same player as the order
 bool Deploy::Validate() {
+    bool playerOwnsTarget = TerritoryBelongsToPlayer(target);
+    std::cout << "Target territory belongs to this order's player? " << (playerOwnsTarget ? "Yes." : "No.") << std::endl;
+
     return TerritoryBelongsToPlayer(target);
 }
 
@@ -708,6 +748,9 @@ void Negotiate::Execute() {
 
 // Check if the other player is different than the one issuing the order
 bool Negotiate::Validate() {
-    return otherPlayer != owningPlayer;
+    bool diffPlayers = otherPlayer != owningPlayer;
+    std::cout << "Is this order's player targeting a different player? " << (diffPlayers ? "Yes." : "No.") << std::endl;
+
+    return diffPlayers;
 }
 // ----- Negotiate -----
