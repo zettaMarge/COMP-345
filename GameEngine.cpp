@@ -7,195 +7,262 @@
 #include <random>
 
 
-void LoadMapCommand::Execute() {
-    std::string input;
-    std::cout << "Please input the name of the directory containing the maps, or press Enter to use the current directory: \n";
-    std::getline(std::cin, input);
-    if (input.empty()) {
-        input = std::filesystem::current_path().string();
+std::string LoadMapCommand::Execute() {
+    if (GameEngine::instance->currentState->name != GameEngine::instance->mapLoadedState.get()->name &&
+        GameEngine::instance->currentState->name != GameEngine::instance->mainMenuState.get()->name) {
+
+        this->effect = "Error: tried to execute loadmap from invalid state";
+        std::cout << this->effect << "\n";
+        return this->effect;
     }
-    const string fileName = input;
-    std::filesystem::path mapPath = std::filesystem::path(fileName) / "maps";
-    vector<std::string> mapFiles;
-    int mapNumber = 1;
-    std::cout << "The following are the Maps in the inputed directory, \n";
-    for (auto& entry : std::filesystem::directory_iterator(mapPath)) {
-        std::cout << "Map " << mapNumber << entry.path().filename().string() << std::endl;
-        mapFiles.push_back(entry.path().string());
-        mapNumber++;
-    }
-    std::cout << "Please input the number associated with the map you want: \n";
-    int selectedOption = -1;
-    std::cin >> selectedOption;
-    if (selectedOption < 1 || selectedOption > mapFiles.size()) {
-        std::cout << "Invalid selection. Please try again.\n";
-        int selectedOption = -1;
-        std::cin >> selectedOption;
-        if (selectedOption < 1 || selectedOption > mapFiles.size()) {
-            std::cout << "Invalid selection. Exiting map loading.\n";
-            return;
+
+    std::filesystem::path mapPath;
+
+    // If user provided file name
+    if (!argument.empty()) {
+        std::filesystem::path fileName(argument);
+
+        // If not absolute, assume maps folder
+        if (!fileName.is_absolute()) {
+            fileName = std::filesystem::current_path() / "maps" / fileName;
         }
+
+        mapPath = fileName;
     }
     else {
+        std::string input;
+        std::cout << "No map selected!\nPlease input the directory of the maps, or press Enter to use current directory:\n";
+        std::getline(std::cin, input);
+
+        if (input.empty()) {
+            input = std::filesystem::current_path().string();
+        }
+
+        mapPath = std::filesystem::path(input) / "maps";
+
+        std::vector<std::string> mapFiles;
+        int mapNumber = 1;
+
+        std::cout << "Available maps:\n";
+        for (auto& entry : std::filesystem::directory_iterator(mapPath)) {
+            std::cout << "Map " << mapNumber << ": " << entry.path().filename().string() << "\n";
+            mapFiles.push_back(entry.path().string());
+            mapNumber++;
+        }
+
+        std::cout << "Enter the map number: ";
+        int selectedOption = -1;
+        std::cin >> selectedOption;
+
+        if (selectedOption < 1 || selectedOption > mapFiles.size()) {
+            this->effect = "Invalid map selection.";
+            std::cout << this->effect << "\n";
+            return this->effect;
+        }
+
         mapPath = mapFiles[selectedOption - 1];
     }
 
-    MapLoader* loader = new MapLoader();
+    // Load map
+    std::unique_ptr<MapLoader> loader = std::make_unique<MapLoader>();
+
     try {
-        bool loadedMap = loader->LoadMapFile(mapPath.string()); //automatically validates the map
-        if (!loadedMap) {
-            std::cout << "Failed to load map from file: " << mapPath.string() << std::endl;
-            return;
+        if (!loader->LoadMapFile(mapPath.string())) {
+            this->effect = "Failed to load map: " + mapPath.string();
+            std::cout << this->effect << "\n";
+            return this->effect;
         }
-        GameEngine::instance->gameMap = new Map(loader->CreateMap());
+
+        GameEngine::instance->gameMap = loader->CreateMap();
+        this->effect = "Successfully loaded map: " + mapPath.string();
+        std::cout << this->effect << "\n";
     }
     catch (const std::exception& e) {
-        std::cout << "Exception occurred while loading map: " << e.what() << std::endl;
-        delete loader;
-        return;
+        this->effect = std::string("Exception during map loading: ") + e.what();
+        std::cout << this->effect << "\n";
+        return this->effect;
     }
-    delete loader;
-    if (GameEngine::instance->currentState->name == GameEngine::instance->mainMenuState->name) {
+
+    // Change state if needed
+    if (GameEngine::instance->currentState->name ==
+        GameEngine::instance->mainMenuState->name) {
         GameEngine::instance->changeState(GameEngine::instance->mapLoadedState.get());
     }
-    else if (GameEngine::instance->currentState->name != GameEngine::instance->mapLoadedState.get()->name) {
-        std::cout << "Error: trying to execute loadmap from invalid state\n";
-        return;
-    }
+
+    return this->effect;
 };
 
-void ValidateMapCommand::Execute() {
+std::string ValidateMapCommand::Execute() {
     std::cout << "Validating map...\n";
+
+    // Check valid state
+    if (GameEngine::instance->currentState != GameEngine::instance->mapLoadedState.get()) {
+        this->effect = "Error: tried to execute validatemap from invalid state";
+        std::cout << this->effect << "\n";
+        return this->effect;
+    }
+
+    // Validate map
     if (GameEngine::instance->gameMap->Validate()) {
-        std::cout << "Map validated successfully.\n";
+        this->effect = "Map validated successfully";
+        std::cout << this->effect << "\n";
     }
     else {
-        std::cout << "Map validation failed.\n";
-		return;
+        this->effect = "Map validation failed";
+        std::cout << this->effect << "\n";
+        return this->effect;
     }
-    if(GameEngine::instance->currentState == GameEngine::instance->mapLoadedState.get()) {
+
+    // Change state after successful validation
+    if (GameEngine::instance->currentState == GameEngine::instance->mapLoadedState.get()) {
         GameEngine::instance->changeState(GameEngine::instance->mapValidatedState.get());
     }
-    else {
-        std::cout << "Error: trying to execute validatemap from invalid state\n";
-        return;
-    }
+
+    return this->effect;
 };
 
-void AddPlayerCommand::Execute() {
+std::string AddPlayerCommand::Execute() {
+    // Prompt if no argument given
     if (argument.empty()) {
         std::cout << "Please specify a player name to add (e.g., 'addplayer Alice').\n";
         std::getline(std::cin, argument);
     }
+
+    // Validate correct game state
+    if (GameEngine::instance->currentState != GameEngine::instance->mapValidatedState.get() &&
+        GameEngine::instance->currentState != GameEngine::instance->playersAddedState.get()) {
+        this->effect = "Error: tried to execute addplayer from invalid state";
+        std::cout << this->effect << "\n";
+        return this->effect;
+    }
+
     std::cout << "Adding player: " << argument << "\n";
-    //code to add player would go here
+
     try {
         Player* newPlayer = new Player();
         newPlayer->SetName(argument);
         GameEngine::instance->players.push_back(newPlayer);
     }
     catch (const std::exception& e) {
-        std::cout << "Exception occurred while adding player: " << e.what() << std::endl;
-        return;
-	}
-    std::cout << "Player " << argument << " added successfully.\n";
-    if(GameEngine::instance->currentState == GameEngine::instance->mapValidatedState.get()) {
+        this->effect = "Exception occurred while adding player: " + std::string(e.what());
+        std::cout << this->effect << "\n";
+        return this->effect;
+    }
+
+    this->effect = "Player " + argument + " added successfully";
+    std::cout << this->effect << "\n";
+
+    // Transition state only after adding player
+    if (GameEngine::instance->currentState == GameEngine::instance->mapValidatedState.get()) {
         GameEngine::instance->changeState(GameEngine::instance->playersAddedState.get());
     }
-    else if(GameEngine::instance->currentState != GameEngine::instance->playersAddedState.get()) {
-        std::cout << "Error: trying to execute addplayer from invalid state\n";
-        return;
-    }
-};
 
-// ----- GameStartCommand Execute method -----
+    return this->effect;
+}
+
 //needs work!!!!
-void GameStartCommand::Execute() {
-    std::cout << "Starting game...\n";
-    //shuffling players 
-    std::random_device rd; // seed from machines random device
-    std::mt19937 g(rd()); //random number generator 
-    std::shuffle(GameEngine::instance->players.begin(), GameEngine::instance->players.end(), g);
-    std::cout << "2Starting game...\n";
+std::string GameStartCommand::Execute() {
+    if (GameEngine::instance->currentState != GameEngine::instance->playersAddedState.get()) {
+        this->effect = "Error: tried to execute gamestart from invalid state";
+        std::cout << this->effect << "\n";
+        return this->effect;
+    }
 
-    //Distributing territories
-    vector<Territory*> territories = GameEngine::instance->gameMap->territories;
+    std::cout << "Starting game...\n";
+
+    // Shuffle players
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(GameEngine::instance->players.begin(), GameEngine::instance->players.end(), g);
+
+    // Distribute territories round-robin
+    std::vector<Territory*> territories = GameEngine::instance->gameMap->territories;
     int numPlayers = GameEngine::instance->players.size();
     for (int i = 0; i < territories.size(); i++) {
         Player* currentPlayer = GameEngine::instance->players[i % numPlayers];
         Territory* currentTerritory = territories[i];
         currentPlayer->AddTerritory(currentTerritory);
     }
-    std::cout << "3Starting game...\n";
 
-    //50 initial army units to players
-    for (int i = 0; i < GameEngine::instance->players.size(); i++) {
-        Player* player = GameEngine::instance->players[i];
-       // player->AddReinforcements(50);
+    // Give initial reinforcements
+    for (Player* player : GameEngine::instance->players) {
+        player->AddReinforcements(50);  
     }
-    std::cout << "4Starting game...\n";
 
-    //each player draws 2 initial cards from the deck
-    for (int i = 0; i < GameEngine::instance->players.size(); i++) {
-        Player* player = GameEngine::instance->players[i];
-        // player->GetPlayerHand()->AddCard();
-        //player->GetPlayerHand()->AddCard();
+    // idk not working rn 
+    /*
+    for (Player* player : GameEngine::instance->players) {
+        player->GetPlayerHand()->AddCard();
+        player->GetPlayerHand()->AddCard();
     }
-    std::cout << "5Starting game...\n";
+    */
 
-	GameEngine::instance->mainGameLoop();
-    std::cout << "Game started successfully.\n";
-    if(GameEngine::instance->currentState == GameEngine::instance->playersAddedState.get()) {
-        GameEngine::instance->changeState(GameEngine::instance->assignReinforcementState.get());
-    }
-    else {
-        std::cout << "Error: trying to execute gamestart from invalid state\n";
-        return;
-    }
+    this->effect = "Game started successfully";
+    std::cout << this->effect << "\n";
+
+    return this->effect;
+
+    GameEngine::instance->mainGameLoop();
+
+    GameEngine::instance->changeState(GameEngine::instance->assignReinforcementState.get());
+
+    return this->effect;
 };
 
-void ReplayCommand::Execute() {
+std::string ReplayCommand::Execute() {
     std::cout << "Replaying game...\n";
-    //code to reset and replay the game would go here
-    if(GameEngine::instance->currentState == GameEngine::instance->winState.get()) {
+
+    if (GameEngine::instance->currentState == GameEngine::instance->winState.get()) {
         GameEngine::instance->changeState(GameEngine::instance->mainMenuState.get());
-        std::cout << "Game restarted successfully.\n";
+        this->effect = "Game restarted successfully";
+        std::cout << this->effect << "\n";
+        return this->effect;
+    }
+
+    std::cout << "Trying to execute replay from invalid state, force replay anyway? (y/n)\n";
+    char response;
+    std::cin >> response;
+
+    if (response == 'y' || response == 'Y') {
+        GameEngine::instance->changeState(GameEngine::instance->mainMenuState.get());
+        this->effect = "Game restarted successfully (forced)";
+        std::cout << this->effect << "\n";
     }
     else {
-        std::cout << "Trying to execute replay from invalid state, force replay anyway? (y/n)\n";
-		char response;
-		std::cin >> response;
-        if(response == 'y' || response == 'Y') {
-			GameEngine::instance->changeState(GameEngine::instance->mainMenuState.get());
-            std::cout << "Game restarted successfully.\n";
-		}
-        else {
-			std::cout << "Okay, replay command ignored.\n";
-        }
-        return;
-	}   
-};
+        this->effect = "Replay command ignored";
+        std::cout << this->effect << "\n";
+    }
 
-void QuitCommand::Execute() {
+    return this->effect;
+}
+
+std::string QuitCommand::Execute() {
+    // Valid quit only if game already finished
     if (GameEngine::instance->currentState == GameEngine::instance->winState.get()) {
         std::cout << "Quitting game...\n";
+        this->effect = "Game quit successfully";
+        std::cout << this->effect << "\n";
+        // exit(0); 
+        return this->effect;
+    }
+
+    std::cout << "Trying to execute quit mid game, force quit anyway? (y/n)\n";
+    char response;
+    std::cin >> response;
+
+    if (response == 'y' || response == 'Y') {
+        std::cout << "Quitting game...\n";
+        this->effect = "Game quit successfully (forced)";
+        std::cout << this->effect << "\n";
+        // exit(0); 
     }
     else {
-        std::cout << "Trying to execute quit mid game, force quit anyway? (y/n)\n";
-        char response;
-        std::cin >> response;
-        if (response == 'y' || response == 'Y') {
-            std::cout << "Quitting game...\n";
-        }
-        else {
-            std::cout << "Okay, quit command ignored.\n";
-            return;
-        }
+        this->effect = "Quit command ignored";
+        std::cout << this->effect << "\n";
     }
-    //code to cleanly exit the game would go here
-    std::cout << "Game quit successfully.\n";
-    exit(0); //terminate program
-};
+
+    return this->effect;
+}
 
 // ===== SimpleState implementation =====
 // SimpleState constructor
@@ -274,6 +341,8 @@ GameEngine* GameEngine::instance = nullptr; // initialize singleton instance to 
 
 GameEngine::GameEngine() {
     instance = this;
+	gameMap = nullptr;
+	nuetralPlayer = nullptr;
     // Create all states
 	//unique pointers to manage state lifetimes that way I dont have do worry about memory leaks
     mainMenuState = std::make_unique<MainMenuState>();
@@ -330,8 +399,8 @@ GameEngine::GameEngine() {
         std::make_unique<SimpleCommand>("end", nullptr)); // exit game
 
     // Start the game
-	currentState = mainMenuState.get(); // start at main menu
-    currentState->OnEnter();
+	instance -> currentState = instance->mainMenuState.get(); // start at main menu
+    instance-> currentState->OnEnter();
 }
 
 GameEngine::~GameEngine() = default; // unique_ptrs auto-cleanup
@@ -339,6 +408,8 @@ GameEngine::~GameEngine() = default; // unique_ptrs auto-cleanup
 // Copy constructor, really just for the sake of having one, as you can tell its really annoying to implement
 //cuz you have to deep copy everything but yeah it's there
 GameEngine::GameEngine(const GameEngine& other) {
+	gameMap = other.gameMap; //shallow copy map pointer
+	nuetralPlayer = other.nuetralPlayer; //shallow copy nuetral player pointer
     if (other.mainMenuState) mainMenuState = other.mainMenuState->Clone();
     if (other.mapLoadedState) mapLoadedState = other.mapLoadedState->Clone();
     if (other.mapValidatedState) mapValidatedState = other.mapValidatedState->Clone();
@@ -460,36 +531,6 @@ int GameEngine::Run() {
     return 0;
 }
 
-//process user input
-//checks if input matches any available commands in the current state
-//if so, executes the command and transitions to the next state if applicable
-//if not returs list of available commands
-//if command is end it returns false to signal quitting the game
-//bool GameEngine::ProcessInput(const std::string& input) {
-//    for (auto& cmd : currentState->availableCommands) {
-//        if (cmd->name == input) {
-//            cmd->Execute();
-//            if (cmd->name == "end") {
-//                std::cout << "Game Over.\n";
-//                return false;   // signal quit
-//            }
-//            if (cmd->nextState) {
-//                currentState->OnExit();
-//                currentState = cmd->nextState;
-//                currentState->OnEnter();
-//            }
-//            return true;  // valid command
-//        }
-//    }
-//
-//    std::cout << "Invalid command. Available commands:\n";
-//    for (auto& cmd : currentState->availableCommands) {
-//        std::cout << " - " << cmd->name << "\n";
-//    }
-//
-//    return true; // return true so the loop continues
-//}
-
 //execute command
 void GameEngine::ExecuteCommand(const std::shared_ptr<ICommand>& cmd) {
     if (!cmd) return;
@@ -561,9 +602,9 @@ int TestGameEngine() {
 void GameEngine::mainGameLoop() {
     bool gameWon = false;
     while (!gameWon) {
-        reinforcementPhase();
-        issueOrdersPhase();
-        executeOrdersPhase();
+//reinforcementPhase();
+       // issueOrdersPhase();
+   //     executeOrdersPhase();
         // checkPlayerElimination();
         // gameWon = checkWinCondition();
     }
@@ -930,7 +971,7 @@ void GameEngine::LoadMap(const string& fileName) {
         return;
     }
 
-    GameEngine::instance->gameMap = new Map(loader->CreateMap());
+    GameEngine::instance->gameMap = loader->CreateMap();
 }
 
 //Validates the map using its Validate method

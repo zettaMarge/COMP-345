@@ -63,7 +63,7 @@ public:
 	}
 
 private:
-    std::unique_ptr<ICommand> parseCommand(const std::string& userInput);
+    std::unique_ptr<ICommand> readCommand(const std::string& userInput);
     GameEngine* gameEngine;
 };
 
@@ -82,6 +82,6 @@ private:
 
 public:
     FileCommandProcessorAdapter(GameEngine* engine, const std::string& file);
-    void readCommands(GameEngine& engine);
+    void ReadLinesFromFile(GameEngine& engine);
 };
 

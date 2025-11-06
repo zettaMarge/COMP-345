@@ -3,6 +3,7 @@
 #include <sstream>
 #include <memory>
 #include <string>
+#include <cstdlib>
 #include "GameEngine.h"
 #include "CommandProcessing.h"
 
@@ -13,6 +14,7 @@ void TestCommandProcessing() {
 
     std::unique_ptr<FileCommandProcessorAdapter> fileProcessor;
     ConsoleCommandProcessor consoleProcessor(&engine);
+
 
     std::cout << "Read commands from file? (y/n): ";
     char choice;
@@ -25,12 +27,14 @@ void TestCommandProcessing() {
         std::getline(std::cin, filename);
 
         fileProcessor = std::make_unique<FileCommandProcessorAdapter>(&engine, filename);
-        fileProcessor->readCommands(engine); 
+        fileProcessor->ReadLinesFromFile(engine); 
+		fileProcessor->printCommandHistory();
     }
    
     std::cout << "Starting console command processing...\n";
 	
-    consoleProcessor.readCommands(engine);
+    consoleProcessor.proccessConsoleCommands(engine);
 
     std::cout << "Command processing complete.\n";
+	consoleProcessor.printCommandHistory();
 }

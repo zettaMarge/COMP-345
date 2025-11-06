@@ -32,7 +32,7 @@ public:
         : name(n), argument(arg), nextState(next) {
     }
 
-    virtual void Execute() = 0;
+    virtual std::string Execute() = 0;
     virtual ~ICommand() = default;
 
     // Copy / assign
@@ -67,7 +67,7 @@ public:
     SimpleCommand(const std::string& name, IState* next)
         : ICommand(name, "", next) {
     }
-    void Execute() override { std::cout << "Executing " << name << argument <<"\n"; }
+    std::string Execute() override { std::cout << "Executing " << name << argument << "\n"; return "Executing " + name + argument + "\n"; }
 };
 
 class LoadMapCommand : public ICommand {
@@ -77,7 +77,7 @@ public:
         : ICommand("loadmap", arg, next) {
     }
 
-    void Execute() override;
+    std::string Execute() override;
 
 private:
     // Self-registration
@@ -89,7 +89,7 @@ class ValidateMapCommand : public ICommand {
     explicit ValidateMapCommand(const std::string& arg = "", IState* next = nullptr)
         : ICommand("validatemap", arg, next) {
     }
-    void Execute() override;
+    std::string Execute() override;
 private:
     static CommandRegistrar<ValidateMapCommand> registrar; // only declare
 };
@@ -100,7 +100,7 @@ public:
         : ICommand("addplayer", arg, next) {
     }
 
-    void Execute() override;
+    std::string Execute() override;
 
 private:
     static CommandRegistrar<AddPlayerCommand> registrar; // only declare
@@ -111,7 +111,7 @@ class GameStartCommand : public ICommand {
     explicit GameStartCommand(const std::string& arg = "", IState* next = nullptr)
         : ICommand("gamestart", arg, next) {
     }
-    void Execute() override;
+    std::string Execute() override;
 private:
     static CommandRegistrar<GameStartCommand> registrar; // only declare
 };
@@ -121,7 +121,7 @@ class ReplayCommand : public ICommand {
     explicit ReplayCommand(const std::string& arg = "", IState* next = nullptr)
         : ICommand("replay", arg, next) {
     }
-	void Execute() override;
+    std::string Execute() override;
     private:
 		static CommandRegistrar<ReplayCommand> registrar; // only declare
 };
@@ -131,7 +131,7 @@ public:
     explicit QuitCommand(const std::string& arg = "", IState* next = nullptr)
         : ICommand("quit", arg, next) {
     }
-    void Execute() override;
+    std::string Execute() override;
 private:
     static CommandRegistrar<QuitCommand> registrar; // only declare
 };

@@ -8,11 +8,11 @@ void TestOrdersLists();
 
 int main() {
 	TestCommandProcessing();
-	TestMaps();
-	TestPlayers();
-	TestCards();
-	TestOrdersLists();
-    TestGameEngine();
+//	TestMaps();
+//	TestPlayers();
+//	TestCards();
+//	TestOrdersLists();
+  //  TestGameEngine();
 	return 0;
 }
 
