@@ -244,11 +244,11 @@ public:
     void TestStartupPhase(); //Tests the startup phase
 
     enum OrderNames {
-        Advance,
-        Airlift,
-        Blockade,
-        Bomb,
-        Deploy,
-        Negotiate
+        AdvanceEnum,
+        AirliftEnum,
+        BlockadeEnum,
+        BombEnum,
+        DeployEnum,
+        NegotiateEnum
     };
 };

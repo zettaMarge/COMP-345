@@ -390,27 +390,27 @@ void GameEngine::issueOrdersPhase() {
             std::cout << "Available orders:\n";
             for (int j = 0; j < orders.size(); j++) {
                 switch (orders[j]) {
-                case Deploy:
+                case DeployEnum:
                     std::cout << j << " - Deploy\n";
                     break;
 
-                case Advance:
+                case AdvanceEnum:
                     std::cout << j << " - Advance\n";
                     break;
 
-                case Bomb:
+                case BombEnum:
                     std::cout << j << " - Bomb\n";
                     break;
 
-                case Airlift:
+                case AirliftEnum:
                     std::cout << j << " - Airlift\n";
                     break;
 
-                case Blockade:
+                case BlockadeEnum:
                     std::cout << j << " - Blockade\n";
                     break;
 
-                case Negotiate:
+                case NegotiateEnum:
                     std::cout << j << " - Negotiate\n";
                     break;
 
@@ -429,7 +429,7 @@ void GameEngine::issueOrdersPhase() {
                     finishedPlayers++;
                     std::cout << "Player " << player->GetName() << " has ended their turn.\n";
                     break;
-                }case Advance:{
+                }case  AdvanceEnum:{
                     string startTerritory;
                     string targetTerritory;
                     int numUnits;
@@ -443,13 +443,13 @@ void GameEngine::issueOrdersPhase() {
                     cin >> numUnits;
                 
                     //creating and issuing the advance order
-                    Order* advanceOrder = new Advance(player->GetName(), numUnits, gameMap->GetTerritoryByName(startTerritory), gameMap->GetTerritoryByName(targetTerritory));
-                    player->IssueOrder(advanceOrder);
+                    Advance advanceOrder = new Advance(player->GetName(), numUnits, gameMap->GetTerritoryByName(startTerritory), gameMap->GetTerritoryByName(targetTerritory));
+                    player->IssueOrder(advanceOrder*);
 
                     std::cout << "Advance order issued.\n";
                     break;
 
-            }case Airlift:{
+                }case AirliftEnum:{
                     string startTerritory;
                     string targetTerritory;
                     int numUnits = 5;  // Example number of units to airlift    
@@ -463,13 +463,13 @@ void GameEngine::issueOrdersPhase() {
                     cin >> numUnits;
 
                     //creating and issuing the airlift order
-                    Order* airliftOrder = new Airlift(player->GetName(), numUnits, gameMap->GetTerritoryByName(startTerritory), gameMap->GetTerritoryByName(targetTerritory));
-                    player->IssueOrder(airliftOrder);
+                    Airlift airliftOrder = new Airlift(player->GetName(), numUnits, gameMap->GetTerritoryByName(startTerritory), gameMap->GetTerritoryByName(targetTerritory));
+                    player->IssueOrder(airliftOrder*);
 
                     std::cout << "Airlift order issued.\n";
                     break;
 
-            }case Blockade:{
+                }case BlockadeEnum:{
                     string targetTerritory;
 
                     //getting user input for blockade order
@@ -477,13 +477,13 @@ void GameEngine::issueOrdersPhase() {
                     cin >> targetTerritory;
 
                     //creating and issuing the blockade order
-                    Order* blockadeOrder = new Blockade(player->GetName(), gameMap->GetTerritoryByName(targetTerritory));
-                    player->IssueOrder(blockadeOrder);
+                    Blockade blockadeOrder = new Blockade(player->GetName(), gameMap->GetTerritoryByName(targetTerritory));
+                    player->IssueOrder(blockadeOrder*);
 
                     std::cout << "Blockade order issued.\n";
                     break;
 
-                }case Bomb:{
+                }case BombEnum:{
                     string targetTerritory;
 
                     //getting user input for bomb order
@@ -491,13 +491,13 @@ void GameEngine::issueOrdersPhase() {
                     cin >> targetTerritory;
 
                     //creating and issuing the bomb order
-                    Order* bombOrder = new Bomb(player->GetName(), gameMap->GetTerritoryByName(targetTerritory));
-                    player->IssueOrder(bombOrder);
+                    Bomb bombOrder = new Bomb(player->GetName(), gameMap->GetTerritoryByName(targetTerritory));
+                    player->IssueOrder(bombOrder*);
 
                     std::cout << "Bomb order issued.\n";
                     break;
 
-            }   case Deploy:{
+                }case DeployEnum:{
                     string targetTerritory;
                     int numUnits;
 
@@ -508,13 +508,13 @@ void GameEngine::issueOrdersPhase() {
                     cin >> numUnits;
 
                     //creating and issuing the deploy order
-                    Order* deployOrder = new Deploy(player->GetName(), numUnits, gameMap->GetTerritoryByName(targetTerritory));
-                    player->IssueOrder(deployOrder);
+                    Deploy deployOrder = new Deploy(player->GetName(), numUnits, gameMap->GetTerritoryByName(targetTerritory));
+                    player->IssueOrder(deployOrder*);
 
                     std::cout << "Deploy order issued.\n";
                     break;
 
-                    case Negotiate:
+                }case NegotiateEnum:{
                     string targetPlayerName;
 
                     //getting user input for negotiate order
@@ -522,8 +522,8 @@ void GameEngine::issueOrdersPhase() {
                     cin >> targetPlayerName;
 
                     //creating and issuing the negotiate order
-                    Order* negotiateOrder = new Negotiate(player->GetName(), targetPlayerName);
-                    player->IssueOrder(negotiateOrder);
+                    Negotiate negotiateOrder = new Negotiate(player->GetName(), targetPlayerName);
+                    player->IssueOrder(negotiateOrder*);
 
                     std::cout << "Negotiate order issued.\n";
                     break;
@@ -542,22 +542,22 @@ std::vector<int> GameEngine::availableOrders(int playerID) {
     std::vector<OrderNames> orders;
     //while there are still reinforcements, deploy is the only available order
     if (players[playerID]->GetReinforcements() > 0) {
-        orders.push_back(Deploy);
+        orders.push_back(DeployEnum);
     } else {
         orders.push_back(Advance);
-        for (Card* card : players[playerID]->GetPlayerHand()->GetCards()) {
+        for (Card card : players[playerID]->GetPlayerHand()->GetCards()) {
             switch (card->GetType()) {
                 case Card::Airlift:
-                    orders.push_back(Airlift);
+                    orders.push_back(AirliftEnum);
                     break;
                 case Card::Bomb:
-                    orders.push_back(Bomb);
+                    orders.push_back(BombEnum);
                     break;
                 case Card::Blockade:
-                    orders.push_back(Blockade);
+                    orders.push_back(BlockadeEnum);
                     break;
                 case Card::Negotiate:
-                    orders.push_back(Negotiate);
+                    orders.push_back(NegotiateEnum);
                     break;
                 default:
                     break;
