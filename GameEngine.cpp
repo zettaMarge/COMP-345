@@ -543,7 +543,7 @@ void GameEngine::issueOrdersPhase() {
     }
     std::cout << "Issue Orders Phase ended.\n";
 }
-
+// hello alex
 std::vector<GameEngine::OrderNames> GameEngine::availableOrders(int playerID) {
     std::vector<GameEngine::OrderNames> orders;
     //while there are still reinforcements, deploy is the only available order
@@ -552,7 +552,7 @@ std::vector<GameEngine::OrderNames> GameEngine::availableOrders(int playerID) {
     } else {
         orders.push_back(AdvanceEnum);
         for (Card card : players[playerID]->GetPlayerHand()->GetCards()) {
-            Card* ptr = *card;
+            Card* ptr = card;
             int type = ptr->GetType();
             switch (type) {
                 case AirliftEnum:
