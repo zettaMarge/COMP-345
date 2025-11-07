@@ -342,7 +342,7 @@ GameEngine* GameEngine::instance = nullptr; // initialize singleton instance to 
 GameEngine::GameEngine() {
     instance = this;
 	gameMap = nullptr;
-	nuetralPlayer = nullptr;
+	neutralPlayer = nullptr;
     // Create all states
 	//unique pointers to manage state lifetimes that way I dont have do worry about memory leaks
     mainMenuState = std::make_unique<MainMenuState>();
@@ -409,7 +409,7 @@ GameEngine::~GameEngine() = default; // unique_ptrs auto-cleanup
 //cuz you have to deep copy everything but yeah it's there
 GameEngine::GameEngine(const GameEngine& other) {
 	gameMap = other.gameMap; //shallow copy map pointer
-	nuetralPlayer = other.nuetralPlayer; //shallow copy nuetral player pointer
+	neutralPlayer = other.neutralPlayer; //shallow copy neutral player pointer
     if (other.mainMenuState) mainMenuState = other.mainMenuState->Clone();
     if (other.mapLoadedState) mapLoadedState = other.mapLoadedState->Clone();
     if (other.mapValidatedState) mapValidatedState = other.mapValidatedState->Clone();

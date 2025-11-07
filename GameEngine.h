@@ -320,14 +320,14 @@ private:
 //-----------------------------------------------------
     std::vector<Player*> players; //list of players in the game
     Map *gameMap; //pointer to the map being used in the game
-    Player* nuetralPlayer; //pointer to the nuetral player
     void StartupPhase(); //Handles the startup phase of the game
     void AddPlayers(const string &playerName); //Adds a new player to the game
     bool ValidateMap(); //Validates the map according to assignment specifications
     void LoadMap(const string &fileName); //Loads a map from a file
     void GameStart(); //Starts the game
 
-public: 
+public:
+    Player* neutralPlayer; //pointer to the neutral player
     void TestStartupPhase(); //Tests the startup phase
 
 };
