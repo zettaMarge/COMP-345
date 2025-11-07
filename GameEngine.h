@@ -270,6 +270,9 @@ public:
     std::unique_ptr<IState> winState;
 
 	IState* currentState = nullptr; // current state pointer
+    Map* gameMap; //pointer to the map being used in the game
+    std::vector<Player*> players; //list of players in the game
+
 
 	GameEngine(); // constructor
 	~GameEngine(); // destructor
@@ -283,13 +286,13 @@ public:
 	int Run(); // main game loop
 //	bool ProcessInput(const std::string& input); // process user input
 	void ExecuteCommand(const std::shared_ptr<ICommand>& cmd); // execute command
+    void mainGameLoop();
     bool IsValidCommand(const std::string& cmd); // validate command
 	void changeState(IState* next); // change current state
 
     // Code for assignment 2
     // Part 3: Game play: main game loop
 private:
-    void mainGameLoop();
     void reinforcementPhase();
     void issueOrdersPhase();
     void executeOrdersPhase();
@@ -318,8 +321,6 @@ private:
 //I certify that this submission is my original work and meets the Faculty’s Expectations of Originality 
 //Mia Letendre
 //-----------------------------------------------------
-    std::vector<Player*> players; //list of players in the game
-    Map *gameMap; //pointer to the map being used in the game
     Player* nuetralPlayer; //pointer to the nuetral player
     void StartupPhase(); //Handles the startup phase of the game
     void AddPlayers(const string &playerName); //Adds a new player to the game
