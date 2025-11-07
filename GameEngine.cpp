@@ -380,7 +380,7 @@ void GameEngine::issueOrdersPhase() {
 
             Player* player = players[i]; // players vector needs to be defined somewhere in GameEngine
             std::cout << "Player " << player->GetName() << "'s turn to issue an order.\n";
-            std::vector<int> orders = availableOrders(i);
+            std::vector<OrderNames> orders = availableOrders(i);
             if (orders.empty()) {
                 std::cout << "No available orders for player " << player->GetName() << ". Ending turn.\n";
                 isFinished[i] = true;
