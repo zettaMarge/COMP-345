@@ -48,179 +48,179 @@ class OrdersList{
 
 // Abstract Order class - cannot be instantiated
 class Order {
-    public:
-        friend ostream& operator<<(ostream& stream, const Order& obj);
+public:
+    friend ostream& operator<<(ostream& stream, const Order& obj);
 
-        void SetOwningPlayer(std::string playerName);
-        std::string GetOwningPlayer();
+    void SetOwningPlayer(std::string playerName);
+    std::string GetOwningPlayer();
 
-        virtual ostream& Print(ostream& stream) const = 0;
-        virtual std::string GetEffect() const = 0;
-        virtual void Execute() = 0;
+    virtual ostream& Print(ostream& stream) const = 0;
+    virtual std::string GetEffect() const = 0;
+    virtual void Execute() = 0;
 
-    protected:
-        std::string owningPlayer;
+protected:
+    std::string owningPlayer;
 
-        bool TerritoryBelongsToPlayer(Territory* territory);
+    bool TerritoryBelongsToPlayer(Territory* territory);
 
-    private:
-        virtual bool Validate() = 0;
+private:
+    virtual bool Validate() = 0;
 };
 
 
 // Advance order
 class Advance : public Order {
-    public:
-        Advance();
-        Advance(std::string owningPlayer, int nbUnits, Territory* src, Territory* target);
-        Advance(const Advance& obj);
-        ~Advance();
+public:
+    Advance();
+    Advance(std::string owningPlayer, int nbUnits, Territory* src, Territory* target);
+    Advance(const Advance& obj);
+    ~Advance();
 
-        Advance& operator= (const Advance& obj);
+    Advance& operator= (const Advance& obj);
 
-        void SetNbUnits(int nb);
-        int GetNbUnits();
-        void SetSrc(Territory* territory);
-        Territory* GetSrc();
-        void SetTarget(Territory* Target);
-        Territory* GetTarget();
+    void SetNbUnits(int nb);
+    int GetNbUnits();
+    void SetSrc(Territory* territory);
+    Territory* GetSrc();
+    void SetTarget(Territory* Target);
+    Territory* GetTarget();
 
-        ostream& Print(ostream& stream) const;
-        std::string GetEffect() const;
-        void Execute();
-    
-    private:   
-        int nbUnits;
-        Territory* src;
-        Territory* target;
+    ostream& Print(ostream& stream) const;
+    std::string GetEffect() const;
+    void Execute();
 
-        bool Validate();
+private:
+    int nbUnits;
+    Territory* src;
+    Territory* target;
+
+    bool Validate();
 };
 
 
 // Airlift order
 class Airlift : public Order {
-    public:
-        Airlift();
-        Airlift(std::string owningPlayer, int nbUnits, Territory* src, Territory* target);
-        Airlift(const Airlift& obj);
-        ~Airlift();
+public:
+    Airlift();
+    Airlift(std::string owningPlayer, int nbUnits, Territory* src, Territory* target);
+    Airlift(const Airlift& obj);
+    ~Airlift();
 
-        Airlift& operator= (const Airlift& obj);
+    Airlift& operator= (const Airlift& obj);
 
-        void SetNbUnits(int nb);
-        int GetNbUnits();
-        void SetSrc(Territory* territory);
-        Territory* GetSrc();
-        void SetTarget(Territory* Target);
-        Territory* GetTarget();
+    void SetNbUnits(int nb);
+    int GetNbUnits();
+    void SetSrc(Territory* territory);
+    Territory* GetSrc();
+    void SetTarget(Territory* Target);
+    Territory* GetTarget();
 
-        ostream& Print(ostream& stream) const;
-        std::string GetEffect() const;
-        void Execute();
-    
-    private:   
-        int nbUnits;
-        Territory* src;
-        Territory* target;
+    ostream& Print(ostream& stream) const;
+    std::string GetEffect() const;
+    void Execute();
 
-        bool Validate();
+private:
+    int nbUnits;
+    Territory* src;
+    Territory* target;
+
+    bool Validate();
 };
 
 
 // Blockade order
 class Blockade : public Order {
-    public:
-        Blockade();
-        Blockade(std::string owningPlayer, Territory* target);
-        Blockade(const Blockade& obj);
-        ~Blockade();
+public:
+    Blockade();
+    Blockade(std::string owningPlayer, Territory* target);
+    Blockade(const Blockade& obj);
+    ~Blockade();
 
-        Blockade& operator= (const Blockade& obj);
+    Blockade& operator= (const Blockade& obj);
 
-        void SetTarget(Territory* Target);
-        Territory* GetTarget();
+    void SetTarget(Territory* Target);
+    Territory* GetTarget();
 
-        ostream& Print(ostream& stream) const;
-        std::string GetEffect() const;
-        void Execute();
+    ostream& Print(ostream& stream) const;
+    std::string GetEffect() const;
+    void Execute();
 
-    private:
-        Territory* target;
+private:
+    Territory* target;
 
-        bool Validate();
+    bool Validate();
 };
 
 
 // Bomb order
 class Bomb : public Order {
-    public:
-        Bomb();
-        Bomb(std::string owningPlayer, Territory* target);
-        Bomb(const Bomb& obj);
-        ~Bomb();
+public:
+    Bomb();
+    Bomb(std::string owningPlayer, Territory* target);
+    Bomb(const Bomb& obj);
+    ~Bomb();
 
-        Bomb& operator= (const Bomb& obj);
+    Bomb& operator= (const Bomb& obj);
 
-        void SetTarget(Territory* Target);
-        Territory* GetTarget();
+    void SetTarget(Territory* Target);
+    Territory* GetTarget();
 
-        ostream& Print(ostream& stream) const;
-        std::string GetEffect() const;
-        void Execute();
+    ostream& Print(ostream& stream) const;
+    std::string GetEffect() const;
+    void Execute();
 
-    private:
-        Territory* target;
+private:
+    Territory* target;
 
-        bool Validate();
+    bool Validate();
 };
 
 
 // Deploy order
 class Deploy : public Order {
-    public:
-        Deploy();
-        Deploy(std::string owningPlayer, int nbUnits, Territory* target);
-        Deploy(const Deploy& obj);
-        ~Deploy();
+public:
+    Deploy();
+    Deploy(std::string owningPlayer, int nbUnits, Territory* target);
+    Deploy(const Deploy& obj);
+    ~Deploy();
 
-        Deploy& operator= (const Deploy& obj);
+    Deploy& operator= (const Deploy& obj);
 
-        void SetNbUnits(int nb);
-        int GetNbUnits();
-        void SetTarget(Territory* Target);
-        Territory* GetTarget();
+    void SetNbUnits(int nb);
+    int GetNbUnits();
+    void SetTarget(Territory* Target);
+    Territory* GetTarget();
 
-        ostream& Print(ostream& stream) const;
-        std::string GetEffect() const;
-        void Execute();
+    ostream& Print(ostream& stream) const;
+    std::string GetEffect() const;
+    void Execute();
 
-    private:   
-        int nbUnits;
-        Territory* target;
+private:
+    int nbUnits;
+    Territory* target;
 
-        bool Validate();
+    bool Validate();
 };
 
 
 // Negotiate order
 class Negotiate : public Order {
-    public:
-        Negotiate();
-        Negotiate(std::string owningPlayer, std::string otherPlayer);
-        Negotiate(const Negotiate& obj);
+public:
+    Negotiate();
+    Negotiate(std::string owningPlayer, std::string otherPlayer);
+    Negotiate(const Negotiate& obj);
 
-        Negotiate& operator= (const Negotiate& obj);
+    Negotiate& operator= (const Negotiate& obj);
 
-        void SetOtherPlayer(std::string player);
-        std::string GetOtherPlayer();
+    void SetOtherPlayer(std::string player);
+    std::string GetOtherPlayer();
 
-        ostream& Print(ostream& stream) const;
-        std::string GetEffect() const;
-        void Execute();
+    ostream& Print(ostream& stream) const;
+    std::string GetEffect() const;
+    void Execute();
 
-    private:
-        std::string otherPlayer;
+private:
+    std::string otherPlayer;
 
-        bool Validate();
+    bool Validate();
 };

@@ -8,7 +8,7 @@ using std::endl;
 // ----- OrdersList -----
 
 // Default constructor
-OrdersList::OrdersList(){}
+OrdersList::OrdersList() {}
 
 // Copy constructor
 OrdersList::OrdersList(const OrdersList& obj) {
@@ -24,7 +24,7 @@ OrdersList::~OrdersList() {
     {
         delete order;
         order = NULL;
-    } 
+    }
 
     orders.clear();
 }
@@ -226,7 +226,7 @@ ostream& Advance::Print(ostream& stream) const {
 
 // Returns the effect of the order as a string
 std::string Advance::GetEffect() const {
-    return std::string("moving ") + std::to_string(nbUnits) + 
+    return std::string("moving ") + std::to_string(nbUnits) +
         std::string(" units from ") + src->GetName() + std::string(" to ") + target->GetName();
 }
 
@@ -328,7 +328,7 @@ ostream& Airlift::Print(ostream& stream) const {
 
 // Returns the effect of the order as a string
 std::string Airlift::GetEffect() const {
-    return std::string("moving ") + std::to_string(nbUnits) + 
+    return std::string("moving ") + std::to_string(nbUnits) +
         std::string(" units from ") + src->GetName() + std::string(" to ") + target->GetName();
 }
 
@@ -393,7 +393,7 @@ Territory* Blockade::GetTarget() {
 
 // Prints the order to the specified stream
 ostream& Blockade::Print(ostream& stream) const {
-    stream << "Blockade: " << GetEffect() << std::endl; 
+    stream << "Blockade: " << GetEffect() << std::endl;
     return stream;
 }
 
@@ -463,7 +463,7 @@ Territory* Bomb::GetTarget() {
 
 // Prints the order to the specified stream
 ostream& Bomb::Print(ostream& stream) const {
-    stream << "Bomb: " << GetEffect() << std::endl;  
+    stream << "Bomb: " << GetEffect() << std::endl;
     return stream;
 }
 
@@ -486,7 +486,7 @@ void Bomb::Execute() {
 // that belongs to the player issuing the order
 bool Bomb::Validate() {
     std::string ownerName = owningPlayer;
-    std::vector<Territory *> adj = target->AdjacentTerritories();
+    std::vector<Territory*> adj = target->AdjacentTerritories();
 
     return target->GetOwner()->GetName() != owningPlayer &&
         std::find_if(adj.begin(), adj.end(), [&ownerName](Territory* t) { return t->GetOwner()->GetName() == ownerName; }) != adj.end();
@@ -616,7 +616,7 @@ std::string Negotiate::GetOtherPlayer() {
 
 // Prints the order to the specified stream
 ostream& Negotiate::Print(ostream& stream) const {
-    stream << "Negotiate: " << GetEffect() << std::endl; 
+    stream << "Negotiate: " << GetEffect() << std::endl;
     return stream;
 }
 
