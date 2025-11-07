@@ -219,7 +219,7 @@ private:
     //Additional methods
     bool checkWinCondition();
     void checkPlayerElimination();
-    std::vector<int> availableOrders(int playerID);
+    std::vector<OrderNames> availableOrders(int playerID);
 
     //Code for Assignemnt 2 Part 2
 //-----------------------------------------------------

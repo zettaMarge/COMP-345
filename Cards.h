@@ -95,10 +95,12 @@ public:
     // main constructor
     Card(int type);
 
+    int GetType();
+
     void Play() const;
     void Print() const;
 private:
-    enum typeNames { bomb, reinforcement, blockade, airlift, diplomacy };
+    enum typeNames { bomb = 3, reinforcement = 4, blockade = 2, airlift = 1, diplomacy = 5 };
     typeNames type;
     CardTypes* cardType;
 };

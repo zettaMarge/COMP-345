@@ -233,6 +233,11 @@ void Card::Play() const{
     cardType->Play();
 }
 
+//Get enum value for card type
+int Card::GetType(){
+    return type;
+}
+
 // Copy constructor for Card
 Card::Card(const Card& other) {
     type = other.type;

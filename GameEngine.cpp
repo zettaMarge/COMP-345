@@ -338,7 +338,7 @@ void GameEngine::mainGameLoop() {
 // territories they own
 
 void GameEngine::reinforcementPhase() {
-    /*
+    
        std::cout << "Reinforcement Phase started.\n";
 
     // Iterate through each player and calculate reinforcements
@@ -363,7 +363,7 @@ void GameEngine::reinforcementPhase() {
     }
     
     std::cout << "Reinforcement Phase ended.\n";
-    */
+    
 }
 
 // Issue Orders phase - Players issue orders such as deploying armies, attacking other players,
@@ -444,7 +444,8 @@ void GameEngine::issueOrdersPhase() {
                 
                     //creating and issuing the advance order
                     Advance advanceOrder = new Advance(player->GetName(), numUnits, gameMap->GetTerritoryByName(startTerritory), gameMap->GetTerritoryByName(targetTerritory));
-                    player->IssueOrder(advanceOrder*);
+                    Advance* ptr = &advanceOrder;
+                    player->IssueOrder(ptr);
 
                     std::cout << "Advance order issued.\n";
                     break;
@@ -464,7 +465,8 @@ void GameEngine::issueOrdersPhase() {
 
                     //creating and issuing the airlift order
                     Airlift airliftOrder = new Airlift(player->GetName(), numUnits, gameMap->GetTerritoryByName(startTerritory), gameMap->GetTerritoryByName(targetTerritory));
-                    player->IssueOrder(airliftOrder*);
+                    Airlift* ptr = &airliftOrder;
+                    player->IssueOrder(ptr);
 
                     std::cout << "Airlift order issued.\n";
                     break;
@@ -478,7 +480,8 @@ void GameEngine::issueOrdersPhase() {
 
                     //creating and issuing the blockade order
                     Blockade blockadeOrder = new Blockade(player->GetName(), gameMap->GetTerritoryByName(targetTerritory));
-                    player->IssueOrder(blockadeOrder*);
+                    Blockade* ptr = &blockadeOrder;
+                    player->IssueOrder(ptr);
 
                     std::cout << "Blockade order issued.\n";
                     break;
@@ -492,7 +495,8 @@ void GameEngine::issueOrdersPhase() {
 
                     //creating and issuing the bomb order
                     Bomb bombOrder = new Bomb(player->GetName(), gameMap->GetTerritoryByName(targetTerritory));
-                    player->IssueOrder(bombOrder*);
+                    Bomb* ptr = &bombOrder;
+                    player->IssueOrder(ptr);
 
                     std::cout << "Bomb order issued.\n";
                     break;
@@ -509,7 +513,8 @@ void GameEngine::issueOrdersPhase() {
 
                     //creating and issuing the deploy order
                     Deploy deployOrder = new Deploy(player->GetName(), numUnits, gameMap->GetTerritoryByName(targetTerritory));
-                    player->IssueOrder(deployOrder*);
+                    Deploy* ptr = &deployOrder;
+                    player->IssueOrder(ptr);
 
                     std::cout << "Deploy order issued.\n";
                     break;
@@ -523,7 +528,8 @@ void GameEngine::issueOrdersPhase() {
 
                     //creating and issuing the negotiate order
                     Negotiate negotiateOrder = new Negotiate(player->GetName(), targetPlayerName);
-                    player->IssueOrder(negotiateOrder*);
+                    Negotiate* ptr = &negotiateOrder;
+                    player->IssueOrder(ptr);
 
                     std::cout << "Negotiate order issued.\n";
                     break;
@@ -538,25 +544,27 @@ void GameEngine::issueOrdersPhase() {
     std::cout << "Issue Orders Phase ended.\n";
 }
 
-std::vector<int> GameEngine::availableOrders(int playerID) {
-    std::vector<OrderNames> orders;
+std::vector<GameEngine::OrderNames> GameEngine::availableOrders(int playerID) {
+    std::vector<GameEngine::OrderNames> orders;
     //while there are still reinforcements, deploy is the only available order
     if (players[playerID]->GetReinforcements() > 0) {
         orders.push_back(DeployEnum);
     } else {
-        orders.push_back(Advance);
+        orders.push_back(AdvanceEnum);
         for (Card card : players[playerID]->GetPlayerHand()->GetCards()) {
-            switch (card->GetType()) {
-                case Card::Airlift:
+            Card* ptr = *card;
+            int type = ptr->GetType();
+            switch (type) {
+                case AirliftEnum:
                     orders.push_back(AirliftEnum);
                     break;
-                case Card::Bomb:
+                case BombEnum:
                     orders.push_back(BombEnum);
                     break;
-                case Card::Blockade:
+                case BlockadeEnum:
                     orders.push_back(BlockadeEnum);
                     break;
-                case Card::Negotiate:
+                case NegotiateEnum:
                     orders.push_back(NegotiateEnum);
                     break;
                 default:
