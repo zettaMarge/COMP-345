@@ -24,24 +24,25 @@ class Player;
 class Order;
 
 // A player's list of orders
-class OrdersList {
-public:
-    OrdersList();
-    OrdersList(const OrdersList& obj);
-    ~OrdersList();
+class OrdersList{
+    public:
+        OrdersList();
+        OrdersList(const OrdersList& obj);
+        ~OrdersList();
 
-    OrdersList& operator= (const OrdersList& obj);
-    friend ostream& operator<<(ostream& stream, const OrdersList& obj);
+        OrdersList& operator= (const OrdersList& obj);
+        friend ostream& operator<<(ostream& stream, const OrdersList& obj);
 
-    vector<Order*> GetListItems();
-    Order* GetNextOrder();
-    void Add(Order* newOrder);
-    void Move(int fromId, int toId);
-    void Remove(int id);
-    void SetOwningPlayer(std::string name);
+        vector<Order*> GetListItems();
+        Order* GetNextOrder();
+        bool IsEmpty();
+        void Add(Order* newOrder);
+        void Move(int fromId, int toId);
+        void Remove(int id);
+        void SetOwningPlayer(std::string name);
 
-private:
-    vector<Order*> orders;
+    private:
+        vector<Order*> orders;
 };
 
 

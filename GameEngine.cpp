@@ -592,7 +592,7 @@ int TestGameEngine() {
 //Dr. Hamed Jafarpour
 //Submitted: TBD
 //Due: November 11, 2025 
-//I certify that this submission is my original work and meets the Faculty’s Expectations of Originality 
+//I certify that this submission is my original work and meets the FacultyÂ’s Expectations of Originality 
 //Alexandre Godfroy
 //-----------------------------------------------------
 
@@ -613,307 +613,315 @@ void GameEngine::mainGameLoop() {
 // Reinforcement phase - Players are given a number of army units that depends on the number of
 // territories they own
 
-//void GameEngine::reinforcementPhase() {
-//    /*
-//       std::cout << "Reinforcement Phase started.\n";
-//
-//    // Iterate through each player and calculate reinforcements
-//    for (int i = 0; i < players.size(); i++) {
-//        //initiates the player for every iteration
-//        Player* player = players[i]; // players vector needs to be defined somewhere in GameEngine
-//        int numTerritories = player->GetPlayerTerritories().size();
-//        int reinforcementUnits = numTerritories / 3; // 1 unit per 3 territories owned
-//        if (reinforcementUnits < 3) { // minimum of 3 units
-//            reinforcementUnits = 3;
-//        }
-//
-//        // Check for continent control bonuses
-//        std::vector<Continent*> continents = player->GetOwnedContinents();
-//        for (int j = 0; j < continents.size(); j++) {
-//            reinforcementUnits += continents[j]->GetPoints();
-//        }
-//
-//        //add reinforcements to player's pool
-//        player->AddReinforcements(reinforcementUnits);
-//        std::cout << "Player " << player->GetName() << " receives " << reinforcementUnits << " reinforcement units.\n";
-//    }
-//
-//    std::cout << "Reinforcement Phase ended.\n";
-//    */
-//}
-//
-//// Issue Orders phase - Players issue orders such as deploying armies, attacking other players,
-//// and fortifying their positions
-//void GameEngine::issueOrdersPhase() {
-//    std::cout << "Issue Orders Phase started.\n";
-//    std::vector<bool> isFinished(players.size(), false);
-//    int finishedPlayers = 0;
-//    while (finishedPlayers < players.size()) {
-//        for (int i = 0; i < players.size(); i++) {
-//            if (isFinished[i]) {
-//                continue; // Skip players who have finished issuing orders
-//            }
-//
-//            Player* player = players[i]; // players vector needs to be defined somewhere in GameEngine
-//            std::cout << "Player " << player->GetName() << "'s turn to issue an order.\n";
-//            std::vector<OrderNames> orders = availableOrders(i);
-//            if (orders.empty()) {
-//                std::cout << "No available orders for player " << player->GetName() << ". Ending turn.\n";
-//                isFinished[i] = true;
-//                finishedPlayers++;
-//                continue;
-//            }
-//            std::cout << "Available orders:\n";
-//            for (int j = 0; j < orders.size(); j++) {
-//                switch (orders[j]) {
-//                case Deploy:
-//                    std::cout << j << " - Deploy\n";
-//                    break;
-//
-//                case Advance:
-//                    std::cout << j << " - Advance\n";
-//                    break;
-//
-//                case Bomb:
-//                    std::cout << j << " - Bomb\n";
-//                    break;
-//
-//                case Airlift:
-//                    std::cout << j << " - Airlift\n";
-//                    break;
-//
-//                case Blockade:
-//                    std::cout << j << " - Blockade\n";
-//                    break;
-//
-//                case Negotiate:
-//                    std::cout << j << " - Negotiate\n";
-//                    break;
-//
-//                default:
-//                    break;
-//                }
-//            }
-//
-//            std::cout << "Enter the number of the order to issue, or -1 to end your turn: ";
-//            int choice;
-//            std::cin >> choice;
-//            // Issue the selected order
-//            switch (orders[choice]) {
-//            case -1: {
-//                isFinished[i] = true;
-//                finishedPlayers++;
-//                std::cout << "Player " << player->GetName() << " has ended their turn.\n";
-//                break;
-//            }case Advance: {
-//                string startTerritory;
-//                string targetTerritory;
-//                int numUnits;
-//
-//                //getting user input for advance order
-//                std::cout << "You chose to issue an Advance order.\nPlease enter the starting territory: " << std::endl;
-//                cin >> startTerritory;
-//                std::cout << "Please enter the target territory: " << std::endl;
-//                cin >> targetTerritory;
-//                std::cout << "Please enter the number of units to move: " << std::endl;
-//                cin >> numUnits;
-//
-//                //creating and issuing the advance order
-//                Order* advanceOrder = new Advance(player->GetName(), numUnits, gameMap->GetTerritoryByName(startTerritory), gameMap->GetTerritoryByName(targetTerritory));
-//                player->IssueOrder(advanceOrder);
-//
-//                std::cout << "Advance order issued.\n";
-//                break;
-//
-//            }case Airlift: {
-//                string startTerritory;
-//                string targetTerritory;
-//                int numUnits = 5;  // Example number of units to airlift    
-//
-//                //getting user input for airlift order
-//                std::cout << "You chose to issue an Airlift order.\nPlease enter the starting territory: " << std::endl;
-//                cin >> startTerritory;
-//                std::cout << "Please enter the target territory: " << std::endl;
-//                cin >> targetTerritory;
-//                std::cout << "Please enter the number of units to move: " << std::endl;
-//                cin >> numUnits;
-//
-//                //creating and issuing the airlift order
-//                Order* airliftOrder = new Airlift(player->GetName(), numUnits, gameMap->GetTerritoryByName(startTerritory), gameMap->GetTerritoryByName(targetTerritory));
-//                player->IssueOrder(airliftOrder);
-//
-//                std::cout << "Airlift order issued.\n";
-//                break;
-//
-//            }case Blockade: {
-//                string targetTerritory;
-//
-//                //getting user input for blockade order
-//                std::cout << "You chose to issue a Blockade order.\nPlease enter the target territory: " << std::endl;
-//                cin >> targetTerritory;
-//
-//                //creating and issuing the blockade order
-//                Order* blockadeOrder = new Blockade(player->GetName(), gameMap->GetTerritoryByName(targetTerritory));
-//                player->IssueOrder(blockadeOrder);
-//
-//                std::cout << "Blockade order issued.\n";
-//                break;
-//
-//            }case Bomb: {
-//                string targetTerritory;
-//
-//                //getting user input for bomb order
-//                std::cout << "You chose to issue a Bomb order.\nPlease enter the target territory: " << std::endl;
-//                cin >> targetTerritory;
-//
-//                //creating and issuing the bomb order
-//                Order* bombOrder = new Bomb(player->GetName(), gameMap->GetTerritoryByName(targetTerritory));
-//                player->IssueOrder(bombOrder);
-//
-//                std::cout << "Bomb order issued.\n";
-//                break;
-//
-//            }   case Deploy: {
-//                string targetTerritory;
-//                int numUnits;
-//
-//                //getting user input for deploy order
-//                std::cout << "You chose to issue a Deploy order.\nPlease enter the target territory: " << std::endl;
-//                cin >> targetTerritory;
-//                std::cout << "Please enter the number of units to deploy: " << std::endl;
-//                cin >> numUnits;
-//
-//                //creating and issuing the deploy order
-//                Order* deployOrder = new Deploy(player->GetName(), numUnits, gameMap->GetTerritoryByName(targetTerritory));
-//                player->IssueOrder(deployOrder);
-//
-//                std::cout << "Deploy order issued.\n";
-//                break;
-//
-//            case Negotiate:
-//                string targetPlayerName;
-//
-//                //getting user input for negotiate order
-//                std::cout << "You chose to issue a Negotiate order.\nPlease enter the target player name: " << std::endl;
-//                cin >> targetPlayerName;
-//
-//                //creating and issuing the negotiate order
-//                Order* negotiateOrder = new Negotiate(player->GetName(), targetPlayerName);
-//                player->IssueOrder(negotiateOrder);
-//
-//                std::cout << "Negotiate order issued.\n";
-//                break;
-//            } default: {
-//                std::cout << "Invalid choice. Please try again.\n";
-//                i--; // Repeat this player's turn
-//                break;
-//            }
-//            }
-//        }
-//    }
-//    std::cout << "Issue Orders Phase ended.\n";
-//}
-//
-//std::vector<OrderNames> GameEngine::availableOrders(int playerID) {
-//    std::vector<OrderNames> orders;
-//    //while there are still reinforcements, deploy is the only available order
-//    if (players[playerID]->GetReinforcements() > 0) {
-//        orders.push_back(Deploy);
-//    }
-//    else {
-//        orders.push_back(Advance);
-//        for (Card* card : players[playerID]->GetPlayerHand()->GetCards()) {
-//            switch (card->GetType()) {
-//            case Card::Airlift:
-//                orders.push_back(Airlift);
-//                break;
-//            case Card::Bomb:
-//                orders.push_back(Bomb);
-//                break;
-//            case Card::Blockade:
-//                orders.push_back(Blockade);
-//                break;
-//            case Card::Negotiate:
-//                orders.push_back(Negotiate);
-//                break;
-//            default:
-//                break;
-//            }
-//        }
-//    }
-//    return orders;
-//}
-//
-//// Execute Orders phase - The issued orders are executed in the order they were issued
-//void GameEngine::executeOrdersPhase() {
-//    std::cout << "Execute Orders Phase started.\n";
-//    std::vector<bool> isFinished(players.size(), false);
-//    int finishedPlayers = 0;
-//    while (finishedPlayers < players.size()) {
-//        for (int i = 0; i < players.size(); i++) {
-//            if (isFinished[i]) {
-//                continue; // Skip players who have finished executing orders
-//            }
-//
-//            Player* player = players[i]; // players vector needs to be defined somewhere in GameEngine
-//            OrdersList* ordersList = player->GetPlayerOrders();
-//            if (ordersList->IsEmpty()) {
-//                std::cout << "No more orders for player " << player->GetName() << ". Ending turn.\n";
-//                isFinished[i] = true;
-//                finishedPlayers++;
-//                continue;
-//            }
-//
-//            std::cout << "Player " << player->GetName() << "'s turn to execute an order.\n";
-//            Order* order = ordersList->GetNextOrder();
-//            if (order) {
-//                order->Execute();
-//                ordersList->RemoveOrder(0); // Remove the executed order from the list
-//                delete order; // Assuming ownership of Order pointers
-//            }
-//        }
-//    }
-//    std::cout << "Execute Orders Phase ended.\n";
-//}
-//
-//// Check for win condition - returns true if a player has won the game
-//bool GameEngine::checkWinCondition() {
-//    if (players.size() == 1) {
-//        std::cout << "Player " << players[0]->GetName() << " has won the game!\n";
-//        return true;
-//    }
-//    return false;
-//}
-//
-//// Check for player elimination - returns the number of players eliminated in the current turn
-//void GameEngine::checkPlayerElimination() {
-//
-//    // Check for player elimination
-//    std::vector<Player*> eliminatedPlayers;
-//    for (int i = 0; i < players.size(); i++) {
-//        Player* player = players[i]; // players vector needs to be defined somewhere in GameEngine
-//        if (player->GetPlayerTerritories().empty()) {
-//            eliminatedPlayers.push_back(player);
-//            std::cout << "Player " << player->GetName() << " has been eliminated from the game.\n";
-//
-//            //removes player from memory
-//            delete player;
-//
-//            //removes player from players vector
-//            for (int j = i; j < players.size() - 1; j++) {
-//                players[j] = players[j + 1];
-//            }
-//            players.pop_back();
-//            i--; // Adjust index after removal
-//        }
-//    }
-//
-//    // Remove eliminated players from the game
-//    for (Player* eliminatedPlayer : eliminatedPlayers) {
-//        players.erase(std::remove(players.begin(), players.end(), eliminatedPlayer), players.end());
-//        delete eliminatedPlayer; // Assuming ownership of Player pointers
-//    }
-//}
+void GameEngine::reinforcementPhase() {
+    
+       std::cout << "Reinforcement Phase started.\n";
+
+    // Iterate through each player and calculate reinforcements
+    for (int i = 0; i < players.size(); i++) {
+        //initiates the player for every iteration
+        Player* player = players[i]; // players vector needs to be defined somewhere in GameEngine
+        int numTerritories = player->GetPlayerTerritories().size();
+        int reinforcementUnits = numTerritories / 3; // 1 unit per 3 territories owned
+        if (reinforcementUnits < 3) { // minimum of 3 units
+            reinforcementUnits = 3;
+        }
+
+        // Check for continent control bonuses
+        std::vector<Continent*> continents = player->GetOwnedContinents(gameMap);
+        for (int j = 0; j < continents.size(); j++) {
+            reinforcementUnits += continents[j]->GetPoints();
+        }
+        
+        //add reinforcements to player's pool
+        player->AddReinforcements(reinforcementUnits);
+        std::cout << "Player " << player->GetName() << " receives " << reinforcementUnits << " reinforcement units.\n";
+    }
+    
+    std::cout << "Reinforcement Phase ended.\n";
+    
+}
+
+// Issue Orders phase - Players issue orders such as deploying armies, attacking other players,
+// and fortifying their positions
+void GameEngine::issueOrdersPhase() {
+    std::cout << "Issue Orders Phase started.\n";
+    std::vector<bool> isFinished(players.size(), false);
+    int finishedPlayers = 0;
+    while (finishedPlayers < players.size()) {
+        for (int i = 0; i < players.size(); i++) {
+            if (isFinished[i]) {
+                continue; // Skip players who have finished issuing orders
+            }
+
+            Player* player = players[i]; // players vector needs to be defined somewhere in GameEngine
+            std::cout << "Player " << player->GetName() << "'s turn to issue an order.\n";
+            std::vector<OrderNames> orders = availableOrders(i);
+            if (orders.empty()) {
+                std::cout << "No available orders for player " << player->GetName() << ". Ending turn.\n";
+                isFinished[i] = true;
+                finishedPlayers++;
+                continue;
+            }
+            std::cout << "Available orders:\n";
+            for (int j = 0; j < orders.size(); j++) {
+                switch (orders[j]) {
+                case DeployEnum:
+                    std::cout << j << " - Deploy\n";
+                    break;
+
+                case AdvanceEnum:
+                    std::cout << j << " - Advance\n";
+                    break;
+
+                case BombEnum:
+                    std::cout << j << " - Bomb\n";
+                    break;
+
+                case AirliftEnum:
+                    std::cout << j << " - Airlift\n";
+                    break;
+
+                case BlockadeEnum:
+                    std::cout << j << " - Blockade\n";
+                    break;
+
+                case NegotiateEnum:
+                    std::cout << j << " - Negotiate\n";
+                    break;
+
+                default:
+                    break;
+                }
+            }
+
+            std::cout << "Enter the number of the order to issue, or -1 to end your turn: ";
+            int choice;
+            std::cin >> choice;
+            // Issue the selected order
+            switch (orders[choice]) {
+                case  AdvanceEnum:{
+                    string startTerritory;
+                    string targetTerritory;
+                    int numUnits;
+
+                    //getting user input for advance order
+                    std::cout << "You chose to issue an Advance order.\nPlease enter the starting territory: "<< std::endl;
+                    cin >> startTerritory;
+                    std::cout << "Please enter the target territory: "<< std::endl;
+                    cin >> targetTerritory;
+                    std::cout << "Please enter the number of units to move: "<< std::endl;
+                    cin >> numUnits;
+                
+                    //creating and issuing the advance order
+                    Advance* advanceOrder = new Advance(player->GetName(), numUnits, gameMap->GetTerritoryByName(startTerritory), gameMap->GetTerritoryByName(targetTerritory));
+                    Advance* ptr = advanceOrder;
+                    player->IssueOrder(ptr);
+
+                    std::cout << "Advance order issued.\n";
+                    break;
+
+                }case AirliftEnum:{
+                    string startTerritory;
+                    string targetTerritory;
+                    int numUnits = 5;  // Example number of units to airlift    
+
+                    //getting user input for airlift order
+                    std::cout << "You chose to issue an Airlift order.\nPlease enter the starting territory: "<< std::endl;
+                    cin >> startTerritory;
+                    std::cout << "Please enter the target territory: "<< std::endl;
+                    cin >> targetTerritory;
+                    std::cout << "Please enter the number of units to move: "<< std::endl;
+                    cin >> numUnits;
+
+                    //creating and issuing the airlift order
+                    Airlift* airliftOrder = new Airlift(player->GetName(), numUnits, gameMap->GetTerritoryByName(startTerritory), gameMap->GetTerritoryByName(targetTerritory));
+                    Airlift* ptr = airliftOrder;
+                    player->IssueOrder(ptr);
+
+                    std::cout << "Airlift order issued.\n";
+                    break;
+
+                }case BlockadeEnum:{
+                    string targetTerritory;
+
+                    //getting user input for blockade order
+                    std::cout << "You chose to issue a Blockade order.\nPlease enter the target territory: "<< std::endl;
+                    cin >> targetTerritory;
+
+                    //creating and issuing the blockade order
+                    Blockade* blockadeOrder = new Blockade(player->GetName(), gameMap->GetTerritoryByName(targetTerritory));
+                    Blockade* ptr = blockadeOrder;
+                    player->IssueOrder(ptr);
+
+                    std::cout << "Blockade order issued.\n";
+                    break;
+
+                }case BombEnum:{
+                    string targetTerritory;
+
+                    //getting user input for bomb order
+                    std::cout << "You chose to issue a Bomb order.\nPlease enter the target territory: "<< std::endl;
+                    cin >> targetTerritory;
+
+                    //creating and issuing the bomb order
+                    Bomb* bombOrder = new Bomb(player->GetName(), gameMap->GetTerritoryByName(targetTerritory));
+                    Bomb* ptr = bombOrder;
+                    player->IssueOrder(ptr);
+
+                    std::cout << "Bomb order issued.\n";
+                    break;
+
+                }case DeployEnum:{
+                    string targetTerritory;
+                    int numUnits;
+
+                   //getting user input for deploy order
+                    std::cout << "You chose to issue a Deploy order.\nPlease enter the target territory: "<< std::endl;
+                    cin >> targetTerritory;
+                    std::cout << "Please enter the number of units to deploy: "<< std::endl;
+                    cin >> numUnits;
+
+                    //creating and issuing the deploy order
+                    Deploy* deployOrder = new Deploy(player->GetName(), numUnits, gameMap->GetTerritoryByName(targetTerritory));
+                    Deploy* ptr = deployOrder;
+                    player->IssueOrder(ptr);
+
+                    std::cout << "Deploy order issued.\n";
+                    break;
+
+                }case NegotiateEnum:{
+                    string targetPlayerName;
+
+                    //getting user input for negotiate order
+                    std::cout << "You chose to issue a Negotiate order.\nPlease enter the target player name: "<< std::endl;
+                    cin >> targetPlayerName;
+
+                    //creating and issuing the negotiate order
+                    Negotiate* negotiateOrder = new Negotiate(player->GetName(), targetPlayerName);
+                    Negotiate* ptr = negotiateOrder;
+                    player->IssueOrder(ptr);
+
+                    std::cout << "Negotiate order issued.\n";
+                    break;
+                } default:{
+                    if (choice == -1){
+                        isFinished[i] = true;
+                        finishedPlayers++;
+                        std::cout << "Player " << player->GetName() << " has ended their turn.\n";
+                    }else {
+                        std::cout << "Invalid choice. Please try again.\n";
+                    i--; // Repeat this player's turn
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    std::cout << "Issue Orders Phase ended.\n";
+}
+// hello alex
+std::vector<GameEngine::OrderNames> GameEngine::availableOrders(int playerID) {
+    std::vector<GameEngine::OrderNames> orders;
+    //while there are still reinforcements, deploy is the only available order
+    if (players[playerID]->GetReinforcements() > 0) {
+        orders.push_back(DeployEnum);
+    } else {
+        orders.push_back(AdvanceEnum);
+        for (Card card : players[playerID]->GetPlayerHand()->GetCards()) {
+            Card* ptr = &card;
+            int type = ptr->GetType();
+            switch (type) {
+                case AirliftEnum:
+                    orders.push_back(AirliftEnum);
+                    break;
+                case BombEnum:
+                    orders.push_back(BombEnum);
+                    break;
+                case BlockadeEnum:
+                    orders.push_back(BlockadeEnum);
+                    break;
+                case NegotiateEnum:
+                    orders.push_back(NegotiateEnum);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    return orders;
+}
+
+// Execute Orders phase - The issued orders are executed in the order they were issued
+void GameEngine::executeOrdersPhase() {
+    std::cout << "Execute Orders Phase started.\n";
+    std::vector<bool> isFinished(players.size(), false);
+    int finishedPlayers = 0;
+    while (finishedPlayers < players.size()) {
+        for (int i = 0; i < players.size(); i++) {
+            if (isFinished[i]) {
+                continue; // Skip players who have finished executing orders
+            }
+
+            Player* player = players[i]; // players vector needs to be defined somewhere in GameEngine
+            OrdersList* ordersList = player->GetPlayerOrders();
+            if (ordersList->IsEmpty()) {
+                std::cout << "No more orders for player " << player->GetName() << ". Ending turn.\n";
+                isFinished[i] = true;
+                finishedPlayers++;
+                continue;
+            }
+
+            std::cout << "Player " << player->GetName() << "'s turn to execute an order.\n";
+            Order* order = ordersList->GetNextOrder();
+            if (order) {
+                order->Execute();
+                ordersList->Remove(0); // Remove the executed order from the list
+                delete order; // Assuming ownership of Order pointers
+            }
+        }
+    }
+    std::cout << "Execute Orders Phase ended.\n";
+}
+
+// Check for win condition - returns true if a player has won the game
+bool GameEngine::checkWinCondition() {
+    if (players.size() == 1) {
+        std::cout << "Player " << players[0]->GetName() << " has won the game!\n";
+        return true;
+    }
+    return false;
+}
+
+// Check for player elimination - returns the number of players eliminated in the current turn
+void GameEngine::checkPlayerElimination() {
+
+    // Check for player elimination
+    std::vector<Player*> eliminatedPlayers;
+    for (int i = 0; i < players.size(); i++) {
+        Player* player = players[i]; // players vector needs to be defined somewhere in GameEngine
+        if (player->GetPlayerTerritories().empty()) {
+            eliminatedPlayers.push_back(player);
+            std::cout << "Player " << player->GetName() << " has been eliminated from the game.\n";
+
+            //removes player from memory
+            delete player;
+
+            //removes player from players vector
+            for (int j = i; j < players.size() - 1; j++) {
+                players[j] = players[j + 1];
+            }
+            players.pop_back();
+            i--; // Adjust index after removal
+        }
+    }
+
+    // Remove eliminated players from the game
+    for (Player* eliminatedPlayer : eliminatedPlayers) {
+        players.erase(std::remove(players.begin(), players.end(), eliminatedPlayer), players.end());
+        delete eliminatedPlayer; // Assuming ownership of Player pointers
+    }
+}
 
 //-----------------------------------------------------
 //Mia Letendre 40274681
@@ -921,7 +929,7 @@ void GameEngine::mainGameLoop() {
 //Dr. Hamed Jafarpour
 //Submitted: TBD
 //Due: November 11, 2025 
-//I certify that this submission is my original work and meets the Faculty’s Expectations of Originality 
+//I certify that this submission is my original work and meets the FacultyÂ’s Expectations of Originality 
 //Mia Letendre
 //-----------------------------------------------------
     //Creates a new player and adds them to the players vector
@@ -983,7 +991,7 @@ bool GameEngine::ValidateMap() {
 //a) fairly distribute all the territories to the players
 //b) determine randomly the order of play of the players in the game
 //c) give 50 initial army units to the players, which are placed in their respective reinforcement pool
-//d) let each player draw 2 initial cards from the deck using the deck’s draw() method
+//d) let each player draw 2 initial cards from the deck using the deckÂ’s draw() method
 //e) switch the game to the play phase
 void GameEngine::GameStart() {
 

@@ -288,32 +288,46 @@ public:
 
     // Code for assignment 2
     // Part 3: Game play: main game loop
-     void mainGameLoop();
-     void reinforcementPhase();
-     void issueOrdersPhase();
-     void executeOrdersPhase();
+private:
+    void mainGameLoop();
+    void reinforcementPhase();
+    void issueOrdersPhase();
+    void executeOrdersPhase();
 
-     enum OrderNames {
-         Advance,
-         Airlift,
-         Blockade,
-         Bomb,
-         Deploy,
-         Negotiate
-     };
-     void TestStartupPhase(); //Tests the startup phase
-    //Additional methods to check for win condition and player count
-     bool checkWinCondition();
-     void checkPlayerElimination();
-     std::vector<GameEngine::OrderNames> availableOrders(int playerID);
+    enum OrderNames {
+        AdvanceEnum,
+        AirliftEnum,
+        BlockadeEnum,
+        BombEnum,
+        DeployEnum,
+        NegotiateEnum
+    };
 
-    public:
-        std::vector<Player*> players; //list of players in the game
-        Map* gameMap; //pointer to the map being used in the game
-        Player* nuetralPlayer; //pointer to the nuetral player
-        void StartupPhase(); //Handles the startup phase of the game
-        void AddPlayers(const string& playerName); //Adds a new player to the game
-        bool ValidateMap(); //Validates the map according to assignment specifications
-        void LoadMap(const string& fileName); //Loads a map from a file
-        void GameStart(); //Starts the game   
+    //Additional methods
+    bool checkWinCondition();
+    void checkPlayerElimination();
+    std::vector<OrderNames> availableOrders(int playerID);
+
+    //Code for Assignemnt 2 Part 2
+//-----------------------------------------------------
+//Mia Letendre 40274681
+//COMP-345-D 2252 Assignment 2 Game Startup Phase
+//Dr. Hamed Jafarpour
+//Submitted: TBD
+//Due: November 11, 2025 
+//I certify that this submission is my original work and meets the Faculty’s Expectations of Originality 
+//Mia Letendre
+//-----------------------------------------------------
+    std::vector<Player*> players; //list of players in the game
+    Map *gameMap; //pointer to the map being used in the game
+    Player* nuetralPlayer; //pointer to the nuetral player
+    void StartupPhase(); //Handles the startup phase of the game
+    void AddPlayers(const string &playerName); //Adds a new player to the game
+    bool ValidateMap(); //Validates the map according to assignment specifications
+    void LoadMap(const string &fileName); //Loads a map from a file
+    void GameStart(); //Starts the game
+
+public: 
+    void TestStartupPhase(); //Tests the startup phase
+
 };
