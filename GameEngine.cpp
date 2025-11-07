@@ -352,7 +352,7 @@ void GameEngine::reinforcementPhase() {
         }
 
         // Check for continent control bonuses
-        std::vector<Continent*> continents = player->GetOwnedContinents();
+        std::vector<Continent*> continents = player->GetOwnedContinents(gameMap);
         for (int j = 0; j < continents.size(); j++) {
             reinforcementUnits += continents[j]->GetPoints();
         }

@@ -11,6 +11,7 @@
 #include "Map.h"
 #include "Orders.h"
 #include "Player.h"
+#include "GameEngine.h"
 #include <vector>
 #include <iostream>
 #include <unordered_set>
@@ -205,12 +206,25 @@ vector<Territory*> Player::GetPlayerTerritories() {
     return playerTerritories;
 };
 
-vector<Continent*> Player::GetOwnedContinents() const {
-    unordered_set<Continent*> ownedContinentsSet;
-    for (Territory* territory : playerTerritories) {
-        ownedContinentsSet.insert(territory->GetContinentByTerritory());
+vector<Continent*> Player::GetOwnedContinents(const Map* map) const {
+    vector<Continent*> fullyOwnedContinents;
+
+    // Assume you have access to a list of all continents in the game
+    for (Continent* continent : map->GetContinents()) {
+        bool ownsAll = true;
+
+        for (Territory* terr : continent->GetTerritories()) {
+            if (terr->GetOwner() != this) {
+                ownsAll = false;
+                break;
+            }
+        }
+
+        if (ownsAll) {
+            fullyOwnedContinents.push_back(continent);
+        }
     }
-    return vector<Continent*>(ownedContinentsSet.begin(), ownedContinentsSet.end());
+    return fullyOwnedContinents;
 };
 
 Hand* Player::GetPlayerHand() {
