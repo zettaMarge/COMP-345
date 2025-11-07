@@ -443,7 +443,7 @@ void GameEngine::issueOrdersPhase() {
                     cin >> numUnits;
                 
                     //creating and issuing the advance order
-                    Advance advanceOrder = new Advance(player->GetName(), numUnits, gameMap->GetTerritoryByName(startTerritory), gameMap->GetTerritoryByName(targetTerritory));
+                    Advance* advanceOrder = new Advance(player->GetName(), numUnits, gameMap->GetTerritoryByName(startTerritory), gameMap->GetTerritoryByName(targetTerritory));
                     Advance* ptr = &advanceOrder;
                     player->IssueOrder(ptr);
 
@@ -599,7 +599,7 @@ void GameEngine::executeOrdersPhase() {
             Order* order = ordersList->GetNextOrder();
             if (order) {
                 order->Execute();
-                ordersList->RemoveOrder(0); // Remove the executed order from the list
+                ordersList->Remove(0); // Remove the executed order from the list
                 delete order; // Assuming ownership of Order pointers
             }
         }

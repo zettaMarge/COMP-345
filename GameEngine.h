@@ -216,6 +216,15 @@ private:
     void issueOrdersPhase();
     void executeOrdersPhase();
 
+    enum OrderNames {
+        AdvanceEnum,
+        AirliftEnum,
+        BlockadeEnum,
+        BombEnum,
+        DeployEnum,
+        NegotiateEnum
+    };
+
     //Additional methods
     bool checkWinCondition();
     void checkPlayerElimination();
@@ -243,12 +252,4 @@ private:
 public: 
     void TestStartupPhase(); //Tests the startup phase
 
-    enum OrderNames {
-        AdvanceEnum,
-        AirliftEnum,
-        BlockadeEnum,
-        BombEnum,
-        DeployEnum,
-        NegotiateEnum
-    };
 };

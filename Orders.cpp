@@ -66,6 +66,12 @@ Order* OrdersList::GetNextOrder() {
     return nullptr;
 }
 
+bool OrdersList::IsEmpty() {
+    if (orders.empty()) {
+        return true;
+    }
+    return false;
+}
 
 // Add a new order to the list
 void OrdersList::Add(Order* newOrder) {

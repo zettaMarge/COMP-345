@@ -35,6 +35,7 @@ class OrdersList{
 
         vector<Order*> GetListItems();
         Order* GetNextOrder();
+        bool IsEmpty();
         void Add(Order* newOrder);
         void Move(int fromId, int toId);
         void Remove(int id);
