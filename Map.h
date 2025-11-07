@@ -113,6 +113,9 @@ class Map {
 
         Continent* AddContinent(const std::string& name, int points);
         Territory* AddTerritory(const std::string& name, Continent* continent);
+        std::vector<Continent*> GetContinents() const {
+			return continents;
+        };
         void AddAdjacency(Territory* from, Territory* to);
 
         Continent* GetContinentByName(const std::string& name);

@@ -352,7 +352,7 @@ void GameEngine::reinforcementPhase() {
         }
 
         // Check for continent control bonuses
-        std::vector<Continent*> continents = player->GetOwnedContinents();
+        std::vector<Continent*> continents = player->GetOwnedContinents(gameMap);
         for (int j = 0; j < continents.size(); j++) {
             reinforcementUnits += continents[j]->GetPoints();
         }
@@ -552,7 +552,7 @@ std::vector<GameEngine::OrderNames> GameEngine::availableOrders(int playerID) {
     } else {
         orders.push_back(AdvanceEnum);
         for (Card card : players[playerID]->GetPlayerHand()->GetCards()) {
-            Card* ptr = card;
+            Card* ptr = &card;
             int type = ptr->GetType();
             switch (type) {
                 case AirliftEnum:
