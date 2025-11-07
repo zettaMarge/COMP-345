@@ -424,12 +424,7 @@ void GameEngine::issueOrdersPhase() {
             std::cin >> choice;
             // Issue the selected order
             switch (orders[choice]) {
-                case -1:{
-                    isFinished[i] = true;
-                    finishedPlayers++;
-                    std::cout << "Player " << player->GetName() << " has ended their turn.\n";
-                    break;
-                }case  AdvanceEnum:{
+                case  AdvanceEnum:{
                     string startTerritory;
                     string targetTerritory;
                     int numUnits;
@@ -534,8 +529,14 @@ void GameEngine::issueOrdersPhase() {
                     std::cout << "Negotiate order issued.\n";
                     break;
                 } default:{
-                    std::cout << "Invalid choice. Please try again.\n";
+                    if (choice == -1){
+                        isFinished[i] = true;
+                        finishedPlayers++;
+                        std::cout << "Player " << player->GetName() << " has ended their turn.\n";
+                    }else {
+                        std::cout << "Invalid choice. Please try again.\n";
                     i--; // Repeat this player's turn
+                    }
                     break;
                 }
             }
