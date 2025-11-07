@@ -380,7 +380,7 @@ void GameEngine::issueOrdersPhase() {
 
             Player* player = players[i]; // players vector needs to be defined somewhere in GameEngine
             std::cout << "Player " << player->GetName() << "'s turn to issue an order.\n";
-            std::vector<int> orders = availableOrders(i);
+            std::vector<OrderNames> orders = availableOrders(i);
             if (orders.empty()) {
                 std::cout << "No available orders for player " << player->GetName() << ". Ending turn.\n";
                 isFinished[i] = true;
@@ -422,14 +422,10 @@ void GameEngine::issueOrdersPhase() {
             std::cout << "Enter the number of the order to issue, or -1 to end your turn: ";
             int choice;
             std::cin >> choice;
+
             // Issue the selected order
             switch (orders[choice]) {
-                case -1:{
-                    isFinished[i] = true;
-                    finishedPlayers++;
-                    std::cout << "Player " << player->GetName() << " has ended their turn.\n";
-                    break;
-                }case  AdvanceEnum:{
+                case  AdvanceEnum:{
                     string startTerritory;
                     string targetTerritory;
                     int numUnits;
@@ -534,8 +530,14 @@ void GameEngine::issueOrdersPhase() {
                     std::cout << "Negotiate order issued.\n";
                     break;
                 } default:{
-                    std::cout << "Invalid choice. Please try again.\n";
-                    i--; // Repeat this player's turn
+                    if (choice == -1){
+                        isFinished[i] = true;
+                        finishedPlayers++;
+                        std::cout << "Player " << player->GetName() << " has ended their turn.\n";
+                    }else{
+                        std::cout << "Invalid choice. Please try again.\n";
+                        i--; // Repeat this player's turn
+                    }
                     break;
                 }
             }
@@ -543,7 +545,7 @@ void GameEngine::issueOrdersPhase() {
     }
     std::cout << "Issue Orders Phase ended.\n";
 }
-// hello alex
+
 std::vector<GameEngine::OrderNames> GameEngine::availableOrders(int playerID) {
     std::vector<GameEngine::OrderNames> orders;
     //while there are still reinforcements, deploy is the only available order
@@ -552,7 +554,7 @@ std::vector<GameEngine::OrderNames> GameEngine::availableOrders(int playerID) {
     } else {
         orders.push_back(AdvanceEnum);
         for (Card card : players[playerID]->GetPlayerHand()->GetCards()) {
-            Card* ptr = card;
+            Card* ptr = &card;
             int type = ptr->GetType();
             switch (type) {
                 case AirliftEnum:
