@@ -38,6 +38,7 @@ public:
     //setters and getters
     string GetName();
     vector<Territory*> GetPlayerTerritories();
+	vector<Continent*> GetOwnedContinents() const;
     Hand* GetPlayerHand();
     OrdersList* GetPlayerOrders() const;
     int GetReinforcements();

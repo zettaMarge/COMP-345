@@ -205,6 +205,14 @@ vector<Territory*> Player::GetPlayerTerritories() {
     return playerTerritories;
 };
 
+vector<Continent*> Player::GetOwnedContinents() const {
+    unordered_set<Continent*> ownedContinentsSet;
+    for (Territory* territory : playerTerritories) {
+        ownedContinentsSet.insert(territory->GetContinentByTerritory());
+    }
+    return vector<Continent*>(ownedContinentsSet.begin(), ownedContinentsSet.end());
+};
+
 Hand* Player::GetPlayerHand() {
     return playerHand;
 };
