@@ -34,6 +34,8 @@ class OrdersList{
         friend ostream& operator<<(ostream& stream, const OrdersList& obj);
 
         vector<Order*> GetListItems();
+        Order* GetNextOrder();
+        bool IsEmpty();
         void Add(Order* newOrder);
         void Move(int fromId, int toId);
         void Remove(int id);
@@ -46,23 +48,23 @@ class OrdersList{
 
 // Abstract Order class - cannot be instantiated
 class Order {
-    public:
-        friend ostream& operator<<(ostream& stream, const Order& obj);
+public:
+    friend ostream& operator<<(ostream& stream, const Order& obj);
 
         void SetOwningPlayer(Player* player);
         Player* GetOwningPlayer();
 
-        virtual ostream& Print(ostream& stream) const = 0;
-        virtual std::string GetEffect() const = 0;
-        virtual void Execute() = 0;
+    virtual ostream& Print(ostream& stream) const = 0;
+    virtual std::string GetEffect() const = 0;
+    virtual void Execute() = 0;
 
     protected:
         Player* owningPlayer;
 
-        bool TerritoryBelongsToPlayer(Territory* territory);
+    bool TerritoryBelongsToPlayer(Territory* territory);
 
-    private:
-        virtual bool Validate() = 0;
+private:
+    virtual bool Validate() = 0;
 };
 
 
@@ -74,25 +76,25 @@ class Advance : public Order {
         Advance(const Advance& obj);
         ~Advance();
 
-        Advance& operator= (const Advance& obj);
+    Advance& operator= (const Advance& obj);
 
-        void SetNbUnits(int nb);
-        int GetNbUnits();
-        void SetSrc(Territory* territory);
-        Territory* GetSrc();
-        void SetTarget(Territory* Target);
-        Territory* GetTarget();
+    void SetNbUnits(int nb);
+    int GetNbUnits();
+    void SetSrc(Territory* territory);
+    Territory* GetSrc();
+    void SetTarget(Territory* Target);
+    Territory* GetTarget();
 
-        ostream& Print(ostream& stream) const;
-        std::string GetEffect() const;
-        void Execute();
-    
-    private:   
-        int nbUnits;
-        Territory* src;
-        Territory* target;
+    ostream& Print(ostream& stream) const;
+    std::string GetEffect() const;
+    void Execute();
 
-        bool Validate();
+private:
+    int nbUnits;
+    Territory* src;
+    Territory* target;
+
+    bool Validate();
 };
 
 
@@ -104,25 +106,25 @@ class Airlift : public Order {
         Airlift(const Airlift& obj);
         ~Airlift();
 
-        Airlift& operator= (const Airlift& obj);
+    Airlift& operator= (const Airlift& obj);
 
-        void SetNbUnits(int nb);
-        int GetNbUnits();
-        void SetSrc(Territory* territory);
-        Territory* GetSrc();
-        void SetTarget(Territory* Target);
-        Territory* GetTarget();
+    void SetNbUnits(int nb);
+    int GetNbUnits();
+    void SetSrc(Territory* territory);
+    Territory* GetSrc();
+    void SetTarget(Territory* Target);
+    Territory* GetTarget();
 
-        ostream& Print(ostream& stream) const;
-        std::string GetEffect() const;
-        void Execute();
-    
-    private:   
-        int nbUnits;
-        Territory* src;
-        Territory* target;
+    ostream& Print(ostream& stream) const;
+    std::string GetEffect() const;
+    void Execute();
 
-        bool Validate();
+private:
+    int nbUnits;
+    Territory* src;
+    Territory* target;
+
+    bool Validate();
 };
 
 
@@ -134,19 +136,19 @@ class Blockade : public Order {
         Blockade(const Blockade& obj);
         ~Blockade();
 
-        Blockade& operator= (const Blockade& obj);
+    Blockade& operator= (const Blockade& obj);
 
-        void SetTarget(Territory* Target);
-        Territory* GetTarget();
+    void SetTarget(Territory* Target);
+    Territory* GetTarget();
 
-        ostream& Print(ostream& stream) const;
-        std::string GetEffect() const;
-        void Execute();
+    ostream& Print(ostream& stream) const;
+    std::string GetEffect() const;
+    void Execute();
 
-    private:
-        Territory* target;
+private:
+    Territory* target;
 
-        bool Validate();
+    bool Validate();
 };
 
 
@@ -158,19 +160,19 @@ class Bomb : public Order {
         Bomb(const Bomb& obj);
         ~Bomb();
 
-        Bomb& operator= (const Bomb& obj);
+    Bomb& operator= (const Bomb& obj);
 
-        void SetTarget(Territory* Target);
-        Territory* GetTarget();
+    void SetTarget(Territory* Target);
+    Territory* GetTarget();
 
-        ostream& Print(ostream& stream) const;
-        std::string GetEffect() const;
-        void Execute();
+    ostream& Print(ostream& stream) const;
+    std::string GetEffect() const;
+    void Execute();
 
-    private:
-        Territory* target;
+private:
+    Territory* target;
 
-        bool Validate();
+    bool Validate();
 };
 
 
@@ -182,22 +184,22 @@ class Deploy : public Order {
         Deploy(const Deploy& obj);
         ~Deploy();
 
-        Deploy& operator= (const Deploy& obj);
+    Deploy& operator= (const Deploy& obj);
 
-        void SetNbUnits(int nb);
-        int GetNbUnits();
-        void SetTarget(Territory* Target);
-        Territory* GetTarget();
+    void SetNbUnits(int nb);
+    int GetNbUnits();
+    void SetTarget(Territory* Target);
+    Territory* GetTarget();
 
-        ostream& Print(ostream& stream) const;
-        std::string GetEffect() const;
-        void Execute();
+    ostream& Print(ostream& stream) const;
+    std::string GetEffect() const;
+    void Execute();
 
-    private:   
-        int nbUnits;
-        Territory* target;
+private:
+    int nbUnits;
+    Territory* target;
 
-        bool Validate();
+    bool Validate();
 };
 
 
@@ -208,17 +210,17 @@ class Negotiate : public Order {
         Negotiate(Player* owningPlayer, Player* otherPlayer);
         Negotiate(const Negotiate& obj);
 
-        Negotiate& operator= (const Negotiate& obj);
+    Negotiate& operator= (const Negotiate& obj);
 
         void SetOtherPlayer(Player* player);
         Player* GetOtherPlayer();
 
-        ostream& Print(ostream& stream) const;
-        std::string GetEffect() const;
-        void Execute();
+    ostream& Print(ostream& stream) const;
+    std::string GetEffect() const;
+    void Execute();
 
     private:
         Player* otherPlayer;
 
-        bool Validate();
+    bool Validate();
 };

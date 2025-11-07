@@ -17,20 +17,21 @@
 #include "Orders.h"
 
 using namespace std;
-class Player{
+class Player {
 public:
     vector<Territory*> ToAttack() const; //returns list of territories to attack
-    vector<Territory*> ToDefend() const ; //returns list of territories to defend
+    vector<Territory*> ToDefend() const; //returns list of territories to defend
     void AddTerritory(Territory* t); //adds territory to players list of territories
-    void RemoveTerritory(Territory* t); //removes territory from players list of territories
+    void SwitchTerritory(Territory* t, Player* p); //removes territory from players list of territories
     void AddNegotiator(Player* p);
     void ResetNegotiationsAndConquer();
-   
-    void IssueOrder(Order* x);//creates order and puts in players list of orders
-    bool Equals(Player* p); //checks if two players are the same
 
+    void IssueOrder(Order* x);//creates order and puts in players list of orders
+    void AddReinforcements(int num); //adds num reinforcements to player
+
+    bool Equals(Player* p); //checks if two players are the same
     Player(); // Default constructor
-    Player(std::string& name, vector<Territory*> playerTerritories, Hand &playerHand, OrdersList &playerOrders); // Parameterized constructor
+    Player(std::string& name, vector<Territory*> playerTerritories, Hand& playerHand, OrdersList& playerOrders); // Parameterized constructor
     Player(const Player& p); // Copy constructor
     Player& operator=(const Player& p); // Assignment operator
     friend ostream& operator<<(ostream& os, const Player& p); // Stream insertion operator
@@ -39,16 +40,20 @@ public:
     //setters and getters
     string GetName();
     vector<Territory*> GetPlayerTerritories();
+	vector<Continent*> GetOwnedContinents(const Map* map) const;
     Hand* GetPlayerHand();
     OrdersList* GetPlayerOrders() const;
+    int GetReinforcements();
     void SetName(string name);
-    void setPlayerTerritories(vector<Territory*> territories);
+    void SetPlayerTerritories(vector<Territory*> territories);
     void SetPlayerHand(Hand* hand);
     void SetPlayerOrders(OrdersList* orders);
+    void SetReinforcements(int reinforcements);
     bool IsTerritoryOwned(Territory* t);
     bool HasConqueredThisTurn();
     void SetConqueredThisTurn(bool state);
     bool IsNegotiatingWith(Player* p);
+
 
 private:
     string name; //name of player, used to identify who owns territory
@@ -57,4 +62,6 @@ private:
     OrdersList* playersOrders; //list of orders owned by player
     bool conqueredThisTurn; //whether the player conquered a territory this turn or not
     vector<Player*> negotiators; //list of players currently in negotiations with
+};
+    int reinforcements; //number of reinforcements the player has available
 };

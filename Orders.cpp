@@ -10,7 +10,7 @@ using std::endl;
 // ----- OrdersList -----
 
 // Default constructor
-OrdersList::OrdersList(){}
+OrdersList::OrdersList() {}
 
 // Copy constructor
 OrdersList::OrdersList(const OrdersList& obj) {
@@ -26,7 +26,7 @@ OrdersList::~OrdersList() {
     {
         delete order;
         order = NULL;
-    } 
+    }
 
     orders.clear();
 }
@@ -59,6 +59,20 @@ ostream& operator<<(ostream& stream, const OrdersList& obj) {
 // Getter for the actual list
 vector<Order*> OrdersList::GetListItems() {
     return orders;
+}
+
+Order* OrdersList::GetNextOrder() {
+    if (!orders.empty()) {
+        return orders.front();
+    }
+    return nullptr;
+}
+
+bool OrdersList::IsEmpty() {
+    if (orders.empty()) {
+        return true;
+    }
+    return false;
 }
 
 // Add a new order to the list
@@ -214,7 +228,7 @@ ostream& Advance::Print(ostream& stream) const {
 
 // Returns the effect of the order as a string
 std::string Advance::GetEffect() const {
-    return std::string("moving ") + std::to_string(nbUnits) + 
+    return std::string("moving ") + std::to_string(nbUnits) +
         std::string(" units from ") + src->GetName() + std::string(" to ") + target->GetName();
 }
 
@@ -408,7 +422,7 @@ ostream& Airlift::Print(ostream& stream) const {
 
 // Returns the effect of the order as a string
 std::string Airlift::GetEffect() const {
-    return std::string("moving ") + std::to_string(nbUnits) + 
+    return std::string("moving ") + std::to_string(nbUnits) +
         std::string(" units from ") + src->GetName() + std::string(" to ") + target->GetName();
 }
 
@@ -483,7 +497,7 @@ Territory* Blockade::GetTarget() {
 
 // Prints the order to the specified stream
 ostream& Blockade::Print(ostream& stream) const {
-    stream << "Blockade: " << GetEffect() << std::endl; 
+    stream << "Blockade: " << GetEffect() << std::endl;
     return stream;
 }
 
@@ -562,7 +576,7 @@ Territory* Bomb::GetTarget() {
 
 // Prints the order to the specified stream
 ostream& Bomb::Print(ostream& stream) const {
-    stream << "Bomb: " << GetEffect() << std::endl;  
+    stream << "Bomb: " << GetEffect() << std::endl;
     return stream;
 }
 
@@ -725,7 +739,7 @@ Player* Negotiate::GetOtherPlayer() {
 
 // Prints the order to the specified stream
 ostream& Negotiate::Print(ostream& stream) const {
-    stream << "Negotiate: " << GetEffect() << std::endl; 
+    stream << "Negotiate: " << GetEffect() << std::endl;
     return stream;
 }
 

@@ -233,6 +233,11 @@ void Card::Play() const{
     cardType->Play();
 }
 
+//Get enum value for card type
+int Card::GetType(){
+    return type;
+}
+
 // Copy constructor for Card
 Card::Card(const Card& other) {
     type = other.type;
@@ -406,4 +411,8 @@ void Hand::PlayCard(int index) {
     hand.pop_back(); //no need to delete since card is not dynamically allocated
 
     deck.AddCard(card);
+}
+
+std::vector<Card> Hand::GetCards() {
+    return hand;
 }

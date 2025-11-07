@@ -112,6 +112,9 @@ class Map {
 
         Continent* AddContinent(const std::string& name, int points);
         Territory* AddTerritory(const std::string& name, Continent* continent);
+        std::vector<Continent*> GetContinents() const {
+			return continents;
+        };
         void AddAdjacency(Territory* from, Territory* to);
 
         Continent* GetContinentByName(const std::string& name);
@@ -119,13 +122,13 @@ class Map {
 
         bool IsAdjacent(Territory* a, Territory* b);
         bool Validate();
+        std::vector<Territory*> territories;
 
     private:
         std::unordered_map<std::string, Continent*> continentByName;
         std::unordered_map<std::string, Territory*> territoryByName;
 
         std::vector<Continent*> continents;
-        std::vector<Territory*> territories;
 
         void Dfs(Territory* current, std::unordered_set<Territory*>& visited);
         void DfsContinent(Territory* current, std::unordered_set<Territory*>& visited, Continent* continent);
