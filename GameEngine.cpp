@@ -5,6 +5,9 @@
 #include "Map.h"
 #include "Player.h"
 #include <random>
+#include <algorithm>
+#include "Orders.h"
+
 
 
 std::string LoadMapCommand::Execute() {
@@ -840,7 +843,7 @@ std::vector<GameEngine::OrderNames> GameEngine::availableOrders(int playerID) {
         orders.push_back(DeployEnum);
     } else {
         orders.push_back(AdvanceEnum);
-        for (Card card : players[playerID]->GetPlayerHand()->GetCards()) {
+        for (Card* card : players[playerID]->GetPlayerHand()->GetCards()) {
             Card* ptr = card;
             int type = ptr->GetType();
             switch (type) {

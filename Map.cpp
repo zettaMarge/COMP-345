@@ -72,8 +72,7 @@ void Territory::SetOwner(Player* _owner){
     if(owner == _owner) return; // return if no need to update
     Player* oldOwner = owner; // get pointer to old owner to check later
     owner = _owner;
-    if(oldOwner != nullptr && oldOwner->IsTerritoryOwned(this)) oldOwner->RemoveTerritory(this); // remove from old owner
-    if(_owner != nullptr && !_owner->IsTerritoryOwned(this)) _owner->AddTerritory(this); // add to new owner
+    if(oldOwner != nullptr && oldOwner->IsTerritoryOwned(this)) oldOwner->SwitchTerritory(ths, _owner); // remove from old owner
 }
 
 // Gets the territory's owner
