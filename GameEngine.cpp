@@ -73,7 +73,7 @@ std::string LoadMapCommand::Execute() {
             return this->effect;
         }
 
-        GameEngine::instance->gameMap = loader->CreateMap();
+        GameEngine::instance->gameMap = new Map(loader->CreateMap());
         this->effect = "Successfully loaded map: " + mapPath.string();
         std::cout << this->effect << "\n";
     }
@@ -992,7 +992,7 @@ void GameEngine::LoadMap(const string& fileName) {
         return;
     }
 
-    GameEngine::instance->gameMap = loader->CreateMap();
+    GameEngine::instance->gameMap = new Map(loader->CreateMap());
 }
 
 //Validates the map using its Validate method

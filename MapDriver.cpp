@@ -20,7 +20,7 @@ std::vector<Map*> TestLoadMaps(const std::vector<std::string>& mapFiles){
         MapLoader loader;
 
         if(loader.LoadMapFile(mapFiles[i])){
-            Map* gameMap = loader.CreateMap();
+            Map* gameMap = new Map(loader.CreateMap());
 
             if(gameMap->Validate()){
                 std::cout << "Map " << mapFiles[i] << " is valid\n" << std::endl;
