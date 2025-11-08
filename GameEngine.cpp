@@ -5,6 +5,9 @@
 #include "Map.h"
 #include "Player.h"
 #include <random>
+#include <algorithm>
+#include "Orders.h"
+
 
 
 std::string LoadMapCommand::Execute() {
@@ -840,7 +843,7 @@ std::vector<GameEngine::OrderNames> GameEngine::availableOrders(int playerID) {
         orders.push_back(DeployEnum);
     } else {
         orders.push_back(AdvanceEnum);
-        for (Card card : players[playerID]->GetPlayerHand()->GetCards()) {
+        for (Card* card : players[playerID]->GetPlayerHand()->GetCards()) {
             Card* ptr = card;
             int type = ptr->GetType();
             switch (type) {
@@ -1101,18 +1104,18 @@ void GameEngine::TestStartupPhase() {
 void GameEngine::TestOrderExecution() {
     //dummy map init
     Map* testMap = new Map();
-    Continent* testContinent = testMap.AddContinent("Continent", 5);
-    Territory* tA = testMap.AddTerritory("Territory A", northAmerica);
+    Continent* testContinent = testMap->AddContinent("Continent", 5);
+    Territory* tA = testMap->AddTerritory("Territory A", testContinent);
     tA->SetUnits(1);
-    Territory* tB = testMap.AddTerritory("Territory B", northAmerica);
+    Territory* tB = testMap->AddTerritory("Territory B", testContinent);
     tB->SetUnits(15);
-    Territory* tC = testMap.AddTerritory("Territory C", northAmerica);
+    Territory* tC = testMap->AddTerritory("Territory C", testContinent);
     tC->SetUnits(15);
-    Territory* tD = testMap.AddTerritory("Territory D", northAmerica);
+    Territory* tD = testMap->AddTerritory("Territory D", testContinent);
     tD->SetUnits(15);
-    testMap.AddAdjacency(tA, tB);
-    testMap.AddAdjacency(tB, tC);
-    testMap.AddAdjacency(tC, tD);
+    testMap->AddAdjacency(tA, tB);
+    testMap->AddAdjacency(tB, tC);
+    testMap->AddAdjacency(tC, tD);
     GameEngine::instance->gameMap = testMap;
 
 
