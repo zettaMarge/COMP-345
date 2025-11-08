@@ -137,6 +137,8 @@ public:
     void AddCard();
     void PlayCard(int index);
     std::vector<Card> GetCards();
+
+    void SetTestCards(); //Purely for testing purposes, adds a card of each type to the hand
 private:
     std::vector<Card> hand;
     Deck& deck;

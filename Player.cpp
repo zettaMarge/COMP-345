@@ -30,19 +30,25 @@ Player::Player() {
     playerTerritories = vector<Territory*>();
     playerHand = nullptr;
     playersOrders = new OrdersList();
-
+    conqueredThisTurn = false;
+    negotiators = vector<Player*>();
 }
 
 // Parameterized constructor
 // Deep copies of everything
-Player::Player(std::string& name, vector<Territory*> playerTerritories, Hand& playerHand, OrdersList& playerOrders) {
-
+Player::Player(std::string& name, vector<Territory*> playerTerritories, Hand &playerHand, OrdersList &playerOrders, vector<Player*>() negotiators){
+    
     this->name = name;
     for (Territory* t : playerTerritories) {
         this->AddTerritory(t);
     }
     this->playerHand = new Hand(playerHand);
     this->playersOrders = new OrdersList(playerOrders);
+    this->conqueredThisTurn = false;
+    this->negotiators = vector<Player*>();
+    for (Player* p : negotiators) {
+        this->AddNegotiator(p);
+    }
 }
 
 //This is a stub meant to be able to code players class
@@ -126,6 +132,27 @@ void Player::SwitchTerritory(Territory* t, Player* p) {
     playerTerritories.erase(it, playerTerritories.end());
 }
 
+//Add a player to be in negotiations with the current player, if they aren't already
+void Player::AddNegotiator(Player* p) {
+    if (!IsNegotiatingWith(p)) {
+        negotiators.push_back(p);
+    }
+    else {
+        cout << "Already in negotiations with " << p->GetName() << endl;
+    }  
+}
+
+//Checks if a given player is currently negotiating with the current player
+bool Player::IsNegotiatingWith(Player* p) {
+    return std::find(negotiators.begin(), negotiators.end(), p) != negotiators.end()
+}
+
+//Resets the list of current negotiators and whether a territory was conquered
+void Player::ResetNegotiationsAndConquer() {
+    negotiators.clear();
+    conqueredThisTurn = false;
+}
+
 // Copy constructor
 // Clear existing territories and shallow copies, because otherwise there would be two owners of the same territory
 Player::Player(const Player& p) {
@@ -133,6 +160,7 @@ Player::Player(const Player& p) {
     playerTerritories = p.playerTerritories;
     playerHand = new Hand(*(p.playerHand));
     playersOrders = new OrdersList(*(p.playersOrders));
+    conqueredThisTurn = p.conqueredThisTurn;
 }
 
 // Assignment operator
@@ -261,6 +289,13 @@ void Player::SetPlayerOrders(OrdersList* orders) {
     this->playersOrders = new OrdersList(*orders);
 };
 
+bool Player::HasConqueredThisTurn() {
+    return conqueredThisTurn;
+}
+
+void Player::SetConqueredThisTurn(bool state) {
+    conqueredThisTurn = state;
+}
 void Player::SetReinforcements(int reinforcements) {
     this->reinforcements = reinforcements;
 };

@@ -379,7 +379,13 @@ Hand::~Hand() {
 
 // Function to add a card to the hand by drawing from the deck
 void Hand::AddCard() {
+    std::cout << "Before the draw:" << std::endl;
+    Print();
+
     hand.push_back(deck.Draw());
+
+    std::cout << "After the draw:" << std::endl;
+    Print();
 }
 
 // Function to print the contents of the hand and its indexes
@@ -409,4 +415,12 @@ void Hand::PlayCard(int index) {
 
 std::vector<Card> Hand::GetCards() {
     return hand;
+}
+
+void Hand::SetTestCards() {
+    hand.push_back(new Card(1));
+    hand.push_back(new Card(2));
+    hand.push_back(new Card(3));
+    hand.push_back(new Card(4));
+    hand.push_back(new Card(5));
 }

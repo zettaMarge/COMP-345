@@ -23,6 +23,8 @@ public:
     vector<Territory*> ToDefend() const; //returns list of territories to defend
     void AddTerritory(Territory* t); //adds territory to players list of territories
     void SwitchTerritory(Territory* t, Player* p); //removes territory from players list of territories
+    void AddNegotiator(Player* p);
+    void ResetNegotiationsAndConquer();
 
     void IssueOrder(Order* x);//creates order and puts in players list of orders
     void AddReinforcements(int num); //adds num reinforcements to player
@@ -48,6 +50,9 @@ public:
     void SetPlayerOrders(OrdersList* orders);
     void SetReinforcements(int reinforcements);
     bool IsTerritoryOwned(Territory* t);
+    bool HasConqueredThisTurn();
+    void SetConqueredThisTurn(bool state);
+    bool IsNegotiatingWith(Player* p);
 
 
 private:
@@ -55,5 +60,8 @@ private:
     vector<Territory*> playerTerritories; //list of territories owned by player
     Hand* playerHand; //list of cards owned by player or their hand
     OrdersList* playersOrders; //list of orders owned by player
+    bool conqueredThisTurn; //whether the player conquered a territory this turn or not
+    vector<Player*> negotiators; //list of players currently in negotiations with
+};
     int reinforcements; //number of reinforcements the player has available
 };

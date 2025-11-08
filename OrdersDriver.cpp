@@ -1,6 +1,7 @@
 #include "Orders.h"
 #include "Map.h"
 #include "Player.h"
+#include "GameEngine.h"
 #include <iostream>
 
 void TestOrdersLists() {
@@ -39,19 +40,19 @@ void TestOrdersLists() {
 
     std::cout << "----- Creating Orders -----" << std::endl;
     Advance* advanceValid = new Advance();
-    advanceValid->SetOwningPlayer(p1->GetName());
+    advanceValid->SetOwningPlayer(p1);
     advanceValid->SetNbUnits(3);
-    advanceValid->SetSrc(canada);
-    advanceValid->SetTarget(usa);
+    advanceValid->SetSrc(usa);
+    advanceValid->SetTarget(mexico);
 
     Advance* advanceInvalid = new Advance(*advanceValid);
     advanceInvalid->SetTarget(mexico);
 
-    Airlift* airlift = new Airlift(p1->GetName(), 3, canada, mexico);
-    Blockade* blockade = new Blockade(p1->GetName(), canada);
-    Bomb* bomb = new Bomb(p1->GetName(), mexico);
-    Deploy* deploy = new Deploy(p1->GetName(), 3, canada);
-    Negotiate* negotiate = new Negotiate(p1->GetName(), p2->GetName());
+    Airlift* airlift = new Airlift(p1, 3, canada, mexico);
+    Blockade* blockade = new Blockade(p1, canada);
+    Bomb* bomb = new Bomb(p1, mexico);
+    Deploy* deploy = new Deploy(p1, 3, canada);
+    Negotiate* negotiate = new Negotiate(p1, p2);
 
 
     std::cout << "----- Adding orders to p1's list -----" << std::endl;
@@ -67,7 +68,6 @@ void TestOrdersLists() {
 
     
     std::cout << "----- Validating & Executing orders -----" << std::endl;
-    // Fix: Store the result of GetListItems() in a local variable of type vector<Order*>
     std::vector<Order*> orders = p1->GetPlayerOrders()->GetListItems();
     for (const auto& order : orders) {
         order->Execute();
@@ -86,4 +86,11 @@ void TestOrdersLists() {
     std::cout << "-------------------------" << std::endl;
     std::cout << "- OrdersDriver complete -" << std::endl;
     std::cout << "-------------------------" << std::endl;
+}
+
+void testOrderExecution() {
+    GameEngine engine = new GameEngine();
+    engine.TestOrderExecution();
+    delete engine;
+    engine = nullptr;
 }

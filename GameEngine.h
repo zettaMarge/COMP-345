@@ -321,14 +321,15 @@ private:
 //I certify that this submission is my original work and meets the Faculty’s Expectations of Originality 
 //Mia Letendre
 //-----------------------------------------------------
-    Player* nuetralPlayer; //pointer to the nuetral player
     void StartupPhase(); //Handles the startup phase of the game
     void AddPlayers(const string &playerName); //Adds a new player to the game
     bool ValidateMap(); //Validates the map according to assignment specifications
     void LoadMap(const string &fileName); //Loads a map from a file
     void GameStart(); //Starts the game
 
-public: 
+public:
+    Player* neutralPlayer; //pointer to the neutral player
+    Player* FindPlayerByName(const string &name); //Returns the first player pointer matching the name, or nullptr if not found
     void TestStartupPhase(); //Tests the startup phase
-
+    void TestOrderExecution(); //Purely for testing order issuing & execution
 };

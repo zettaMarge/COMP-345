@@ -1,9 +1,9 @@
 //-----------------------------------------------------
     //Marjorie Dudemaine 40287779
-    //COMP-345-D 2252 Assignment 1 Orders.h
+    //COMP-345-D 2252 Assignment 2 Orders.h
     //Dr. Hamed Jafarpour
     //Submitted: TBD
-    //Due: October 7, 2025 
+    //Due: November 11, 2025 
     //I certify that this submission is my original work and meets the Faculty’s Expectations of Originality 
     //Marjorie Dudemaine
 //-----------------------------------------------------
@@ -39,7 +39,7 @@ class OrdersList{
         void Add(Order* newOrder);
         void Move(int fromId, int toId);
         void Remove(int id);
-        void SetOwningPlayer(std::string name);
+        void SetOwningPlayer(Player* player);
 
     private:
         vector<Order*> orders;
@@ -51,15 +51,15 @@ class Order {
 public:
     friend ostream& operator<<(ostream& stream, const Order& obj);
 
-    void SetOwningPlayer(std::string playerName);
-    std::string GetOwningPlayer();
+        void SetOwningPlayer(Player* player);
+        Player* GetOwningPlayer();
 
     virtual ostream& Print(ostream& stream) const = 0;
     virtual std::string GetEffect() const = 0;
     virtual void Execute() = 0;
 
-protected:
-    std::string owningPlayer;
+    protected:
+        Player* owningPlayer;
 
     bool TerritoryBelongsToPlayer(Territory* territory);
 
@@ -70,11 +70,11 @@ private:
 
 // Advance order
 class Advance : public Order {
-public:
-    Advance();
-    Advance(std::string owningPlayer, int nbUnits, Territory* src, Territory* target);
-    Advance(const Advance& obj);
-    ~Advance();
+    public:
+        Advance();
+        Advance(Player* owningPlayer, int nbUnits, Territory* src, Territory* target);
+        Advance(const Advance& obj);
+        ~Advance();
 
     Advance& operator= (const Advance& obj);
 
@@ -100,11 +100,11 @@ private:
 
 // Airlift order
 class Airlift : public Order {
-public:
-    Airlift();
-    Airlift(std::string owningPlayer, int nbUnits, Territory* src, Territory* target);
-    Airlift(const Airlift& obj);
-    ~Airlift();
+    public:
+        Airlift();
+        Airlift(Player* owningPlayer, int nbUnits, Territory* src, Territory* target);
+        Airlift(const Airlift& obj);
+        ~Airlift();
 
     Airlift& operator= (const Airlift& obj);
 
@@ -130,11 +130,11 @@ private:
 
 // Blockade order
 class Blockade : public Order {
-public:
-    Blockade();
-    Blockade(std::string owningPlayer, Territory* target);
-    Blockade(const Blockade& obj);
-    ~Blockade();
+    public:
+        Blockade();
+        Blockade(Player* owningPlayer, Territory* target);
+        Blockade(const Blockade& obj);
+        ~Blockade();
 
     Blockade& operator= (const Blockade& obj);
 
@@ -154,11 +154,11 @@ private:
 
 // Bomb order
 class Bomb : public Order {
-public:
-    Bomb();
-    Bomb(std::string owningPlayer, Territory* target);
-    Bomb(const Bomb& obj);
-    ~Bomb();
+    public:
+        Bomb();
+        Bomb(Player* owningPlayer, Territory* target);
+        Bomb(const Bomb& obj);
+        ~Bomb();
 
     Bomb& operator= (const Bomb& obj);
 
@@ -178,11 +178,11 @@ private:
 
 // Deploy order
 class Deploy : public Order {
-public:
-    Deploy();
-    Deploy(std::string owningPlayer, int nbUnits, Territory* target);
-    Deploy(const Deploy& obj);
-    ~Deploy();
+    public:
+        Deploy();
+        Deploy(Player* owningPlayer, int nbUnits, Territory* target);
+        Deploy(const Deploy& obj);
+        ~Deploy();
 
     Deploy& operator= (const Deploy& obj);
 
@@ -205,22 +205,22 @@ private:
 
 // Negotiate order
 class Negotiate : public Order {
-public:
-    Negotiate();
-    Negotiate(std::string owningPlayer, std::string otherPlayer);
-    Negotiate(const Negotiate& obj);
+    public:
+        Negotiate();
+        Negotiate(Player* owningPlayer, Player* otherPlayer);
+        Negotiate(const Negotiate& obj);
 
     Negotiate& operator= (const Negotiate& obj);
 
-    void SetOtherPlayer(std::string player);
-    std::string GetOtherPlayer();
+        void SetOtherPlayer(Player* player);
+        Player* GetOtherPlayer();
 
     ostream& Print(ostream& stream) const;
     std::string GetEffect() const;
     void Execute();
 
-private:
-    std::string otherPlayer;
+    private:
+        Player* otherPlayer;
 
     bool Validate();
 };
