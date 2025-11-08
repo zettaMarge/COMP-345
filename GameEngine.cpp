@@ -810,7 +810,7 @@ void GameEngine::issueOrdersPhase() {
                     Player* targetPlayer = FindPlayerByName(targetPlayerName);
 
                     while (targetPlayer == nullptr) {
-                        std::count << "Could not find a player by that name, please try again: " << std::endl;
+                        std::cout << "Could not find a player by that name, please try again: " << std::endl;
                         cin >> targetPlayerName;
                         targetPlayer = FindPlayerByName(targetPlayerName);
                     }
@@ -1101,18 +1101,18 @@ void GameEngine::TestStartupPhase() {
 void GameEngine::TestOrderExecution() {
     //dummy map init
     Map* testMap = new Map();
-    Continent* testContinent = testMap.AddContinent("Continent", 5);
-    Territory* tA = testMap.AddTerritory("Territory A", northAmerica);
+    Continent* testContinent = testMap->AddContinent("Continent", 5);
+    Territory* tA = testMap->AddTerritory("Territory A", testContinent);
     tA->SetUnits(1);
-    Territory* tB = testMap.AddTerritory("Territory B", northAmerica);
+    Territory* tB = testMap->AddTerritory("Territory B", testContinent);
     tB->SetUnits(15);
-    Territory* tC = testMap.AddTerritory("Territory C", northAmerica);
+    Territory* tC = testMap->AddTerritory("Territory C", testContinent);
     tC->SetUnits(15);
-    Territory* tD = testMap.AddTerritory("Territory D", northAmerica);
+    Territory* tD = testMap->AddTerritory("Territory D", testContinent);
     tD->SetUnits(15);
-    testMap.AddAdjacency(tA, tB);
-    testMap.AddAdjacency(tB, tC);
-    testMap.AddAdjacency(tC, tD);
+    testMap->AddAdjacency(tA, tB);
+    testMap->AddAdjacency(tB, tC);
+    testMap->AddAdjacency(tC, tD);
     GameEngine::instance->gameMap = testMap;
 
 
