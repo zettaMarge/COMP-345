@@ -1,18 +1,21 @@
 #include "GameEngine.h"
 #include "CommandProcessing.h"
 void TestCommandProcessing();
+void testOrderExecution();
 int TestMaps();
 int TestPlayers();
 int TestCards();
-void TestOrdersLists();
 
 int main() {
 	TestCommandProcessing();
-//	TestMaps();
-//	TestPlayers();
-//	TestCards();
-//	TestOrdersLists();
-  //  TestGameEngine();
+	testOrderExecution();
+
+	//Assignment 1 tests
+	//	TestMaps();
+	//	TestPlayers();
+	//	TestCards();
+	//	TestOrdersLists();
+	//  TestGameEngine();
 	return 0;
 }
 

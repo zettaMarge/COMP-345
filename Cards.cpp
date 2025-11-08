@@ -416,3 +416,11 @@ void Hand::PlayCard(int index) {
 std::vector<Card> Hand::GetCards() {
     return hand;
 }
+
+void Hand::SetTestCards() {
+    hand.push_back(new Card(1));
+    hand.push_back(new Card(2));
+    hand.push_back(new Card(3));
+    hand.push_back(new Card(4));
+    hand.push_back(new Card(5));
+}

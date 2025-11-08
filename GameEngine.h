@@ -328,6 +328,7 @@ private:
 
 public:
     Player* neutralPlayer; //pointer to the neutral player
+    Player* FindPlayerByName(const string &name); //Returns the first player pointer matching the name, or nullptr if not found
     void TestStartupPhase(); //Tests the startup phase
-
+    void TestOrderExecution(); //Purely for testing order issuing & execution
 };

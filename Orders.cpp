@@ -1,6 +1,7 @@
 #include "Orders.h"
 #include "Map.h"
 #include "Player.h"
+#include "GameEngine.h"
 #include <algorithm>
 #include <cmath>
 #include <stdlib.h>
@@ -143,7 +144,13 @@ Player* Order::GetOwningPlayer() {
 
 // Checks whether a given territory belongs to the order's player
 bool Order::TerritoryBelongsToPlayer(Territory* territory) {
-    return territory->GetOwner()->GetName() == owningPlayer->GetName();
+    if (territory->GetOwner() != nullptr) {
+        return territory->GetOwner()->GetName() == owningPlayer->GetName();
+    }
+    else {
+        return false;
+    }
+    
 }
 
 // ----- Order -----
@@ -314,7 +321,7 @@ void Advance::Execute() {
 
             std::cout << "Advance order successful in " << GetEffect() << std::endl;
         }
-        else if (!owningPlayer->IsNegotiatingWith(target->GetOwner())) {
+        else if (target->GetOwner() == nullptr || !owningPlayer->IsNegotiatingWith(target->GetOwner())) { //either targte is a Neutral territory or player is not in negotiations with target owner
             std::cout << "Target belongs to another player, initiating battle." << std::endl;
             SimulateBattle(owningPlayer, nbUnits, target->GetUnits(), src, target);
         }
@@ -512,7 +519,7 @@ void Blockade::Execute() {
         target->SetUnits(target->GetUnits() * 2);
 
         std::cout << "Owner before blockade: " << target->GetOwner()->GetName() << std::endl;
-        //target->GetOwner()->SwitchTerritory(target, x);
+        target->GetOwner()->SwitchTerritory(target, GameEngine->instance->neutralPlayer);
         std::cout << "Owner after blockade: " << target->GetOwner()->GetName() << std::endl;
         
         std::cout << "Blockade order successful in " << GetEffect() << std::endl;

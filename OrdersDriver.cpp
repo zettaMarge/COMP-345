@@ -1,6 +1,7 @@
 #include "Orders.h"
 #include "Map.h"
 #include "Player.h"
+#include "GameEngine.h"
 #include <iostream>
 
 void TestOrdersLists() {
@@ -88,10 +89,8 @@ void TestOrdersLists() {
 }
 
 void testOrderExecution() {
-    //each order is validated before being executed according to the above description
-    //ownership of a territory is transferred to the attacking player if a territory is conquered as a result of an advance order
-    //one card is given to a player if they conquer at least one territory in a turn (not more than one card per turn
-    //the negotiate order prevents attacks between the two players involved
-    //the blockade order transfers ownership to the Neutral player
-    //all the orders described above can be issued by a player and executed by the game engine
+    GameEngine engine = new GameEngine();
+    engine.TestOrderExecution();
+    delete engine;
+    engine = nullptr;
 }

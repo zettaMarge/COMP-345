@@ -714,7 +714,7 @@ void GameEngine::issueOrdersPhase() {
                     cin >> numUnits;
                 
                     //creating and issuing the advance order
-                    Advance* advanceOrder = new Advance(player->GetName(), numUnits, gameMap->GetTerritoryByName(startTerritory), gameMap->GetTerritoryByName(targetTerritory));
+                    Advance* advanceOrder = new Advance(player, numUnits, gameMap->GetTerritoryByName(startTerritory), gameMap->GetTerritoryByName(targetTerritory));
                     Advance* ptr = advanceOrder;
                     player->IssueOrder(ptr);
 
@@ -735,7 +735,7 @@ void GameEngine::issueOrdersPhase() {
                     cin >> numUnits;
 
                     //creating and issuing the airlift order
-                    Airlift* airliftOrder = new Airlift(player->GetName(), numUnits, gameMap->GetTerritoryByName(startTerritory), gameMap->GetTerritoryByName(targetTerritory));
+                    Airlift* airliftOrder = new Airlift(player, numUnits, gameMap->GetTerritoryByName(startTerritory), gameMap->GetTerritoryByName(targetTerritory));
                     Airlift* ptr = airliftOrder;
                     player->IssueOrder(ptr);
 
@@ -750,7 +750,7 @@ void GameEngine::issueOrdersPhase() {
                     cin >> targetTerritory;
 
                     //creating and issuing the blockade order
-                    Blockade* blockadeOrder = new Blockade(player->GetName(), gameMap->GetTerritoryByName(targetTerritory));
+                    Blockade* blockadeOrder = new Blockade(player, gameMap->GetTerritoryByName(targetTerritory));
                     Blockade* ptr = blockadeOrder;
                     player->IssueOrder(ptr);
 
@@ -765,7 +765,7 @@ void GameEngine::issueOrdersPhase() {
                     cin >> targetTerritory;
 
                     //creating and issuing the bomb order
-                    Bomb* bombOrder = new Bomb(player->GetName(), gameMap->GetTerritoryByName(targetTerritory));
+                    Bomb* bombOrder = new Bomb(player, gameMap->GetTerritoryByName(targetTerritory));
                     Bomb* ptr = bombOrder;
                     player->IssueOrder(ptr);
 
@@ -782,10 +782,16 @@ void GameEngine::issueOrdersPhase() {
                     std::cout << "Please enter the number of units to deploy: "<< std::endl;
                     cin >> numUnits;
 
+                    while (numUnits < 0 || numUnits > player->GetReinforcements()) {
+                        std::cout << "Please enter a valid number of units to deploy: "<< std::endl;
+                        cin >> numUnits;
+                    }
+
                     //creating and issuing the deploy order
-                    Deploy* deployOrder = new Deploy(player->GetName(), numUnits, gameMap->GetTerritoryByName(targetTerritory));
+                    Deploy* deployOrder = new Deploy(player, numUnits, gameMap->GetTerritoryByName(targetTerritory));
                     Deploy* ptr = deployOrder;
                     player->IssueOrder(ptr);
+                    player->SetReinforcements(player->GetReinforcements() - numUnits); //in order to be able to issue other kinds of orders this turn
 
                     std::cout << "Deploy order issued.\n";
                     break;
@@ -796,9 +802,16 @@ void GameEngine::issueOrdersPhase() {
                     //getting user input for negotiate order
                     std::cout << "You chose to issue a Negotiate order.\nPlease enter the target player name: "<< std::endl;
                     cin >> targetPlayerName;
+                    Player* targetPlayer = FindPlayerByName(targetPlayerName);
+
+                    while (targetPlayer == nullptr) {
+                        std::count << "Could not find a player by that name, please try again: " << std::endl;
+                        cin >> targetPlayerName;
+                        targetPlayer = FindPlayerByName(targetPlayerName);
+                    }
 
                     //creating and issuing the negotiate order
-                    Negotiate* negotiateOrder = new Negotiate(player->GetName(), targetPlayerName);
+                    Negotiate* negotiateOrder = new Negotiate(player, targetPlayer);
                     Negotiate* ptr = negotiateOrder;
                     player->IssueOrder(ptr);
 
@@ -1070,6 +1083,63 @@ void GameEngine::StartupPhase() {
     GameStart();
 }
 
+Player* GameEngine::FindPlayerByName(const string &name) {
+    for (int i = 0; i < players.size(); i++) {
+        Player* p = players[i];
+
+        if (p->GetName() == name) {
+            return p;
+        }
+    }
+
+    return nullptr;
+}
+
 void GameEngine::TestStartupPhase() {
     StartupPhase();
+}
+
+void GameEngine::TestOrderExecution() {
+    //dummy map init
+    Map* testMap = new Map();
+    Continent* testContinent = testMap.AddContinent("Continent", 5);
+    Territory* tA = testMap.AddTerritory("Territory A", northAmerica);
+    tA->SetUnits(1);
+    Territory* tB = testMap.AddTerritory("Territory B", northAmerica);
+    tB->SetUnits(15);
+    Territory* tC = testMap.AddTerritory("Territory C", northAmerica);
+    tC->SetUnits(15);
+    Territory* tD = testMap.AddTerritory("Territory D", northAmerica);
+    tD->SetUnits(15);
+    testMap.AddAdjacency(tA, tB);
+    testMap.AddAdjacency(tB, tC);
+    testMap.AddAdjacency(tC, tD);
+    GameEngine::instance->gameMap = testMap;
+
+
+    //dummy players init
+    Deck* deck = new Deck();
+
+    GameEngine::instance->AddPlayers("Player1");
+    GameEngine::instance->AddPlayers("Player2");
+
+    Player* p1 = GameEngine::instance->players[0];
+    p1->AddTerritory(tB);
+    p1->AddTerritory(tC);
+    p1->SetReinforcements(3);
+    Hand* hand1 = new Hand(*deck);
+    hand1->SetTestCards();
+    p1->SetPlayerHand(hand1);
+
+    Player* p2 = GameEngine::instance->players[1];
+    p2->AddTerritory(tA);
+    p2->AddTerritory(tD);
+    p2->SetReinforcements(3);
+    Hand* hand2 = new Hand(*deck);
+    hand2->SetTestCards();
+    p2->SetPlayerHand(hand2);
+
+    //test the phases
+    GameEngine::instance->issueOrdersPhase();
+    GameEngine::instance->executeOrdersPhase();
 }
