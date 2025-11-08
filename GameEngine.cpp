@@ -813,7 +813,7 @@ void GameEngine::issueOrdersPhase() {
                     Player* targetPlayer = FindPlayerByName(targetPlayerName);
 
                     while (targetPlayer == nullptr) {
-                        std::count << "Could not find a player by that name, please try again: " << std::endl;
+                        std::cout << "Could not find a player by that name, please try again: " << std::endl;
                         cin >> targetPlayerName;
                         targetPlayer = FindPlayerByName(targetPlayerName);
                     }

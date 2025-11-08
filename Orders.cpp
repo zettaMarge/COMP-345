@@ -315,7 +315,7 @@ void SimulateBattle(Player* attackingPlayer, int attackingUnits, int defendingUn
 void Advance::Execute() {
     if (Validate()) {
         if (TerritoryBelongsToPlayer(target)) {
-            std::cout << "Both source and target territories belong to the player."
+            std::cout << "Both source and target territories belong to the player.";
             src->SetUnits(src->GetUnits() - nbUnits);
             target->SetUnits(target->GetUnits() + nbUnits);
 
@@ -326,7 +326,7 @@ void Advance::Execute() {
             SimulateBattle(owningPlayer, nbUnits, target->GetUnits(), src, target);
         }
         else {
-            std::cout << "Unable to attack " target->GetName() << "; Currently in negotiations with "<< target->GetOwner()->GetName() << std::endl;
+            std::cout << "Unable to attack " << target->GetName() << "; Currently in negotiations with "<< target->GetOwner()->GetName() << std::endl;
         }
     }
     else {
@@ -519,7 +519,7 @@ void Blockade::Execute() {
         target->SetUnits(target->GetUnits() * 2);
 
         std::cout << "Owner before blockade: " << target->GetOwner()->GetName() << std::endl;
-        target->GetOwner()->SwitchTerritory(target, GameEngine->instance->neutralPlayer);
+        target->GetOwner()->SwitchTerritory(target, GameEngine::instance->neutralPlayer);
         std::cout << "Owner after blockade: " << target->GetOwner()->GetName() << std::endl;
         
         std::cout << "Blockade order successful in " << GetEffect() << std::endl;

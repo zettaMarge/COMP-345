@@ -144,7 +144,7 @@ void Player::AddNegotiator(Player* p) {
 
 //Checks if a given player is currently negotiating with the current player
 bool Player::IsNegotiatingWith(Player* p) {
-    return std::find(negotiators.begin(), negotiators.end(), p) != negotiators.end()
+    return std::find(negotiators.begin(), negotiators.end(), p) != negotiators.end();
 }
 
 //Resets the list of current negotiators and whether a territory was conquered
