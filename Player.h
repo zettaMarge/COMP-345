@@ -31,7 +31,7 @@ public:
 
     bool Equals(Player* p); //checks if two players are the same
     Player(); // Default constructor
-    Player(std::string& name, vector<Territory*> playerTerritories, Hand& playerHand, OrdersList& playerOrders); // Parameterized constructor
+    Player(std::string& name, vector<Territory*> playerTerritories, Hand& playerHand, OrdersList& playerOrders, vector<Player*> negotiators); // Parameterized constructor
     Player(const Player& p); // Copy constructor
     Player& operator=(const Player& p); // Assignment operator
     friend ostream& operator<<(ostream& os, const Player& p); // Stream insertion operator

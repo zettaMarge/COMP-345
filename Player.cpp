@@ -36,7 +36,7 @@ Player::Player() {
 
 // Parameterized constructor
 // Deep copies of everything
-Player::Player(std::string& name, vector<Territory*> playerTerritories, Hand &playerHand, OrdersList &playerOrders, vector<Player*>() negotiators){
+Player::Player(std::string& name, vector<Territory*> playerTerritories, Hand &playerHand, OrdersList &playerOrders, vector<Player*> negotiators){
     
     this->name = name;
     for (Territory* t : playerTerritories) {
