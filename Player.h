@@ -62,6 +62,5 @@ private:
     OrdersList* playersOrders; //list of orders owned by player
     bool conqueredThisTurn; //whether the player conquered a territory this turn or not
     vector<Player*> negotiators; //list of players currently in negotiations with
-};
     int reinforcements; //number of reinforcements the player has available
 };
