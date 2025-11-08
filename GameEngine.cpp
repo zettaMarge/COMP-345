@@ -820,7 +820,7 @@ void GameEngine::issueOrdersPhase() {
     }
     std::cout << "Issue Orders Phase ended.\n";
 }
-// hello alex
+
 std::vector<GameEngine::OrderNames> GameEngine::availableOrders(int playerID) {
     std::vector<GameEngine::OrderNames> orders;
     //while there are still reinforcements, deploy is the only available order
