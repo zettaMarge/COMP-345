@@ -89,8 +89,8 @@ void TestOrdersLists() {
 }
 
 void testOrderExecution() {
-    GameEngine engine = new GameEngine();
-    engine.TestOrderExecution();
+    GameEngine* engine = new GameEngine();
+    engine->TestOrderExecution();
     delete engine;
     engine = nullptr;
 }
