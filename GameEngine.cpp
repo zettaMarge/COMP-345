@@ -631,7 +631,7 @@ void GameEngine::reinforcementPhase() {
         }
 
         // Check for continent control bonuses
-        std::vector<Continent*> continents = player->GetOwnedContinents();
+        std::vector<Continent*> continents = player->GetOwnedContinents(gameMap);
         for (int j = 0; j < continents.size(); j++) {
             reinforcementUnits += continents[j]->GetPoints();
         }
@@ -703,12 +703,7 @@ void GameEngine::issueOrdersPhase() {
             std::cin >> choice;
             // Issue the selected order
             switch (orders[choice]) {
-                case -1:{
-                    isFinished[i] = true;
-                    finishedPlayers++;
-                    std::cout << "Player " << player->GetName() << " has ended their turn.\n";
-                    break;
-                }case  AdvanceEnum:{
+                case  AdvanceEnum:{
                     string startTerritory;
                     string targetTerritory;
                     int numUnits;
@@ -826,8 +821,14 @@ void GameEngine::issueOrdersPhase() {
                     std::cout << "Negotiate order issued.\n";
                     break;
                 } default:{
-                    std::cout << "Invalid choice. Please try again.\n";
+                    if (choice == -1){
+                        isFinished[i] = true;
+                        finishedPlayers++;
+                        std::cout << "Player " << player->GetName() << " has ended their turn.\n";
+                    }else {
+                        std::cout << "Invalid choice. Please try again.\n";
                     i--; // Repeat this player's turn
+                    }
                     break;
                 }
             }
@@ -843,8 +844,8 @@ std::vector<GameEngine::OrderNames> GameEngine::availableOrders(int playerID) {
         orders.push_back(DeployEnum);
     } else {
         orders.push_back(AdvanceEnum);
-        for (Card* card : players[playerID]->GetPlayerHand()->GetCards()) {
-            Card* ptr = card;
+        for (Card card : players[playerID]->GetPlayerHand()->GetCards()) {
+            Card* ptr = &card;
             int type = ptr->GetType();
             switch (type) {
                 case AirliftEnum:
