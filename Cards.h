@@ -100,7 +100,7 @@ public:
     void Play() const;
     void Print() const;
 private:
-    enum typeNames { bomb = 3, reinforcement = 4, blockade = 2, airlift = 1, diplomacy = 5 };
+    enum typeNames { bomb = 2, reinforcement = 3, blockade = 1, airlift = 0, diplomacy = 4 };
     typeNames type;
     CardTypes* cardType;
 };

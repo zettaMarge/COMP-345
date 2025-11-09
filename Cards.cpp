@@ -418,9 +418,9 @@ std::vector<Card> Hand::GetCards() {
 }
 
 void Hand::SetTestCards() {
+    hand.push_back(Card(0));
     hand.push_back(Card(1));
     hand.push_back(Card(2));
     hand.push_back(Card(3));
     hand.push_back(Card(4));
-    hand.push_back(Card(5));
 }
