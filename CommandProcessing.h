@@ -47,16 +47,42 @@ public:
     }
 };
 
+struct CommandLog {
+    std::string command;
+    std::string effect;
+};
+
 // ================== CommandProcessor ==================
 class CommandProcessor {
 public:
-	std::vector<std::unique_ptr<std::string>> commandHistory;
+	std::vector<CommandLog> commandHistory;
 
     explicit CommandProcessor(GameEngine* engine);
 
     void processInput(const std::string& userInput);
 
-    void SaveCommand(const ICommand& cmd);
+    void SaveCommand(const std::string& cmdName) {
+        commandHistory.push_back({ cmdName, "" });
+    }
+
+    void SaveEffect(const std::string& effect) {
+        if (!commandHistory.empty()) {
+            commandHistory.back().effect = effect;
+        }
+    }
+
+    void PrintCommandHistory() const {
+        std::cout << "Command History:\n";
+        for (const auto& entry : commandHistory) {
+            std::cout << entry.command;
+
+            if (!entry.effect.empty()) {
+                std::cout << " -> " << entry.effect;
+            }
+
+            std::cout << "\n";
+        }
+    }
 
     bool validate(const std::string& commandName) {
         return CommandFactory::Instance().CreateCommand(commandName, "") != nullptr;
@@ -70,8 +96,8 @@ private:
 class ConsoleCommandProcessor : public CommandProcessor {
 public:
     ConsoleCommandProcessor(GameEngine* engine);
+    void proccessConsoleCommands(GameEngine& engine);
     // Continuously read commands from console
-    void readCommands(GameEngine& engine);
 };
 
 

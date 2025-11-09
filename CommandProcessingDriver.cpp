@@ -28,7 +28,7 @@ void TestCommandProcessing() {
 
         fileProcessor = std::make_unique<FileCommandProcessorAdapter>(&engine, filename);
         fileProcessor->ReadLinesFromFile(engine); 
-		fileProcessor->printCommandHistory();
+		fileProcessor->PrintCommandHistory();
     }
    
     std::cout << "Starting console command processing...\n";
@@ -36,5 +36,5 @@ void TestCommandProcessing() {
     consoleProcessor.proccessConsoleCommands(engine);
 
     std::cout << "Command processing complete.\n";
-	consoleProcessor.printCommandHistory();
+	consoleProcessor.PrintCommandHistory();
 }
