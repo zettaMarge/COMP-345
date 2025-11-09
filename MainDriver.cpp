@@ -1,14 +1,13 @@
 #include "GameEngine.h"
 #include "CommandProcessing.h"
-void TestCommandProcessing();
-void testOrderExecution();
-int TestMaps();
-int TestPlayers();
-int TestCards();
 
 int main() {
-	TestCommandProcessing();
-	testOrderExecution();
+	GameEngine* game = new GameEngine();
+	GameEngine::instance = game;
+	game->TestStartupPhase();
+	game->TestOrderExecution();
+	TestGameEngine();
+	//command procceing i think is done in the command processing driver	
 
 	//Assignment 1 tests
 	//	TestMaps();

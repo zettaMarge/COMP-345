@@ -1082,8 +1082,7 @@ void GameEngine::StartupPhase() {
         std::cin >> playerName;
         AddPlayers(playerName);
     }
-    std::cout << "Players added successfully. Starting game...\n";
-    GameStart();
+    std::cout << "Players added successfully. Start up phase complete!\n";
 }
 
 Player* GameEngine::FindPlayerByName(const string &name) {
@@ -1104,6 +1103,7 @@ void GameEngine::TestStartupPhase() {
 
 void GameEngine::TestOrderExecution() {
     //dummy map init
+    std::cout << "Initializing test map...\n";
     Map* testMap = new Map();
     Continent* testContinent = testMap->AddContinent("Continent", 5);
     Territory* tA = testMap->AddTerritory("Territory A", testContinent);
@@ -1121,19 +1121,24 @@ void GameEngine::TestOrderExecution() {
 
 
     //dummy players init
+    std::cout << "1.\n";
     Deck* deck = new Deck();
-
+    std::cout << "2.\n";
     GameEngine::instance->AddPlayers("Player1");
+    std::cout << "3.\n";
     GameEngine::instance->AddPlayers("Player2");
+    std::cout << "4.\n";
 
     Player* p1 = GameEngine::instance->players[0];
     p1->AddTerritory(tB);
     p1->AddTerritory(tC);
     p1->SetReinforcements(3);
+    std::cout << "3.\n";
     Hand* hand1 = new Hand(*deck);
     hand1->SetTestCards();
     p1->SetPlayerHand(hand1);
 
+    std::cout << "4.\n";
     Player* p2 = GameEngine::instance->players[1];
     p2->AddTerritory(tA);
     p2->AddTerritory(tD);
@@ -1141,6 +1146,7 @@ void GameEngine::TestOrderExecution() {
     Hand* hand2 = new Hand(*deck);
     hand2->SetTestCards();
     p2->SetPlayerHand(hand2);
+    std::cout << "5.\n";
 
     //test the phases
     GameEngine::instance->issueOrdersPhase();

@@ -291,7 +291,7 @@ Card& Card::operator=(const Card& other) {
 //----------------------------------------------------------------
 // Deck class implementation
 // Constructor initializes the deck with 30 random cards
-Deck::Deck(){
+Deck::Deck() : initialSize(30) {
     for (int i = 0; i < initialSize; ++i) {
         int typeIndex = rand() % 5; //5 types of cards
         cards.push_back(Card(typeIndex));
