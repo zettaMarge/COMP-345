@@ -194,10 +194,7 @@ Advance::Advance(const Advance& obj) {
 
 // Destructor
 Advance::~Advance() {
-    delete src;
     src = NULL;
-
-    delete target;
     target = NULL;
 }
 
@@ -389,10 +386,7 @@ Airlift::Airlift(const Airlift& obj) {
 
 // Destructor
 Airlift::~Airlift() {
-    delete src;
     src = NULL;
-
-    delete target;
     target = NULL;
 }
 
@@ -496,7 +490,6 @@ Blockade::Blockade(const Blockade& obj) {
 
 // Destructor
 Blockade::~Blockade() {
-    delete target;
     target = NULL;
 }
 
@@ -576,7 +569,6 @@ Bomb::Bomb(const Bomb& obj) {
 
 // Destructor
 Bomb::~Bomb() {
-    delete target;
     target = NULL;
 }
 
@@ -660,7 +652,6 @@ Deploy::Deploy(const Deploy& obj) {
 
 // Destructor
 Deploy::~Deploy() {
-    delete target;
     target = NULL;
 }
 
