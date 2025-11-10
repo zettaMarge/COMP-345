@@ -187,23 +187,21 @@ std::string GameStartCommand::Execute() {
         currentPlayer->AddTerritory(currentTerritory);
     }
 
-    // Give initial reinforcements
-    for (Player* player : GameEngine::instance->players) {
-        player->AddReinforcements(50);  
+    //50 initial army units to players
+    for (int i = 0; i < GameEngine::instance->players.size(); i++) {
+        Player* player = GameEngine::instance->players[i];
+        player->AddReinforcements(50);
     }
 
-    // idk not working rn 
-    /*
-    for (Player* player : GameEngine::instance->players) {
+    //each player draws 2 initial cards from the deck
+    for (int i = 0; i < GameEngine::instance->players.size(); i++) {
+        Player* player = GameEngine::instance->players[i];
         player->GetPlayerHand()->AddCard();
         player->GetPlayerHand()->AddCard();
     }
-    */
 
     this->effect = "Game started successfully";
     std::cout << this->effect << "\n";
-
-    return this->effect;
 
     GameEngine::instance->mainGameLoop();
 
@@ -606,11 +604,11 @@ int TestGameEngine() {
 void GameEngine::mainGameLoop() {
     bool gameWon = false;
     while (!gameWon) {
-//reinforcementPhase();
-       // issueOrdersPhase();
-   //     executeOrdersPhase();
-        // checkPlayerElimination();
-        // gameWon = checkWinCondition();
+        reinforcementPhase();
+        issueOrdersPhase();
+        executeOrdersPhase();
+        checkPlayerElimination();
+        gameWon = checkWinCondition();
     }
 }
 
