@@ -648,7 +648,7 @@ void GameEngine::reinforcementPhase() {
 
 // Issue Orders phase - Players issue orders such as deploying armies, attacking other players,
 // and fortifying their positions
-void GameEngine::issueOrdersPhase() {   //TODO: play the cards to remove them from the player's hand after issuing the order
+void GameEngine::issueOrdersPhase() {
     std::cout << "Issue Orders Phase started.\n";
     std::vector<bool> isFinished(players.size(), false);
     int finishedPlayers = 0;
@@ -739,6 +739,15 @@ void GameEngine::issueOrdersPhase() {   //TODO: play the cards to remove them fr
                     cin >> numUnits;
 
                     //creating and issuing the airlift order
+                    int cardIndex = player->GetPlayerHand()->GetCardIndex(AirliftEnum);
+
+                    if (cardIndex == player->GetPlayerHand()->GetHandSize()) {
+                        std::cout << "ERROR: could not find the card in hand, please try again.";
+                        --i;
+                        break;
+                    }
+
+                    player->GetPlayerHand()->PlayCard(cardIndex);
                     Airlift* airliftOrder = new Airlift(player, numUnits, gameMap->GetTerritoryByName(startTerritory), gameMap->GetTerritoryByName(targetTerritory));
                     Airlift* ptr = airliftOrder;
                     player->IssueOrder(ptr);
@@ -754,6 +763,15 @@ void GameEngine::issueOrdersPhase() {   //TODO: play the cards to remove them fr
                     cin >> targetTerritory;
 
                     //creating and issuing the blockade order
+                    int cardIndex = player->GetPlayerHand()->GetCardIndex(BlockadeEnum);
+
+                    if (cardIndex == player->GetPlayerHand()->GetHandSize()) {
+                        std::cout << "ERROR: could not find the card in hand, please try again.";
+                        --i;
+                        break;
+                    }
+
+                    player->GetPlayerHand()->PlayCard(cardIndex);
                     Blockade* blockadeOrder = new Blockade(player, gameMap->GetTerritoryByName(targetTerritory));
                     Blockade* ptr = blockadeOrder;
                     player->IssueOrder(ptr);
@@ -769,6 +787,15 @@ void GameEngine::issueOrdersPhase() {   //TODO: play the cards to remove them fr
                     cin >> targetTerritory;
 
                     //creating and issuing the bomb order
+                    int cardIndex = player->GetPlayerHand()->GetCardIndex(BombEnum);
+
+                    if (cardIndex == player->GetPlayerHand()->GetHandSize()) {
+                        std::cout << "ERROR: could not find the card in hand, please try again.";
+                        --i;
+                        break;
+                    }
+
+                    player->GetPlayerHand()->PlayCard(cardIndex);
                     Bomb* bombOrder = new Bomb(player, gameMap->GetTerritoryByName(targetTerritory));
                     Bomb* ptr = bombOrder;
                     player->IssueOrder(ptr);
@@ -815,6 +842,15 @@ void GameEngine::issueOrdersPhase() {   //TODO: play the cards to remove them fr
                     }
 
                     //creating and issuing the negotiate order
+                    int cardIndex = player->GetPlayerHand()->GetCardIndex(NegotiateEnum);
+
+                    if (cardIndex == player->GetPlayerHand()->GetHandSize()) {
+                        std::cout << "ERROR: could not find the card in hand, please try again.";
+                        --i;
+                        break;
+                    }
+
+                    player->GetPlayerHand()->PlayCard(cardIndex);
                     Negotiate* negotiateOrder = new Negotiate(player, targetPlayer);
                     Negotiate* ptr = negotiateOrder;
                     player->IssueOrder(ptr);

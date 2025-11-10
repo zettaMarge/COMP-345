@@ -417,6 +417,22 @@ std::vector<Card> Hand::GetCards() {
     return hand;
 }
 
+//Returns the index of the first card of the specified type, or the size if none found
+int Hand::GetCardIndex(int type) {
+    for (size_t i = 0; i < hand.size(); ++i) {
+        if (hand[i].GetType() == type) {
+            return i;
+        }
+    }
+
+    return hand.size();
+}
+
+//Returns how many cards are in the hand
+int Hand::GetHandSize() {
+    return hand.size();
+}
+
 void Hand::SetTestCards() {
     hand.push_back(Card(0));
     hand.push_back(Card(1));
