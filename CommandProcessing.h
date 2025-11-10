@@ -7,6 +7,7 @@
 #include <sstream>
 #include <fstream>
 #include "GameEngine.h"  // for IState, GameEngine
+#include "LoggingObserver.h"
 
 class GameEngine;
 class ICommand;
@@ -53,7 +54,7 @@ struct CommandLog {
 };
 
 // ================== CommandProcessor ==================
-class CommandProcessor {
+class CommandProcessor: public Subject, public ILoggable {
 public:
 	std::vector<CommandLog> commandHistory;
 
@@ -63,11 +64,13 @@ public:
 
     void SaveCommand(const std::string& cmdName) {
         commandHistory.push_back({ cmdName, "" });
+        Notify(this);
     }
 
     void SaveEffect(const std::string& effect) {
         if (!commandHistory.empty()) {
             commandHistory.back().effect = effect;
+            Notify(this);
         }
     }
 
@@ -81,6 +84,20 @@ public:
             }
 
             std::cout << "\n";
+        }
+    }
+
+    std::string StringToLog() override {
+        if (commandHistory.empty()) {
+            return "CommandProcessor: No commands yet";
+        }
+
+        const auto& lastCmd = commandHistory.back();
+
+        if (lastCmd.effect.empty()) {
+            return "Command: " + lastCmd.command;
+        } else {
+            return "Command effect: " + lastCmd.command + " -> " + lastCmd.effect;
         }
     }
 

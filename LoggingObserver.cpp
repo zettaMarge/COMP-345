@@ -2,23 +2,23 @@
 #include <algorithm>
 #include <iostream>
 
-void Subject::attach(Observer* _observer){
+void Subject::Attach(Observer* _observer){
     if(_observer != nullptr){
         observers.push_back(_observer);
     }
 }
 
-void Subject::detach(Observer* _observer){
+void Subject::Detach(Observer* _observer){
     observers.erase(
         std::remove(observers.begin(), observers.end(), _observer),
         observers.end()
     );
 }
 
-void Subject::notify(ILoggable* loggable){
+void Subject::Notify(ILoggable* loggable){
     for(Observer* o : observers){
         if(o != nullptr && loggable != nullptr){
-            o->update(loggable);
+            o->Update(loggable);
         }
     }
 }
@@ -36,9 +36,9 @@ LogObserver::~LogObserver(){
     closeLogFile();
 }
 
-void LogObserver::update(ILoggable* loggable){
+void LogObserver::Update(ILoggable* loggable){
     if(loggable != nullptr && logs.is_open()){
-        std::string logEntry = loggable->stringToLog();
+        std::string logEntry = loggable->StringToLog();
         logs << logEntry << std::endl;
         logs.flush();
     }
