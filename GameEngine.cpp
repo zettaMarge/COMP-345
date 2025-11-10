@@ -870,7 +870,7 @@ std::vector<GameEngine::OrderNames> GameEngine::availableOrders(int playerID) {
 }
 
 // Execute Orders phase - The issued orders are executed in the order they were issued
-void GameEngine::executeOrdersPhase() { //TODO after all orders are executed, call player->ResetNegotiationsAndConquer()
+void GameEngine::executeOrdersPhase() {
     std::cout << "Execute Orders Phase started.\n";
     std::vector<bool> isFinished(players.size(), false);
     int finishedPlayers = 0;
@@ -903,7 +903,7 @@ void GameEngine::executeOrdersPhase() { //TODO after all orders are executed, ca
         Player* player = players[i];
         player->ResetNegotiationsAndConquer();
     }
-    
+
     std::cout << "Execute Orders Phase ended.\n";
 }
 
