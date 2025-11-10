@@ -571,6 +571,14 @@ void GameEngine::changeState(IState* next) {
     currentState->OnExit();
     currentState = next;
     currentState->OnEnter();
+    Notify(this);
+}
+
+std::string GameEngine::StringToLog() {
+    if (currentState) {
+        return "GameEngine: Transitioned to " + currentState->name;
+    }
+    return "GameEngine: No current state";
 }
 
 // ===== Entry point =====

@@ -8,6 +8,7 @@
 #include "Map.h"
 #include "Cards.h"
 #include "Orders.h"
+#include "LoggingObserver.h"
 // ===== Forward declarations =====
 class IState;
 template <typename T>
@@ -255,7 +256,7 @@ public:
 // Singleton class that manages the game states and transitions
 // Owns all states and manages the current state
 // Contains Run and ProcessInput methods to handle the game loop and user input
-class GameEngine {
+class GameEngine: public Subject, public ILoggable {
 public:
 	static GameEngine* instance; // singleton instance
 
@@ -289,6 +290,7 @@ public:
     void mainGameLoop();
     bool IsValidCommand(const std::string& cmd); // validate command
 	void changeState(IState* next); // change current state
+    std::string StringToLog();
 
     // Code for assignment 2
     // Part 3: Game play: main game loop
