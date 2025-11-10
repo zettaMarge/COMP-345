@@ -898,6 +898,12 @@ void GameEngine::executeOrdersPhase() { //TODO after all orders are executed, ca
             }
         }
     }
+
+    for (int i = 0; i < players.size(); i++) {
+        Player* player = players[i];
+        player->ResetNegotiationsAndConquer();
+    }
+    
     std::cout << "Execute Orders Phase ended.\n";
 }
 
