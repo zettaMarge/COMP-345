@@ -345,7 +345,8 @@ GameEngine* GameEngine::instance = nullptr; // initialize singleton instance to 
 GameEngine::GameEngine() {
     instance = this;
 	gameMap = nullptr;
-	neutralPlayer = nullptr;
+	neutralPlayer = new Player();
+    neutralPlayer->SetName("NEUTRAL");
     // Create all states
 	//unique pointers to manage state lifetimes that way I dont have do worry about memory leaks
     mainMenuState = std::make_unique<MainMenuState>();
@@ -1106,13 +1107,13 @@ void GameEngine::TestOrderExecution() {
     std::cout << "Initializing test map...\n";
     Map* testMap = new Map();
     Continent* testContinent = testMap->AddContinent("Continent", 5);
-    Territory* tA = testMap->AddTerritory("Territory A", testContinent);
+    Territory* tA = testMap->AddTerritory("TA", testContinent);
     tA->SetUnits(1);
-    Territory* tB = testMap->AddTerritory("Territory B", testContinent);
+    Territory* tB = testMap->AddTerritory("TB", testContinent);
     tB->SetUnits(15);
-    Territory* tC = testMap->AddTerritory("Territory C", testContinent);
+    Territory* tC = testMap->AddTerritory("TC", testContinent);
     tC->SetUnits(15);
-    Territory* tD = testMap->AddTerritory("Territory D", testContinent);
+    Territory* tD = testMap->AddTerritory("TD", testContinent);
     tD->SetUnits(15);
     testMap->AddAdjacency(tA, tB);
     testMap->AddAdjacency(tB, tC);

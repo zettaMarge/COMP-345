@@ -144,13 +144,7 @@ Player* Order::GetOwningPlayer() {
 
 // Checks whether a given territory belongs to the order's player
 bool Order::TerritoryBelongsToPlayer(Territory* territory) {
-    if (territory->GetOwner() != nullptr) {
-        return territory->GetOwner()->GetName() == owningPlayer->GetName();
-    }
-    else {
-        return false;
-    }
-    
+    return territory->GetOwner()->GetName() == owningPlayer->GetName();
 }
 
 // ----- Order -----
@@ -321,7 +315,7 @@ void Advance::Execute() {
 
             std::cout << "Advance order successful in " << GetEffect() << std::endl;
         }
-        else if (target->GetOwner() == nullptr || !owningPlayer->IsNegotiatingWith(target->GetOwner())) { //either targte is a Neutral territory or player is not in negotiations with target owner
+        else if (target->GetOwner()->GetName() == "NEUTRAL" || !owningPlayer->IsNegotiatingWith(target->GetOwner())) { //either target is a Neutral territory or player is not in negotiations with target owner
             std::cout << "Target belongs to another player, initiating battle." << std::endl;
             SimulateBattle(owningPlayer, nbUnits, target->GetUnits(), src, target);
         }
