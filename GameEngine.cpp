@@ -648,7 +648,7 @@ void GameEngine::reinforcementPhase() {
 
 // Issue Orders phase - Players issue orders such as deploying armies, attacking other players,
 // and fortifying their positions
-void GameEngine::issueOrdersPhase() {
+void GameEngine::issueOrdersPhase() {   //TODO: play the cards to remove them from the player's hand after issuing the order
     std::cout << "Issue Orders Phase started.\n";
     std::vector<bool> isFinished(players.size(), false);
     int finishedPlayers = 0;

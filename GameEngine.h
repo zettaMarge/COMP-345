@@ -298,12 +298,12 @@ private:
     void executeOrdersPhase();
 
     enum OrderNames {
-        AdvanceEnum,
-        AirliftEnum,
-        BlockadeEnum,
-        BombEnum,
-        DeployEnum,
-        NegotiateEnum
+        AdvanceEnum = 5,
+        AirliftEnum = 0,
+        BlockadeEnum = 1,
+        BombEnum = 2,
+        DeployEnum = 3,
+        NegotiateEnum = 4
     };
 
     //Additional methods
