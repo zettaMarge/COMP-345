@@ -137,6 +137,16 @@ private:
     static CommandRegistrar<QuitCommand> registrar; // only declare
 };
 
+class NewGameCommand : public ICommand {
+public:
+    explicit NewGameCommand(const std::string& arg = "", IState* next = nullptr)
+        : ICommand("new game", arg, next) {
+    }
+    std::string Execute() override;
+private:
+    static CommandRegistrar<NewGameCommand> registrar; // only declare
+};
+
 // ===== IState =====
 //Interface for states
 //contains a name and a list of available commands

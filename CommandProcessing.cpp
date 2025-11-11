@@ -13,6 +13,7 @@ CommandRegistrar<AddPlayerCommand> AddPlayerCommand::registrar("addplayer");
 CommandRegistrar<GameStartCommand> GameStartCommand::registrar("gamestart");
 CommandRegistrar<ReplayCommand> ReplayCommand::registrar("replay");
 CommandRegistrar<QuitCommand> QuitCommand::registrar("quit");
+CommandRegistrar<NewGameCommand> NewGameCommand::registrar("newgame");
 
 //command processor parent class
 CommandProcessor::CommandProcessor(GameEngine* engine)  

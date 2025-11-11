@@ -163,7 +163,6 @@ std::string AddPlayerCommand::Execute() {
     return this->effect;
 }
 
-//needs work!!!!
 std::string GameStartCommand::Execute() {
     if (GameEngine::instance->currentState != GameEngine::instance->playersAddedState.get()) {
         this->effect = "Error: tried to execute gamestart from invalid state";
@@ -171,7 +170,15 @@ std::string GameStartCommand::Execute() {
         return this->effect;
     }
 
-    std::cout << "Starting game...\n";
+    std::cout << "Running game...\n";
+
+    this->effect = "Game started successfully";
+    std::cout << this->effect << "\n";
+
+    
+    GameEngine::instance->changeState(GameEngine::instance->winState.get());
+
+    return this->effect;
 
     // Shuffle players
     std::random_device rd;
@@ -199,15 +206,6 @@ std::string GameStartCommand::Execute() {
         player->GetPlayerHand()->AddCard();
         player->GetPlayerHand()->AddCard();
     }
-
-    this->effect = "Game started successfully";
-    std::cout << this->effect << "\n";
-
-    GameEngine::instance->mainGameLoop();
-
-    GameEngine::instance->changeState(GameEngine::instance->assignReinforcementState.get());
-
-    return this->effect;
 };
 
 std::string ReplayCommand::Execute() {
@@ -243,7 +241,8 @@ std::string QuitCommand::Execute() {
         std::cout << "Quitting game...\n";
         this->effect = "Game quit successfully";
         std::cout << this->effect << "\n";
-        // exit(0); 
+         exit(0); 
+
         return this->effect;
     }
 
@@ -255,13 +254,26 @@ std::string QuitCommand::Execute() {
         std::cout << "Quitting game...\n";
         this->effect = "Game quit successfully (forced)";
         std::cout << this->effect << "\n";
-        // exit(0); 
+         exit(0); 
     }
     else {
         this->effect = "Quit command ignored";
         std::cout << this->effect << "\n";
     }
 
+    return this->effect;
+}
+
+std::string NewGameCommand::Execute() {
+    std::cout << "Starting a new game...\n";
+    if (GameEngine::instance->currentState == GameEngine::instance->mainMenuState.get()) {
+        this->effect = "Already in main menu state, new game ignored";
+        std::cout << this->effect << "\n";
+        return this->effect;
+    }
+    GameEngine::instance->changeState(GameEngine::instance->mainMenuState.get());
+    this->effect = "New game started successfully";
+    std::cout << this->effect << "\n";
     return this->effect;
 }
 
@@ -395,10 +407,10 @@ GameEngine::GameEngine() {
         std::make_unique<SimpleCommand>("win", winState.get()));
 
     winState->availableCommands.emplace_back(
-        std::make_unique<SimpleCommand>("play", mainMenuState.get()));
+        std::make_unique<SimpleCommand>("newgame", mainMenuState.get()));
 
     winState->availableCommands.emplace_back(
-        std::make_unique<SimpleCommand>("end", nullptr)); // exit game
+        std::make_unique<SimpleCommand>("quit", nullptr)); // exit game
 
     // Start the game
 	instance -> currentState = instance->mainMenuState.get(); // start at main menu

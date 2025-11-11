@@ -1,9 +1,11 @@
 #include "GameEngine.h"
 #include "CommandProcessing.h"
 
+void TestCommandProcessing();
 void testLoggingObserver();
 
 int main() {
+	TestCommandProcessing();
 	GameEngine* game = new GameEngine();
 	GameEngine::instance = game;
 	game->TestStartupPhase();

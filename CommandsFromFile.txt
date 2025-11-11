@@ -1,7 +1,12 @@
-loadmap world.map
+loadmap _64_ BIG BLUE.map
 validatemap
 addplayer Alice
 addplayer Bob
 gamestart
-replay
+newgame
+loadmap _64_ BIG BLUE.map
+validatemap
+addplayer t
+gamestart
+history
 quit
