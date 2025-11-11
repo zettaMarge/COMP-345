@@ -1159,7 +1159,13 @@ Player* GameEngine::FindPlayerByName(const string &name) {
 }
 
 void GameEngine::TestStartupPhase() {
+    std::cout << "--------------------------" << std::endl;
+    std::cout << "- TestStartupPhase Start -" << std::endl;
+    std::cout << "--------------------------" << std::endl;
     StartupPhase();
+    std::cout << "------------------------" << std::endl;
+    std::cout << "- TestStartupPhase End -" << std::endl;
+    std::cout << "------------------------" << std::endl;
 }
 
 void GameEngine::TestOrderExecution() {
@@ -1182,7 +1188,9 @@ void GameEngine::TestOrderExecution() {
 
 
     //dummy players init
+    std::cout << "Initializing test players...\n";
     Deck* deck = new Deck();
+    GameEngine::instance->players.clear();
     GameEngine::instance->AddPlayers("Player1");
     GameEngine::instance->AddPlayers("Player2");
 

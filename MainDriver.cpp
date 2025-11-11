@@ -3,13 +3,14 @@
 
 void TestCommandProcessing();
 void testLoggingObserver();
+void testOrderExecution();
 
 int main() {
 	TestCommandProcessing();
 	GameEngine* game = new GameEngine();
 	GameEngine::instance = game;
 	game->TestStartupPhase();
-	game->TestOrderExecution();
+	testOrderExecution();
 	TestGameEngine();
 	// testLoggingObserver();
 	//command procceing i think is done in the command processing driver	
