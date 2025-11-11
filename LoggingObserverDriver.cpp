@@ -16,7 +16,7 @@
 #include <iostream>
 #include <fstream>
 
-void testLoggingObserver(){
+void TestLoggingObserver(){
     std::cout << "Logging Observer test" << std::endl;
     LogObserver* logObserver = new LogObserver();
 

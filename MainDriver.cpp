@@ -2,7 +2,7 @@
 #include "CommandProcessing.h"
 
 void TestCommandProcessing();
-void testLoggingObserver();
+void TestLoggingObserver();
 void testOrderExecution();
 
 int main() {
@@ -12,7 +12,7 @@ int main() {
 	game->TestStartupPhase();
 	testOrderExecution();
 	TestGameEngine();
-	// testLoggingObserver();
+	TestLoggingObserver();
 	//command procceing i think is done in the command processing driver	
 
 	//Assignment 1 tests
