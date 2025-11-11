@@ -1,3 +1,12 @@
+//-----------------------------------------------------
+    //Sara Vargas Aceves 40349399
+    //COMP-345-D 2252 Assignment 2 LoggingObserverDriver.cpp
+    //Dr. Hamed Jafarpour
+    //Submitted: TBD
+    //Due: November 11, 2025 
+    //I certify that this submission is my original work and meets the Faculty’s Expectations of Originality 
+    //Sara Vargas Aceves
+//-----------------------------------------------------
 #include "LoggingObserver.h"
 #include "GameEngine.h"
 #include "CommandProcessing.h"
@@ -7,7 +16,7 @@
 #include <iostream>
 #include <fstream>
 
-void testLoggingObserver() {
+void testLoggingObserver(){
     std::cout << "Logging Observer test" << std::endl;
     LogObserver* logObserver = new LogObserver();
 
