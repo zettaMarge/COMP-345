@@ -7,7 +7,6 @@ int main() {
 	game->TestStartupPhase();
 	game->TestOrderExecution();
 	TestGameEngine();
-	//command procceing i think is done in the command processing driver	
 
 	//Assignment 1 tests
 	//	TestMaps();
