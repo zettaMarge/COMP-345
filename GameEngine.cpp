@@ -602,7 +602,7 @@ int TestGameEngine() {
 //Alexandre Godfroy 40300165
 //COMP-345-D 2252 Assignment 2 Game play: main game Loop
 //Dr. Hamed Jafarpour
-//Submitted: TBD
+//Submitted: November 11, 2025
 //Due: November 11, 2025 
 //I certify that this submission is my original work and meets the Facultys Expectations of Originality 
 //Alexandre Godfroy
@@ -994,7 +994,7 @@ void GameEngine::checkPlayerElimination() {
 //Mia Letendre 40274681
 //COMP-345-D 2252 Assignment 2 Game Startup Phase
 //Dr. Hamed Jafarpour
-//Submitted: TBD
+//Submitted: November 11, 2025
 //Due: November 11, 2025 
 //I certify that this submission is my original work and meets the Facultys Expectations of Originality 
 //Mia Letendre
