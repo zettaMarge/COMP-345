@@ -627,7 +627,7 @@ bool Bomb::Validate() {
     std::cout << "Target territory belongs to this order's player? " << (playerOwnsTarget ? "Yes." : "No.") << std::endl;
     std::cout << "Target territory adjacent to one of this order's player territories? " << (targetAdjacentToPlayer ? "Yes." : "No.") << std::endl;
 
-    return playerOwnsTarget && targetAdjacentToPlayer;
+    return !playerOwnsTarget && targetAdjacentToPlayer;
 }
 // ----- Bomb -----
 
