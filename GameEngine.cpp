@@ -50,6 +50,7 @@ void GameEngine::RunTournament(const TournamentParameters& params)
 				}
                 auto gameStartCmd =  std::make_shared<GameStartCommand>(std::to_string(params.maxTurns));
                 std::string winner = gameStartCmd->Execute();
+
                 // Record results
                 for (int s = 0; s < params.strategies.size(); ++s) {
                     std::string playerName = "Player" + std::to_string(s + 1) + "_" + params.strategies[s];
@@ -63,6 +64,8 @@ void GameEngine::RunTournament(const TournamentParameters& params)
                         results[m][s].push_back("L");
                     }
                 }
+				auto replayCmd = std::make_shared<ReplayCommand>();
+				replayCmd->Execute();
 				std::cout << "Done.\n";
              }
     }
