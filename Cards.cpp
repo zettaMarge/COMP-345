@@ -291,7 +291,7 @@ Card& Card::operator=(const Card& other) {
 //----------------------------------------------------------------
 // Deck class implementation
 // Constructor initializes the deck with 30 random cards
-Deck::Deck(){
+Deck::Deck() : initialSize(30) {
     for (int i = 0; i < initialSize; ++i) {
         int typeIndex = rand() % 5; //5 types of cards
         cards.push_back(Card(typeIndex));
@@ -417,10 +417,26 @@ std::vector<Card> Hand::GetCards() {
     return hand;
 }
 
+//Returns the index of the first card of the specified type, or the size if none found
+int Hand::GetCardIndex(int type) {
+    for (size_t i = 0; i < hand.size(); ++i) {
+        if (hand[i].GetType() == type) {
+            return i;
+        }
+    }
+
+    return hand.size();
+}
+
+//Returns how many cards are in the hand
+int Hand::GetHandSize() {
+    return hand.size();
+}
+
 void Hand::SetTestCards() {
-    hand.push_back(new Card(1));
-    hand.push_back(new Card(2));
-    hand.push_back(new Card(3));
-    hand.push_back(new Card(4));
-    hand.push_back(new Card(5));
+    hand.push_back(Card(0));
+    hand.push_back(Card(1));
+    hand.push_back(Card(2));
+    hand.push_back(Card(3));
+    hand.push_back(Card(4));
 }

@@ -89,8 +89,21 @@ void TestOrdersLists() {
 }
 
 void testOrderExecution() {
-    GameEngine engine = new GameEngine();
-    engine.TestOrderExecution();
-    delete engine;
-    engine = nullptr;
+    std::cout << "----------------------------" << std::endl;
+    std::cout << "- TestOrderExecution Start -" << std::endl;
+    std::cout << "----------------------------" << std::endl;
+
+    if (GameEngine::instance != nullptr) {
+        GameEngine::instance->TestOrderExecution();
+    }
+    else {
+        GameEngine* engine = new GameEngine();
+        engine->TestOrderExecution();
+        delete engine;
+        engine = nullptr;
+    }
+    
+    std::cout << "--------------------------" << std::endl;
+    std::cout << "- TestOrderExecution End -" << std::endl;
+    std::cout << "--------------------------" << std::endl;
 }

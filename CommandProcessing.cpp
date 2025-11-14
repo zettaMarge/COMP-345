@@ -13,6 +13,7 @@ CommandRegistrar<AddPlayerCommand> AddPlayerCommand::registrar("addplayer");
 CommandRegistrar<GameStartCommand> GameStartCommand::registrar("gamestart");
 CommandRegistrar<ReplayCommand> ReplayCommand::registrar("replay");
 CommandRegistrar<QuitCommand> QuitCommand::registrar("quit");
+CommandRegistrar<NewGameCommand> NewGameCommand::registrar("newgame");
 
 //command processor parent class
 CommandProcessor::CommandProcessor(GameEngine* engine)  
@@ -47,7 +48,7 @@ std::unique_ptr<ICommand> CommandProcessor::readCommand(const std::string& userI
 //if a valid command is returned, saves it to history and executes it
 void CommandProcessor::processInput(const std::string& userInput) {
     if(userInput == "history") {
-        printCommandHistory();
+        PrintCommandHistory();
         return;
 	}
     auto cmd = readCommand(userInput);

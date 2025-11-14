@@ -14,6 +14,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include "LoggingObserver.h"
 
 using std::ostream;
 using std::vector;
@@ -24,7 +25,7 @@ class Player;
 class Order;
 
 // A player's list of orders
-class OrdersList{
+class OrdersList: public Subject, public ILoggable{
     public:
         OrdersList();
         OrdersList(const OrdersList& obj);
@@ -40,6 +41,7 @@ class OrdersList{
         void Move(int fromId, int toId);
         void Remove(int id);
         void SetOwningPlayer(Player* player);
+        std::string StringToLog() override;
 
     private:
         vector<Order*> orders;
@@ -47,7 +49,7 @@ class OrdersList{
 
 
 // Abstract Order class - cannot be instantiated
-class Order {
+class Order: public Subject, public ILoggable {
 public:
     friend ostream& operator<<(ostream& stream, const Order& obj);
 
@@ -57,6 +59,7 @@ public:
     virtual ostream& Print(ostream& stream) const = 0;
     virtual std::string GetEffect() const = 0;
     virtual void Execute() = 0;
+    std::string StringToLog() override;
 
     protected:
         Player* owningPlayer;

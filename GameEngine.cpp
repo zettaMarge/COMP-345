@@ -5,6 +5,9 @@
 #include "Map.h"
 #include "Player.h"
 #include <random>
+#include <algorithm>
+#include "Orders.h"
+
 
 
 std::string LoadMapCommand::Execute() {
@@ -160,7 +163,6 @@ std::string AddPlayerCommand::Execute() {
     return this->effect;
 }
 
-//needs work!!!!
 std::string GameStartCommand::Execute() {
     if (GameEngine::instance->currentState != GameEngine::instance->playersAddedState.get()) {
         this->effect = "Error: tried to execute gamestart from invalid state";
@@ -168,7 +170,15 @@ std::string GameStartCommand::Execute() {
         return this->effect;
     }
 
-    std::cout << "Starting game...\n";
+    std::cout << "Running game...\n";
+
+    this->effect = "Game started successfully";
+    std::cout << this->effect << "\n";
+
+    
+    GameEngine::instance->changeState(GameEngine::instance->winState.get());
+
+    return this->effect;
 
     // Shuffle players
     std::random_device rd;
@@ -184,29 +194,18 @@ std::string GameStartCommand::Execute() {
         currentPlayer->AddTerritory(currentTerritory);
     }
 
-    // Give initial reinforcements
-    for (Player* player : GameEngine::instance->players) {
-        player->AddReinforcements(50);  
+    //50 initial army units to players
+    for (int i = 0; i < GameEngine::instance->players.size(); i++) {
+        Player* player = GameEngine::instance->players[i];
+        player->AddReinforcements(50);
     }
 
-    // idk not working rn 
-    /*
-    for (Player* player : GameEngine::instance->players) {
+    //each player draws 2 initial cards from the deck
+    for (int i = 0; i < GameEngine::instance->players.size(); i++) {
+        Player* player = GameEngine::instance->players[i];
         player->GetPlayerHand()->AddCard();
         player->GetPlayerHand()->AddCard();
     }
-    */
-
-    this->effect = "Game started successfully";
-    std::cout << this->effect << "\n";
-
-    return this->effect;
-
-    GameEngine::instance->mainGameLoop();
-
-    GameEngine::instance->changeState(GameEngine::instance->assignReinforcementState.get());
-
-    return this->effect;
 };
 
 std::string ReplayCommand::Execute() {
@@ -242,7 +241,8 @@ std::string QuitCommand::Execute() {
         std::cout << "Quitting game...\n";
         this->effect = "Game quit successfully";
         std::cout << this->effect << "\n";
-        // exit(0); 
+         exit(0); 
+
         return this->effect;
     }
 
@@ -254,13 +254,26 @@ std::string QuitCommand::Execute() {
         std::cout << "Quitting game...\n";
         this->effect = "Game quit successfully (forced)";
         std::cout << this->effect << "\n";
-        // exit(0); 
+         exit(0); 
     }
     else {
         this->effect = "Quit command ignored";
         std::cout << this->effect << "\n";
     }
 
+    return this->effect;
+}
+
+std::string NewGameCommand::Execute() {
+    std::cout << "Starting a new game...\n";
+    if (GameEngine::instance->currentState == GameEngine::instance->mainMenuState.get()) {
+        this->effect = "Already in main menu state, new game ignored";
+        std::cout << this->effect << "\n";
+        return this->effect;
+    }
+    GameEngine::instance->changeState(GameEngine::instance->mainMenuState.get());
+    this->effect = "New game started successfully";
+    std::cout << this->effect << "\n";
     return this->effect;
 }
 
@@ -342,7 +355,8 @@ GameEngine* GameEngine::instance = nullptr; // initialize singleton instance to 
 GameEngine::GameEngine() {
     instance = this;
 	gameMap = nullptr;
-	neutralPlayer = nullptr;
+	neutralPlayer = new Player();
+    neutralPlayer->SetName("NEUTRAL");
     // Create all states
 	//unique pointers to manage state lifetimes that way I dont have do worry about memory leaks
     mainMenuState = std::make_unique<MainMenuState>();
@@ -393,10 +407,10 @@ GameEngine::GameEngine() {
         std::make_unique<SimpleCommand>("win", winState.get()));
 
     winState->availableCommands.emplace_back(
-        std::make_unique<SimpleCommand>("play", mainMenuState.get()));
+        std::make_unique<SimpleCommand>("newgame", mainMenuState.get()));
 
     winState->availableCommands.emplace_back(
-        std::make_unique<SimpleCommand>("end", nullptr)); // exit game
+        std::make_unique<SimpleCommand>("quit", nullptr)); // exit game
 
     // Start the game
 	instance -> currentState = instance->mainMenuState.get(); // start at main menu
@@ -569,6 +583,14 @@ void GameEngine::changeState(IState* next) {
     currentState->OnExit();
     currentState = next;
     currentState->OnEnter();
+    Notify(this);
+}
+
+std::string GameEngine::StringToLog() {
+    if (currentState) {
+        return "GameEngine: Transitioned to " + currentState->name;
+    }
+    return "GameEngine: No current state";
 }
 
 // ===== Entry point =====
@@ -602,11 +624,11 @@ int TestGameEngine() {
 void GameEngine::mainGameLoop() {
     bool gameWon = false;
     while (!gameWon) {
-//reinforcementPhase();
-       // issueOrdersPhase();
-   //     executeOrdersPhase();
-        // checkPlayerElimination();
-        // gameWon = checkWinCondition();
+        reinforcementPhase();
+        issueOrdersPhase();
+        executeOrdersPhase();
+        checkPlayerElimination();
+        gameWon = checkWinCondition();
     }
 }
 
@@ -735,6 +757,15 @@ void GameEngine::issueOrdersPhase() {
                     cin >> numUnits;
 
                     //creating and issuing the airlift order
+                    int cardIndex = player->GetPlayerHand()->GetCardIndex(AirliftEnum);
+
+                    if (cardIndex == player->GetPlayerHand()->GetHandSize()) {
+                        std::cout << "ERROR: could not find the card in hand, please try again.";
+                        --i;
+                        break;
+                    }
+
+                    player->GetPlayerHand()->PlayCard(cardIndex);
                     Airlift* airliftOrder = new Airlift(player, numUnits, gameMap->GetTerritoryByName(startTerritory), gameMap->GetTerritoryByName(targetTerritory));
                     Airlift* ptr = airliftOrder;
                     player->IssueOrder(ptr);
@@ -750,6 +781,15 @@ void GameEngine::issueOrdersPhase() {
                     cin >> targetTerritory;
 
                     //creating and issuing the blockade order
+                    int cardIndex = player->GetPlayerHand()->GetCardIndex(BlockadeEnum);
+
+                    if (cardIndex == player->GetPlayerHand()->GetHandSize()) {
+                        std::cout << "ERROR: could not find the card in hand, please try again.";
+                        --i;
+                        break;
+                    }
+
+                    player->GetPlayerHand()->PlayCard(cardIndex);
                     Blockade* blockadeOrder = new Blockade(player, gameMap->GetTerritoryByName(targetTerritory));
                     Blockade* ptr = blockadeOrder;
                     player->IssueOrder(ptr);
@@ -765,6 +805,15 @@ void GameEngine::issueOrdersPhase() {
                     cin >> targetTerritory;
 
                     //creating and issuing the bomb order
+                    int cardIndex = player->GetPlayerHand()->GetCardIndex(BombEnum);
+
+                    if (cardIndex == player->GetPlayerHand()->GetHandSize()) {
+                        std::cout << "ERROR: could not find the card in hand, please try again.";
+                        --i;
+                        break;
+                    }
+
+                    player->GetPlayerHand()->PlayCard(cardIndex);
                     Bomb* bombOrder = new Bomb(player, gameMap->GetTerritoryByName(targetTerritory));
                     Bomb* ptr = bombOrder;
                     player->IssueOrder(ptr);
@@ -805,12 +854,21 @@ void GameEngine::issueOrdersPhase() {
                     Player* targetPlayer = FindPlayerByName(targetPlayerName);
 
                     while (targetPlayer == nullptr) {
-                        std::count << "Could not find a player by that name, please try again: " << std::endl;
+                        std::cout << "Could not find a player by that name, please try again: " << std::endl;
                         cin >> targetPlayerName;
                         targetPlayer = FindPlayerByName(targetPlayerName);
                     }
 
                     //creating and issuing the negotiate order
+                    int cardIndex = player->GetPlayerHand()->GetCardIndex(NegotiateEnum);
+
+                    if (cardIndex == player->GetPlayerHand()->GetHandSize()) {
+                        std::cout << "ERROR: could not find the card in hand, please try again.";
+                        --i;
+                        break;
+                    }
+
+                    player->GetPlayerHand()->PlayCard(cardIndex);
                     Negotiate* negotiateOrder = new Negotiate(player, targetPlayer);
                     Negotiate* ptr = negotiateOrder;
                     player->IssueOrder(ptr);
@@ -833,7 +891,7 @@ void GameEngine::issueOrdersPhase() {
     }
     std::cout << "Issue Orders Phase ended.\n";
 }
-// hello alex
+
 std::vector<GameEngine::OrderNames> GameEngine::availableOrders(int playerID) {
     std::vector<GameEngine::OrderNames> orders;
     //while there are still reinforcements, deploy is the only available order
@@ -894,6 +952,12 @@ void GameEngine::executeOrdersPhase() {
             }
         }
     }
+
+    for (int i = 0; i < players.size(); i++) {
+        Player* player = players[i];
+        player->ResetNegotiationsAndConquer();
+    }
+
     std::cout << "Execute Orders Phase ended.\n";
 }
 
@@ -1079,8 +1143,7 @@ void GameEngine::StartupPhase() {
         std::cin >> playerName;
         AddPlayers(playerName);
     }
-    std::cout << "Players added successfully. Starting game...\n";
-    GameStart();
+    std::cout << "Players added successfully. Start up phase complete!\n";
 }
 
 Player* GameEngine::FindPlayerByName(const string &name) {
@@ -1096,30 +1159,38 @@ Player* GameEngine::FindPlayerByName(const string &name) {
 }
 
 void GameEngine::TestStartupPhase() {
+    std::cout << "--------------------------" << std::endl;
+    std::cout << "- TestStartupPhase Start -" << std::endl;
+    std::cout << "--------------------------" << std::endl;
     StartupPhase();
+    std::cout << "------------------------" << std::endl;
+    std::cout << "- TestStartupPhase End -" << std::endl;
+    std::cout << "------------------------" << std::endl;
 }
 
 void GameEngine::TestOrderExecution() {
     //dummy map init
+    std::cout << "Initializing test map...\n";
     Map* testMap = new Map();
-    Continent* testContinent = testMap.AddContinent("Continent", 5);
-    Territory* tA = testMap.AddTerritory("Territory A", northAmerica);
+    Continent* testContinent = testMap->AddContinent("Continent", 5);
+    Territory* tA = testMap->AddTerritory("TA", testContinent);
     tA->SetUnits(1);
-    Territory* tB = testMap.AddTerritory("Territory B", northAmerica);
+    Territory* tB = testMap->AddTerritory("TB", testContinent);
     tB->SetUnits(15);
-    Territory* tC = testMap.AddTerritory("Territory C", northAmerica);
+    Territory* tC = testMap->AddTerritory("TC", testContinent);
     tC->SetUnits(15);
-    Territory* tD = testMap.AddTerritory("Territory D", northAmerica);
+    Territory* tD = testMap->AddTerritory("TD", testContinent);
     tD->SetUnits(15);
-    testMap.AddAdjacency(tA, tB);
-    testMap.AddAdjacency(tB, tC);
-    testMap.AddAdjacency(tC, tD);
+    testMap->AddAdjacency(tA, tB);
+    testMap->AddAdjacency(tB, tC);
+    testMap->AddAdjacency(tC, tD);
     GameEngine::instance->gameMap = testMap;
 
 
     //dummy players init
+    std::cout << "Initializing test players...\n";
     Deck* deck = new Deck();
-
+    GameEngine::instance->players.clear();
     GameEngine::instance->AddPlayers("Player1");
     GameEngine::instance->AddPlayers("Player2");
 

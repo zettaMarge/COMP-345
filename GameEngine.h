@@ -8,6 +8,7 @@
 #include "Map.h"
 #include "Cards.h"
 #include "Orders.h"
+#include "LoggingObserver.h"
 // ===== Forward declarations =====
 class IState;
 template <typename T>
@@ -136,6 +137,16 @@ private:
     static CommandRegistrar<QuitCommand> registrar; // only declare
 };
 
+class NewGameCommand : public ICommand {
+public:
+    explicit NewGameCommand(const std::string& arg = "", IState* next = nullptr)
+        : ICommand("new game", arg, next) {
+    }
+    std::string Execute() override;
+private:
+    static CommandRegistrar<NewGameCommand> registrar; // only declare
+};
+
 // ===== IState =====
 //Interface for states
 //contains a name and a list of available commands
@@ -255,7 +266,7 @@ public:
 // Singleton class that manages the game states and transitions
 // Owns all states and manages the current state
 // Contains Run and ProcessInput methods to handle the game loop and user input
-class GameEngine {
+class GameEngine: public Subject, public ILoggable {
 public:
 	static GameEngine* instance; // singleton instance
 
@@ -289,6 +300,7 @@ public:
     void mainGameLoop();
     bool IsValidCommand(const std::string& cmd); // validate command
 	void changeState(IState* next); // change current state
+    std::string StringToLog();
 
     // Code for assignment 2
     // Part 3: Game play: main game loop
@@ -298,12 +310,12 @@ private:
     void executeOrdersPhase();
 
     enum OrderNames {
-        AdvanceEnum,
-        AirliftEnum,
-        BlockadeEnum,
-        BombEnum,
-        DeployEnum,
-        NegotiateEnum
+        AdvanceEnum = 5,
+        AirliftEnum = 0,
+        BlockadeEnum = 1,
+        BombEnum = 2,
+        DeployEnum = 3,
+        NegotiateEnum = 4
     };
 
     //Additional methods

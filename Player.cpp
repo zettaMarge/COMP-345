@@ -36,7 +36,7 @@ Player::Player() {
 
 // Parameterized constructor
 // Deep copies of everything
-Player::Player(std::string& name, vector<Territory*> playerTerritories, Hand &playerHand, OrdersList &playerOrders, vector<Player*>() negotiators){
+Player::Player(std::string& name, vector<Territory*> playerTerritories, Hand &playerHand, OrdersList &playerOrders, vector<Player*> negotiators){
     
     this->name = name;
     for (Territory* t : playerTerritories) {
@@ -144,7 +144,7 @@ void Player::AddNegotiator(Player* p) {
 
 //Checks if a given player is currently negotiating with the current player
 bool Player::IsNegotiatingWith(Player* p) {
-    return std::find(negotiators.begin(), negotiators.end(), p) != negotiators.end()
+    return std::find(negotiators.begin(), negotiators.end(), p) != negotiators.end();
 }
 
 //Resets the list of current negotiators and whether a territory was conquered

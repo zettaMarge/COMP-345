@@ -79,6 +79,7 @@ bool OrdersList::IsEmpty() {
 // Add a new order to the list
 void OrdersList::Add(Order* newOrder) {
     orders.push_back(newOrder);
+    Notify(this);
 }
 
 // Move an order to a new position in the list
@@ -123,6 +124,19 @@ void OrdersList::SetOwningPlayer(Player* player) {
         order->SetOwningPlayer(player);
     }
 }
+
+std::string OrdersList::StringToLog() {
+    if (orders.empty()) {
+        return "OrdersList: Empty order list";
+    }
+
+    Order* lastOrder = orders.back();
+    std::ostringstream oss;
+    oss << "Order added to list: ";
+    lastOrder->Print(oss);
+    return oss.str();
+}
+
 // ----- OrdersList -----
 
 
@@ -144,13 +158,15 @@ Player* Order::GetOwningPlayer() {
 
 // Checks whether a given territory belongs to the order's player
 bool Order::TerritoryBelongsToPlayer(Territory* territory) {
-    if (territory->GetOwner() != nullptr) {
-        return territory->GetOwner()->GetName() == owningPlayer->GetName();
-    }
-    else {
-        return false;
-    }
-    
+    return territory->GetOwner()->GetName() == owningPlayer->GetName();
+}
+
+std::string Order::StringToLog() {
+    std::ostringstream oss;
+    oss << "Order Executed: ";
+    Print(oss);
+    oss << " | Effect: " << GetEffect();
+    return oss.str();
 }
 
 // ----- Order -----
@@ -178,10 +194,7 @@ Advance::Advance(const Advance& obj) {
 
 // Destructor
 Advance::~Advance() {
-    delete src;
     src = NULL;
-
-    delete target;
     target = NULL;
 }
 
@@ -315,23 +328,24 @@ void SimulateBattle(Player* attackingPlayer, int attackingUnits, int defendingUn
 void Advance::Execute() {
     if (Validate()) {
         if (TerritoryBelongsToPlayer(target)) {
-            std::cout << "Both source and target territories belong to the player."
+            std::cout << "Both source and target territories belong to the player.";
             src->SetUnits(src->GetUnits() - nbUnits);
             target->SetUnits(target->GetUnits() + nbUnits);
 
             std::cout << "Advance order successful in " << GetEffect() << std::endl;
         }
-        else if (target->GetOwner() == nullptr || !owningPlayer->IsNegotiatingWith(target->GetOwner())) { //either targte is a Neutral territory or player is not in negotiations with target owner
+        else if (target->GetOwner()->GetName() == "NEUTRAL" || !owningPlayer->IsNegotiatingWith(target->GetOwner())) { //either target is a Neutral territory or player is not in negotiations with target owner
             std::cout << "Target belongs to another player, initiating battle." << std::endl;
             SimulateBattle(owningPlayer, nbUnits, target->GetUnits(), src, target);
         }
         else {
-            std::cout << "Unable to attack " target->GetName() << "; Currently in negotiations with "<< target->GetOwner()->GetName() << std::endl;
+            std::cout << "Unable to attack " << target->GetName() << "; Currently in negotiations with "<< target->GetOwner()->GetName() << std::endl;
         }
     }
     else {
         std::cout << "This Advance order is invalid." << std::endl;
     }
+    Notify(this);
 }
 
 // Check if the source territory belongs to the same player as the order, has enough units to move,
@@ -372,10 +386,7 @@ Airlift::Airlift(const Airlift& obj) {
 
 // Destructor
 Airlift::~Airlift() {
-    delete src;
     src = NULL;
-
-    delete target;
     target = NULL;
 }
 
@@ -443,6 +454,7 @@ void Airlift::Execute() {
     else {
         std::cout << "This Airlift order is invalid." << std::endl;
     }
+    Notify(this);
 }
 
 // Check if the source and target territories belong to the same player as the order, and the source has enough units to move
@@ -478,7 +490,6 @@ Blockade::Blockade(const Blockade& obj) {
 
 // Destructor
 Blockade::~Blockade() {
-    delete target;
     target = NULL;
 }
 
@@ -519,7 +530,7 @@ void Blockade::Execute() {
         target->SetUnits(target->GetUnits() * 2);
 
         std::cout << "Owner before blockade: " << target->GetOwner()->GetName() << std::endl;
-        target->GetOwner()->SwitchTerritory(target, GameEngine->instance->neutralPlayer);
+        target->GetOwner()->SwitchTerritory(target, GameEngine::instance->neutralPlayer);
         std::cout << "Owner after blockade: " << target->GetOwner()->GetName() << std::endl;
         
         std::cout << "Blockade order successful in " << GetEffect() << std::endl;
@@ -527,6 +538,7 @@ void Blockade::Execute() {
     else {
         std::cout << "This Blockade order is invalid." << std::endl;
     }
+    Notify(this);
 }
 
 // Check if the target territory belongs to the same player as the order
@@ -557,7 +569,6 @@ Bomb::Bomb(const Bomb& obj) {
 
 // Destructor
 Bomb::~Bomb() {
-    delete target;
     target = NULL;
 }
 
@@ -602,6 +613,7 @@ void Bomb::Execute() {
     else {
         std::cout << "This Bomb order is invalid." << std::endl;
     }
+    Notify(this);
 }
 
 // Check if the target belongs to another player and has an adjacent territory
@@ -615,7 +627,7 @@ bool Bomb::Validate() {
     std::cout << "Target territory belongs to this order's player? " << (playerOwnsTarget ? "Yes." : "No.") << std::endl;
     std::cout << "Target territory adjacent to one of this order's player territories? " << (targetAdjacentToPlayer ? "Yes." : "No.") << std::endl;
 
-    return playerOwnsTarget && targetAdjacentToPlayer;
+    return !playerOwnsTarget && targetAdjacentToPlayer;
 }
 // ----- Bomb -----
 
@@ -640,7 +652,6 @@ Deploy::Deploy(const Deploy& obj) {
 
 // Destructor
 Deploy::~Deploy() {
-    delete target;
     target = NULL;
 }
 
@@ -695,6 +706,7 @@ void Deploy::Execute() {
     else {
         std::cout << "This Deploy order is invalid." << std::endl;
     }
+    Notify(this);
 }
 
 // Check if the target belongs to the same player as the order
@@ -765,6 +777,7 @@ void Negotiate::Execute() {
     else {
         std::cout << "This Negotiate order is invalid." << std::endl;
     }
+    Notify(this);
 }
 
 // Check if the other player is different than the one issuing the order

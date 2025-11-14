@@ -19,7 +19,7 @@ void TestCommandProcessing() {
     std::cout << "Read commands from file? (y/n): ";
     char choice;
     std::cin >> choice;
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cin.ignore(1000000, '\n');
 
     if (choice == 'y' || choice == 'Y') {
         std::string filename;
@@ -28,7 +28,7 @@ void TestCommandProcessing() {
 
         fileProcessor = std::make_unique<FileCommandProcessorAdapter>(&engine, filename);
         fileProcessor->ReadLinesFromFile(engine); 
-		fileProcessor->printCommandHistory();
+		fileProcessor->PrintCommandHistory();
     }
    
     std::cout << "Starting console command processing...\n";
@@ -36,5 +36,5 @@ void TestCommandProcessing() {
     consoleProcessor.proccessConsoleCommands(engine);
 
     std::cout << "Command processing complete.\n";
-	consoleProcessor.printCommandHistory();
+	consoleProcessor.PrintCommandHistory();
 }

@@ -31,7 +31,7 @@ public:
 
     bool Equals(Player* p); //checks if two players are the same
     Player(); // Default constructor
-    Player(std::string& name, vector<Territory*> playerTerritories, Hand& playerHand, OrdersList& playerOrders); // Parameterized constructor
+    Player(std::string& name, vector<Territory*> playerTerritories, Hand& playerHand, OrdersList& playerOrders, vector<Player*> negotiators); // Parameterized constructor
     Player(const Player& p); // Copy constructor
     Player& operator=(const Player& p); // Assignment operator
     friend ostream& operator<<(ostream& os, const Player& p); // Stream insertion operator
@@ -62,6 +62,5 @@ private:
     OrdersList* playersOrders; //list of orders owned by player
     bool conqueredThisTurn; //whether the player conquered a territory this turn or not
     vector<Player*> negotiators; //list of players currently in negotiations with
-};
     int reinforcements; //number of reinforcements the player has available
 };
