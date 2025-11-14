@@ -57,6 +57,9 @@ Player::Player(std::string& name, vector<Territory*> playerTerritories, Hand &pl
 //aslo assumes that the territories var hold all the territories owned by the player
 // Compares Owner pointer to this Player instance
 vector<Territory*> Player::ToAttack() const {
+    return playerStrategy->ToAttack();
+
+    /* OLD CODE
     vector<Territory*> toAttackList;
     for (Territory* territory : playerTerritories) {
         for (Territory* neighbor : territory->AdjacentTerritories()) {
@@ -71,23 +74,32 @@ vector<Territory*> Player::ToAttack() const {
         cout << "No territories to attack." << endl;
     }
     return toAttackList;
+    */
 };
 
 //This is a stub meant to be able to code players class
 //will return all the territiories that are owned by the player and can be defended
 // Compares Owner pointer to this Player instance
 vector<Territory*> Player::ToDefend() const {
+    return playerStrategy->ToDefend();
 
+    /* OLD CODE
     if (playerTerritories.empty()) {
         cout << "No territories to defend." << endl;
     }
     return playerTerritories;
+    */
 };
 
 
 //This is a stub meant to be able to code players class
-// will add newOrder to players list of orders
-void Player::IssueOrder(Order* x) {
+//Processes which order to make
+void Player::IssueOrder() {
+    playerStrategy->IssueOrder();
+};
+
+//Adds an order to the player's list of orders
+void Player::AddOrderToList(Order* x) {
     playersOrders->Add(x);
 };
 
@@ -224,8 +236,10 @@ ostream& operator<<(ostream& os, const Player& p) {
 // Clean up dynamically allocated Orders
 // Note: Territories are not deleted here as they may be shared among players
 Player::~Player() {
-
     playerTerritories.clear();
+    negotiators.clear();
+    delete playerStrategy;
+    playerStrategy = NULL;
 }
 
 string Player::GetName() {
@@ -279,6 +293,7 @@ void Player::SetPlayerTerritories(vector<Territory*> territories) {
         this->AddTerritory(t);
     }
 };
+
 void Player::SetPlayerHand(Hand* hand) {
     delete playerHand;
     playerHand = new Hand(*hand);
@@ -296,6 +311,16 @@ bool Player::HasConqueredThisTurn() {
 void Player::SetConqueredThisTurn(bool state) {
     conqueredThisTurn = state;
 }
+
 void Player::SetReinforcements(int reinforcements) {
     this->reinforcements = reinforcements;
 };
+
+PlayerStrategies* Player::GetStrategy() {
+    return playerStrategy;
+}
+
+void Player::SetStrategy(PlayerStrategies* strategy) {
+    playerStrategy = strategy;
+    playerStrategy->SetPlayer(this);
+}

@@ -56,13 +56,13 @@ void TestOrdersLists() {
 
 
     std::cout << "----- Adding orders to p1's list -----" << std::endl;
-    p1->IssueOrder(advanceValid);
-    p1->IssueOrder(advanceInvalid);
-    p1->IssueOrder(airlift);
-    p1->IssueOrder(blockade);
-    p1->IssueOrder(bomb);
-    p1->IssueOrder(deploy);
-    p1->IssueOrder(negotiate);
+    p1->AddOrderToList(advanceValid);
+    p1->AddOrderToList(advanceInvalid);
+    p1->AddOrderToList(airlift);
+    p1->AddOrderToList(blockade);
+    p1->AddOrderToList(bomb);
+    p1->AddOrderToList(deploy);
+    p1->AddOrderToList(negotiate);
 
     std::cout << *p1->GetPlayerOrders() << std::endl;
 

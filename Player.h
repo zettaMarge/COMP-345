@@ -15,6 +15,7 @@
 #include "Map.h"
 #include "Cards.h"
 #include "Orders.h"
+#include "PlayerStrategies.h"
 
 using namespace std;
 class Player {
@@ -26,7 +27,8 @@ public:
     void AddNegotiator(Player* p);
     void ResetNegotiationsAndConquer();
 
-    void IssueOrder(Order* x);//creates order and puts in players list of orders
+    void IssueOrder();//processes which order to make
+    void AddOrderToList(Order* x); //puts new order in players list of orders
     void AddReinforcements(int num); //adds num reinforcements to player
 
     bool Equals(Player* p); //checks if two players are the same
@@ -53,6 +55,8 @@ public:
     bool HasConqueredThisTurn();
     void SetConqueredThisTurn(bool state);
     bool IsNegotiatingWith(Player* p);
+    PlayerStrategies* GetStrategy();
+    void SetStrategy(PlayerStrategies* strategy);
 
 
 private:
@@ -63,4 +67,5 @@ private:
     bool conqueredThisTurn; //whether the player conquered a territory this turn or not
     vector<Player*> negotiators; //list of players currently in negotiations with
     int reinforcements; //number of reinforcements the player has available
+    PlayerStrategies* playerStrategy; //player's current strategy
 };

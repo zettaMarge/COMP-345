@@ -738,7 +738,7 @@ void GameEngine::issueOrdersPhase() {
                     //creating and issuing the advance order
                     Advance* advanceOrder = new Advance(player, numUnits, gameMap->GetTerritoryByName(startTerritory), gameMap->GetTerritoryByName(targetTerritory));
                     Advance* ptr = advanceOrder;
-                    player->IssueOrder(ptr);
+                    player->AddOrderToList(ptr);
 
                     std::cout << "Advance order issued.\n";
                     break;
@@ -768,7 +768,7 @@ void GameEngine::issueOrdersPhase() {
                     player->GetPlayerHand()->PlayCard(cardIndex);
                     Airlift* airliftOrder = new Airlift(player, numUnits, gameMap->GetTerritoryByName(startTerritory), gameMap->GetTerritoryByName(targetTerritory));
                     Airlift* ptr = airliftOrder;
-                    player->IssueOrder(ptr);
+                    player->AddOrderToList(ptr);
 
                     std::cout << "Airlift order issued.\n";
                     break;
@@ -792,7 +792,7 @@ void GameEngine::issueOrdersPhase() {
                     player->GetPlayerHand()->PlayCard(cardIndex);
                     Blockade* blockadeOrder = new Blockade(player, gameMap->GetTerritoryByName(targetTerritory));
                     Blockade* ptr = blockadeOrder;
-                    player->IssueOrder(ptr);
+                    player->AddOrderToList(ptr);
 
                     std::cout << "Blockade order issued.\n";
                     break;
@@ -816,7 +816,7 @@ void GameEngine::issueOrdersPhase() {
                     player->GetPlayerHand()->PlayCard(cardIndex);
                     Bomb* bombOrder = new Bomb(player, gameMap->GetTerritoryByName(targetTerritory));
                     Bomb* ptr = bombOrder;
-                    player->IssueOrder(ptr);
+                    player->AddOrderToList(ptr);
 
                     std::cout << "Bomb order issued.\n";
                     break;
@@ -839,7 +839,7 @@ void GameEngine::issueOrdersPhase() {
                     //creating and issuing the deploy order
                     Deploy* deployOrder = new Deploy(player, numUnits, gameMap->GetTerritoryByName(targetTerritory));
                     Deploy* ptr = deployOrder;
-                    player->IssueOrder(ptr);
+                    player->AddOrderToList(ptr);
                     player->SetReinforcements(player->GetReinforcements() - numUnits); //in order to be able to issue other kinds of orders this turn
 
                     std::cout << "Deploy order issued.\n";
@@ -871,7 +871,7 @@ void GameEngine::issueOrdersPhase() {
                     player->GetPlayerHand()->PlayCard(cardIndex);
                     Negotiate* negotiateOrder = new Negotiate(player, targetPlayer);
                     Negotiate* ptr = negotiateOrder;
-                    player->IssueOrder(ptr);
+                    player->AddOrderToList(ptr);
 
                     std::cout << "Negotiate order issued.\n";
                     break;
