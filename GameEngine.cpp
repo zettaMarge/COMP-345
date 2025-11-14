@@ -8,7 +8,104 @@
 #include <algorithm>
 #include "Orders.h"
 
+void GameEngine::RunTournament(const TournamentParameters& params)
+{
+    std::cout << "=== Running Tournament Mode ===\n";
+    std::cout << "Maps (" << params.maps.size() << "): ";
+    for (const auto& m : params.maps)
+        std::cout << m << " ";
+    std::cout << "\n";
 
+    std::cout << "Player Strategies (" << params.strategies.size() << "): ";
+    for (const auto& p : params.strategies)
+        std::cout << p << " ";
+    std::cout << "\n";
+
+    std::cout << "Number of Games (G): " << params.games << "\n";
+    std::cout << "Max Turns (D): " << params.maxTurns << "\n";
+
+    std::cout << "=====================================\n";
+    // Results matrix: rows = maps, columns = strategies
+    // each cell stores list of results like ["A", "-", "W"]
+    std::vector<std::vector<std::vector<std::string>>> results;
+
+    results.resize(params.maps.size(),
+        std::vector<std::vector<std::string>>(
+            params.strategies.size()
+        )
+    );
+
+    for (int m = 0; m < params.maps.size(); ++m) {
+            for (int g = 1; g <= params.games; ++g) {
+                std::cout << "  Game " << g << " of " << params.games << "... ";
+				//simulate game here
+                auto loadMapCmd = std::make_shared<LoadMapCommand>(params.maps[m]);
+                loadMapCmd->Execute();
+				auto validateMapCmd = std::make_shared<ValidateMapCommand>();
+				validateMapCmd->Execute();
+                for(int p = 0; p < params.strategies.size(); ++p) {
+                    std::string playerName = "Player" + std::to_string(p + 1) + "_" + params.strategies[p];
+                    auto addPlayerCmd = std::make_shared<AddPlayerCommand>(playerName+ params.strategies[p]);
+                    addPlayerCmd->Execute();
+				}
+                auto gameStartCmd =  std::make_shared<GameStartCommand>(std::to_string(params.maxTurns));
+                std::string winner = gameStartCmd->Execute();
+                // Record results
+                for (int s = 0; s < params.strategies.size(); ++s) {
+                    std::string playerName = "Player" + std::to_string(s + 1) + "_" + params.strategies[s];
+                    if (winner == "Draw") {
+                        results[m][s].push_back("-");
+                    }
+                    else if (winner == playerName) {
+                        results[m][s].push_back("W");
+                    }
+                    else {
+                        results[m][s].push_back("L");
+                    }
+                }
+				std::cout << "Done.\n";
+             }
+    }
+
+    std::cout << "\n=== TOURNAMENT RESULTS ===\n\n";
+
+    std::cout << "Map \\ Strategy";
+    for (const auto& strat : params.strategies)
+        std::cout << "\t" << strat;
+    std::cout << "\"\n";
+
+    for (int m = 0; m < params.maps.size(); ++m) {
+        std::cout << params.maps[m];
+
+        for (int s = 0; s < params.strategies.size(); ++s) {
+
+            std::cout << "\t";
+
+            for (const auto& r : results[m][s])
+                std::cout << r;   
+        }
+
+        std::cout << "\n";
+    }
+
+    std::cout << "\n=== Tournament Complete ===\n";
+
+}
+/*  
+ tournament -M "_64_ BIG BLUE.map" "_11_ Against All Odds.map" -P benevolent aggressive neutral -G 2 -D 10
+ */
+std::string TournamentCommand::Execute() {
+    this->effect = "Tournament command under construction.";
+    GameEngine::instance->RunTournament(
+        TournamentParameters{
+            this->mapFiles,
+            this->playerStrategies,
+            this->numberOfGames,
+            this->maxTurns
+        }
+	);
+    return this->effect;
+};
 
 std::string LoadMapCommand::Execute() {
     if (GameEngine::instance->currentState->name != GameEngine::instance->mapLoadedState.get()->name &&
@@ -370,6 +467,10 @@ GameEngine::GameEngine() {
 
     // Hook commands with automatic transitions
 	//I feel like there's probably a more elegant way to do this but whatever
+    
+    mainMenuState->availableCommands.emplace_back(
+		std::make_unique<TournamentCommand>("tournament", nullptr));
+
     mainMenuState->availableCommands.emplace_back(
         std::make_unique<LoadMapCommand>("", mapLoadedState.get()));
 

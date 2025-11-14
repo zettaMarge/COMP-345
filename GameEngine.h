@@ -71,6 +71,22 @@ public:
     std::string Execute() override { std::cout << "Executing " << name << argument << "\n"; return "Executing " + name + argument + "\n"; }
 };
 
+
+class TournamentCommand : public ICommand {
+    public:
+    explicit TournamentCommand(const std::string& arg = "", IState* next = nullptr)
+        : ICommand("tournament", arg, next), numberOfGames(0), maxTurns(0) { } // initialize members   
+    std::string Execute() override;
+    std::vector<std::string> mapFiles;         
+    std::vector<std::string> playerStrategies; 
+    int numberOfGames;                          
+    int maxTurns;
+
+
+    private: 
+	    static CommandRegistrar<TournamentCommand> registrar; // only declare
+};
+
 class LoadMapCommand : public ICommand {
 public:
     // Normal constructor
@@ -269,6 +285,8 @@ public:
 class GameEngine: public Subject, public ILoggable {
 public:
 	static GameEngine* instance; // singleton instance
+    
+	void RunTournament(const TournamentParameters& params); 
 
     // Own all states
     std::unique_ptr<IState> mainMenuState;
