@@ -1,5 +1,8 @@
 #include "PlayerStrategies.h"
 #include "GameEngine.h"
+#include "Player.h"
+#include <algorithm>
+#include <iostream>
 
 void PlayerStrategies::SetPlayer(Player* p) {
     player = p;
@@ -37,7 +40,7 @@ vector<Territory*> HumanPlayerStrategy::ToDefend() const {
     for (Territory* territory : player->GetPlayerTerritories()) {
         for (Territory* neighbor : territory->AdjacentTerritories()) {
             if (neighbor->GetOwner() != player && neighbor->GetOwner() != GameEngine::instance->neutralPlayer) { //neutral territories dont attack, not to be confused with the neutral player strategy
-                toAttackList.push_back(territory);
+                toDefendList.push_back(territory);
                 break;
             }
         }
@@ -47,7 +50,7 @@ vector<Territory*> HumanPlayerStrategy::ToDefend() const {
         cout << "No territories to defend." << endl;
     }
 
-    return playerTerritories;
+    return toDefendList;
 }
 
 void HumanPlayerStrategy::IssueOrder() {
@@ -63,27 +66,27 @@ void HumanPlayerStrategy::IssueOrder() {
     std::cout << "Available orders:\n";
     for (int j = 0; j < orders.size(); j++) {
         switch (orders[j]) {
-        case GameEngine::DeployEnum:
+        case DeployEnum:
             std::cout << j << " - Deploy\n";
             break;
 
-        case GameEngine::AdvanceEnum:
+        case AdvanceEnum:
             std::cout << j << " - Advance\n";
             break;
 
-        case GameEngine::BombEnum:
+        case BombEnum:
             std::cout << j << " - Bomb\n";
             break;
 
-        case GameEngine::AirliftEnum:
+        case AirliftEnum:
             std::cout << j << " - Airlift\n";
             break;
 
-        case GameEngine::BlockadeEnum:
+        case BlockadeEnum:
             std::cout << j << " - Blockade\n";
             break;
 
-        case GameEngine::NegotiateEnum:
+        case NegotiateEnum:
             std::cout << j << " - Negotiate\n";
             break;
 
@@ -98,7 +101,7 @@ void HumanPlayerStrategy::IssueOrder() {
 
     // Issue the selected order
     switch (orders[choice]) {
-        case  GameEngine::AdvanceEnum: {
+        case  AdvanceEnum: {
             string startTerritory;
             string targetTerritory;
             int numUnits;
@@ -119,7 +122,7 @@ void HumanPlayerStrategy::IssueOrder() {
             std::cout << "Advance order issued.\n";
             return;
         }
-        case GameEngine::AirliftEnum: {
+        case AirliftEnum: {
             string startTerritory;
             string targetTerritory;
             int numUnits; 
@@ -133,7 +136,7 @@ void HumanPlayerStrategy::IssueOrder() {
             cin >> numUnits;
 
             //creating and issuing the airlift order
-            int cardIndex = player->GetPlayerHand()->GetCardIndex(GameEngine::AirliftEnum);
+            int cardIndex = player->GetPlayerHand()->GetCardIndex(AirliftEnum);
 
             if (cardIndex == player->GetPlayerHand()->GetHandSize()) {
                 std::cout << "ERROR: could not find the card in hand, please try again.";
@@ -149,7 +152,7 @@ void HumanPlayerStrategy::IssueOrder() {
             std::cout << "Airlift order issued.\n";
             return;
         }
-        case GameEngine::BlockadeEnum: {
+        case BlockadeEnum: {
             string targetTerritory;
 
             //getting user input for blockade order
@@ -157,7 +160,7 @@ void HumanPlayerStrategy::IssueOrder() {
             cin >> targetTerritory;
 
             //creating and issuing the blockade order
-            int cardIndex = player->GetPlayerHand()->GetCardIndex(GameEngine::BlockadeEnum);
+            int cardIndex = player->GetPlayerHand()->GetCardIndex(BlockadeEnum);
 
             if (cardIndex == player->GetPlayerHand()->GetHandSize()) {
                 std::cout << "ERROR: could not find the card in hand, please try again.";
@@ -173,7 +176,7 @@ void HumanPlayerStrategy::IssueOrder() {
             std::cout << "Blockade order issued.\n";
             return;
         }
-        case GameEngine::BombEnum: {
+        case BombEnum: {
             string targetTerritory;
 
             //getting user input for bomb order
@@ -181,7 +184,7 @@ void HumanPlayerStrategy::IssueOrder() {
             cin >> targetTerritory;
 
             //creating and issuing the bomb order
-            int cardIndex = player->GetPlayerHand()->GetCardIndex(GameEngine::BombEnum);
+            int cardIndex = player->GetPlayerHand()->GetCardIndex(BombEnum);
 
             if (cardIndex == player->GetPlayerHand()->GetHandSize()) {
                 std::cout << "ERROR: could not find the card in hand, please try again.";
@@ -197,7 +200,7 @@ void HumanPlayerStrategy::IssueOrder() {
             std::cout << "Bomb order issued.\n";
             return;
         }
-        case GameEngine::DeployEnum: {
+        case DeployEnum: {
             string targetTerritory;
             int numUnits;
 
@@ -221,13 +224,13 @@ void HumanPlayerStrategy::IssueOrder() {
             std::cout << "Deploy order issued.\n";
             return;
         }
-        case GameEngine::NegotiateEnum: {
+        case NegotiateEnum: {
             string targetPlayerName;
 
             //getting user input for negotiate order
             std::cout << "You chose to issue a Negotiate order.\nPlease enter the target player name: "<< std::endl;
             cin >> targetPlayerName;
-            Player* targetPlayer = FindPlayerByName(targetPlayerName);
+            Player* targetPlayer = GameEngine::instance->FindPlayerByName(targetPlayerName);
 
             while (targetPlayer == nullptr) {
                 std::cout << "Could not find a player by that name, please try again: " << std::endl;
@@ -236,7 +239,7 @@ void HumanPlayerStrategy::IssueOrder() {
             }
 
             //creating and issuing the negotiate order
-            int cardIndex = player->GetPlayerHand()->GetCardIndex(GameEngine::NegotiateEnum);
+            int cardIndex = player->GetPlayerHand()->GetCardIndex(NegotiateEnum);
 
             if (cardIndex == player->GetPlayerHand()->GetHandSize()) {
                 std::cout << "ERROR: could not find the card in hand, please try again.";

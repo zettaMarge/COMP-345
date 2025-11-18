@@ -13,6 +13,15 @@
 
 class PlayerStrategies {
     public:
+        enum OrderNames {
+                AdvanceEnum = 5,
+                AirliftEnum = 0,
+                BlockadeEnum = 1,
+                BombEnum = 2,
+                DeployEnum = 3,
+                NegotiateEnum = 4
+            };
+
         ~PlayerStrategies(); // Destructor
         virtual vector<Territory*> ToAttack() const = 0; //returns list of territories to attack
         virtual vector<Territory*> ToDefend() const = 0; //returns list of territories to defend

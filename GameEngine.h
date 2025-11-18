@@ -328,23 +328,14 @@ private:
 //Mia Letendre
 //-----------------------------------------------------
     void StartupPhase(); //Handles the startup phase of the game
-    void AddPlayers(const string &playerName); //Adds a new player to the game
+    void AddPlayers(const std::string &playerName); //Adds a new player to the game
     bool ValidateMap(); //Validates the map according to assignment specifications
-    void LoadMap(const string &fileName); //Loads a map from a file
+    void LoadMap(const std::string &fileName); //Loads a map from a file
     void GameStart(); //Starts the game
 
 public:
     Player* neutralPlayer; //pointer to the neutral player
-    Player* FindPlayerByName(const string &name); //Returns the first player pointer matching the name, or nullptr if not found
+    Player* FindPlayerByName(const std::string &name); //Returns the first player pointer matching the name, or nullptr if not found
     void TestStartupPhase(); //Tests the startup phase
     void TestOrderExecution(); //Purely for testing order issuing & execution
-
-    static enum OrderNames {
-        AdvanceEnum = 5,
-        AirliftEnum = 0,
-        BlockadeEnum = 1,
-        BombEnum = 2,
-        DeployEnum = 3,
-        NegotiateEnum = 4
-    };
 };

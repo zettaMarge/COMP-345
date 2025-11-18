@@ -7,6 +7,7 @@
 #include <random>
 #include <algorithm>
 #include "Orders.h"
+#include "PlayerStrategies.h"
 
 
 
@@ -892,6 +893,8 @@ int GameEngine::GetPlayerIndex(Player* p) {
             return i;
         }
     }
+
+    return -1;
 }
 
 void GameEngine::StartupPhase() {
@@ -987,20 +990,24 @@ void GameEngine::TestOrderExecution() {
     GameEngine::instance->AddPlayers("Player2");
 
     Player* p1 = GameEngine::instance->players[0];
+    PlayerStrategies* s1 = new HumanPlayerStrategy();
     p1->AddTerritory(tB);
     p1->AddTerritory(tC);
     p1->SetReinforcements(3);
     Hand* hand1 = new Hand(*deck);
     hand1->SetTestCards();
     p1->SetPlayerHand(hand1);
+    p1->SetStrategy(s1);
 
     Player* p2 = GameEngine::instance->players[1];
+    PlayerStrategies* s2 = new HumanPlayerStrategy();
     p2->AddTerritory(tA);
     p2->AddTerritory(tD);
     p2->SetReinforcements(3);
     Hand* hand2 = new Hand(*deck);
     hand2->SetTestCards();
     p2->SetPlayerHand(hand2);
+    p2->SetStrategy(s2);
 
     //test the phases
     GameEngine::instance->issueOrdersPhase();

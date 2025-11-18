@@ -79,31 +79,31 @@ void Player::AddOrderToList(Order* x) {
     playersOrders->Add(x);
 };
 
-std::vector<GameEngine::OrderNames> Player::availableOrders() {
-    std::vector<GameEngine::OrderNames> orders;
+std::vector<PlayerStrategies::OrderNames> Player::availableOrders() {
+    std::vector<PlayerStrategies::OrderNames> orders;
 
     //while there are still reinforcements, deploy is the only available order
     if (GetReinforcements() > 0) {
-        orders.push_back(GameEngine::DeployEnum);
+        orders.push_back(PlayerStrategies::DeployEnum);
     }
     else {
-        orders.push_back(GameEngine::AdvanceEnum);
+        orders.push_back(PlayerStrategies::AdvanceEnum);
 
         for (Card card : GetPlayerHand()->GetCards()) {
             Card* ptr = &card;
             int type = ptr->GetType();
             switch (type) {
-                case GameEngine::AirliftEnum:
-                    orders.push_back(GameEngine::AirliftEnum);
+                case PlayerStrategies::AirliftEnum:
+                    orders.push_back(PlayerStrategies::AirliftEnum);
                     break;
-                case GameEngine::BombEnum:
-                    orders.push_back(GameEngine::BombEnum);
+                case PlayerStrategies::BombEnum:
+                    orders.push_back(PlayerStrategies::BombEnum);
                     break;
-                case GameEngine::BlockadeEnum:
-                    orders.push_back(GameEngine::BlockadeEnum);
+                case PlayerStrategies::BlockadeEnum:
+                    orders.push_back(PlayerStrategies::BlockadeEnum);
                     break;
-                case GameEngine::NegotiateEnum:
-                    orders.push_back(GameEngine::NegotiateEnum);
+                case PlayerStrategies::NegotiateEnum:
+                    orders.push_back(PlayerStrategies::NegotiateEnum);
                     break;
                 default:
                     break;

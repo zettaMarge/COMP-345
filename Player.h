@@ -18,6 +18,7 @@
 #include "PlayerStrategies.h"
 
 using namespace std;
+
 class Player {
 public:
     vector<Territory*> ToAttack() const; //returns list of territories to attack
@@ -57,7 +58,7 @@ public:
     bool IsNegotiatingWith(Player* p);
     PlayerStrategies* GetStrategy();
     void SetStrategy(PlayerStrategies* strategy);
-    std::vector<OrderNames> availableOrders();
+    std::vector<PlayerStrategies::OrderNames> availableOrders();
 
 
 private:
