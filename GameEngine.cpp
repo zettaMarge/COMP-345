@@ -1010,6 +1010,7 @@ void GameEngine::TestOrderExecution() {
     p2->SetStrategy(s2);
 
     //test the phases
+    InitFinishedPlayers();
     GameEngine::instance->issueOrdersPhase();
     GameEngine::instance->executeOrdersPhase();
 }

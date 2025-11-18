@@ -29,7 +29,7 @@ std::vector<Territory*> HumanPlayerStrategy::ToAttack() const {
     }
 
     if (toAttackList.empty()) {
-        cout << "No territories to attack." << endl;
+        std::cout << "No territories to attack." << endl;
     }
 
     return toAttackList;
@@ -48,7 +48,7 @@ std::vector<Territory*> HumanPlayerStrategy::ToDefend() const {
     }
 
     if (toDefendList.empty()) {
-        cout << "No territories to defend." << endl;
+        std::cout << "No territories to defend." << endl;
     }
 
     return toDefendList;
@@ -109,11 +109,11 @@ void HumanPlayerStrategy::IssueOrder() {
 
             //getting user input for advance order
             std::cout << "You chose to issue an Advance order.\nPlease enter the starting territory: "<< std::endl;
-            cin >> startTerritory;
+            std::cin >> startTerritory;
             std::cout << "Please enter the target territory: "<< std::endl;
-            cin >> targetTerritory;
+            std::cin >> targetTerritory;
             std::cout << "Please enter the number of units to move: "<< std::endl;
-            cin >> numUnits;
+            std::cin >> numUnits;
         
             //creating and issuing the advance order
             Advance* advanceOrder = new Advance(player, numUnits, GameEngine::instance->gameMap->GetTerritoryByName(startTerritory), GameEngine::instance->gameMap->GetTerritoryByName(targetTerritory));
@@ -130,11 +130,11 @@ void HumanPlayerStrategy::IssueOrder() {
 
             //getting user input for airlift order
             std::cout << "You chose to issue an Airlift order.\nPlease enter the starting territory: "<< std::endl;
-            cin >> startTerritory;
+            std::cin >> startTerritory;
             std::cout << "Please enter the target territory: "<< std::endl;
-            cin >> targetTerritory;
+            std::cin >> targetTerritory;
             std::cout << "Please enter the number of units to move: "<< std::endl;
-            cin >> numUnits;
+            std::cin >> numUnits;
 
             //creating and issuing the airlift order
             int cardIndex = player->GetPlayerHand()->GetCardIndex(AirliftEnum);
@@ -158,7 +158,7 @@ void HumanPlayerStrategy::IssueOrder() {
 
             //getting user input for blockade order
             std::cout << "You chose to issue a Blockade order.\nPlease enter the target territory: "<< std::endl;
-            cin >> targetTerritory;
+            std:: >> targetTerritory;
 
             //creating and issuing the blockade order
             int cardIndex = player->GetPlayerHand()->GetCardIndex(BlockadeEnum);
@@ -182,7 +182,7 @@ void HumanPlayerStrategy::IssueOrder() {
 
             //getting user input for bomb order
             std::cout << "You chose to issue a Bomb order.\nPlease enter the target territory: "<< std::endl;
-            cin >> targetTerritory;
+            std::cin >> targetTerritory;
 
             //creating and issuing the bomb order
             int cardIndex = player->GetPlayerHand()->GetCardIndex(BombEnum);
@@ -207,13 +207,13 @@ void HumanPlayerStrategy::IssueOrder() {
 
             //getting user input for deploy order
             std::cout << "You chose to issue a Deploy order.\nPlease enter the target territory: "<< std::endl;
-            cin >> targetTerritory;
+            std::cin >> targetTerritory;
             std::cout << "Please enter the number of units to deploy: "<< std::endl;
-            cin >> numUnits;
+            std::cin >> numUnits;
 
             while (numUnits < 0 || numUnits > player->GetReinforcements()) {
                 std::cout << "Please enter a valid number of units to deploy: "<< std::endl;
-                cin >> numUnits;
+                std::cin >> numUnits;
             }
 
             //creating and issuing the deploy order
@@ -230,12 +230,12 @@ void HumanPlayerStrategy::IssueOrder() {
 
             //getting user input for negotiate order
             std::cout << "You chose to issue a Negotiate order.\nPlease enter the target player name: "<< std::endl;
-            cin >> targetPlayerName;
+            std::cin >> targetPlayerName;
             Player* targetPlayer = GameEngine::instance->FindPlayerByName(targetPlayerName);
 
             while (targetPlayer == nullptr) {
                 std::cout << "Could not find a player by that name, please try again: " << std::endl;
-                cin >> targetPlayerName;
+                std::cin >> targetPlayerName;
                 targetPlayer = GameEngine::instance->FindPlayerByName(targetPlayerName);
             }
 
