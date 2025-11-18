@@ -57,6 +57,7 @@ public:
     bool IsNegotiatingWith(Player* p);
     PlayerStrategies* GetStrategy();
     void SetStrategy(PlayerStrategies* strategy);
+    std::vector<OrderNames> availableOrders();
 
 
 private:

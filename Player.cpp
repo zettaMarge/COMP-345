@@ -58,23 +58,6 @@ Player::Player(std::string& name, vector<Territory*> playerTerritories, Hand &pl
 // Compares Owner pointer to this Player instance
 vector<Territory*> Player::ToAttack() const {
     return playerStrategy->ToAttack();
-
-    /* OLD CODE
-    vector<Territory*> toAttackList;
-    for (Territory* territory : playerTerritories) {
-        for (Territory* neighbor : territory->AdjacentTerritories()) {
-            if (std::find(toAttackList.begin(), toAttackList.end(), neighbor) == toAttackList.end()) {
-                if (neighbor->GetOwner() != this) {
-                    toAttackList.push_back(neighbor);
-                }
-            }
-        }
-    }
-    if (toAttackList.empty()) {
-        cout << "No territories to attack." << endl;
-    }
-    return toAttackList;
-    */
 };
 
 //This is a stub meant to be able to code players class
@@ -82,13 +65,6 @@ vector<Territory*> Player::ToAttack() const {
 // Compares Owner pointer to this Player instance
 vector<Territory*> Player::ToDefend() const {
     return playerStrategy->ToDefend();
-
-    /* OLD CODE
-    if (playerTerritories.empty()) {
-        cout << "No territories to defend." << endl;
-    }
-    return playerTerritories;
-    */
 };
 
 
@@ -102,6 +78,41 @@ void Player::IssueOrder() {
 void Player::AddOrderToList(Order* x) {
     playersOrders->Add(x);
 };
+
+std::vector<GameEngine::OrderNames> Player::availableOrders() {
+    std::vector<GameEngine::OrderNames> orders;
+
+    //while there are still reinforcements, deploy is the only available order
+    if (GetReinforcements() > 0) {
+        orders.push_back(GameEngine::DeployEnum);
+    }
+    else {
+        orders.push_back(GameEngine::AdvanceEnum);
+
+        for (Card card : GetPlayerHand()->GetCards()) {
+            Card* ptr = &card;
+            int type = ptr->GetType();
+            switch (type) {
+                case GameEngine::AirliftEnum:
+                    orders.push_back(GameEngine::AirliftEnum);
+                    break;
+                case GameEngine::BombEnum:
+                    orders.push_back(GameEngine::BombEnum);
+                    break;
+                case GameEngine::BlockadeEnum:
+                    orders.push_back(GameEngine::BlockadeEnum);
+                    break;
+                case GameEngine::NegotiateEnum:
+                    orders.push_back(GameEngine::NegotiateEnum);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    return orders;
+}
 
 void Player::AddReinforcements(int num) {
     reinforcements += num;
