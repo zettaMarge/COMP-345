@@ -9,13 +9,16 @@
 //-----------------------------------------------------
 
 #pragma once
-#include "Player.h"
+#include "Map.h"
+#include <vector>
+
+class Player;
 
 class PlayerStrategies {
     public:
         ~PlayerStrategies(); // Destructor
-        virtual vector<Territory*> ToAttack() const = 0; //returns list of territories to attack
-        virtual vector<Territory*> ToDefend() const = 0; //returns list of territories to defend
+        virtual std::vector<Territory*> ToAttack() const = 0; //returns list of territories to attack
+        virtual std::vector<Territory*> ToDefend() const = 0; //returns list of territories to defend
         virtual void IssueOrder() = 0; //processes which order to make then puts it in its player's list of orders
         void SetPlayer(Player* p);
 
@@ -25,35 +28,35 @@ class PlayerStrategies {
 
 class HumanPlayerStrategy : public PlayerStrategies {
     public:
-        vector<Territory*> ToAttack() const;
-        vector<Territory*> ToDefend() const;
+        std::vector<Territory*> ToAttack() const;
+        std::vector<Territory*> ToDefend() const;
         void IssueOrder();
 };
 
 class AggressivePlayerStrategy : public PlayerStrategies {
     public:
-        vector<Territory*> ToAttack() const;
-        vector<Territory*> ToDefend() const;
+        std::vector<Territory*> ToAttack() const;
+        std::vector<Territory*> ToDefend() const;
         void IssueOrder();
 };
 
 class BenevolentPlayerStrategy : public PlayerStrategies {
     public:
-        vector<Territory*> ToAttack() const;
-        vector<Territory*> ToDefend() const;
+        std::vector<Territory*> ToAttack() const;
+        std::vector<Territory*> ToDefend() const;
         void IssueOrder();
 };
 
 class NeutralPlayerStrategy : public PlayerStrategies {
     public:
-        vector<Territory*> ToAttack() const;
-        vector<Territory*> ToDefend() const;
+        std::vector<Territory*> ToAttack() const;
+        std::vector<Territory*> ToDefend() const;
         void IssueOrder();
 };
 
 class CheaterPlayerStrategy : public PlayerStrategies {
     public:
-        vector<Territory*> ToAttack() const;
-        vector<Territory*> ToDefend() const;
+        std::vector<Territory*> ToAttack() const;
+        std::vector<Territory*> ToDefend() const;
         void IssueOrder();
 };

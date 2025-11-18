@@ -1,4 +1,5 @@
 #include "PlayerStrategies.h"
+#include <vector>
 
 void PlayerStrategies::SetPlayer(Player* p) {
     player = p;
@@ -10,11 +11,11 @@ PlayerStrategies::~PlayerStrategies() {
 
 
 // ----- Human -----
-vector<Territory*> HumanPlayerStrategy::ToAttack() const {
+std::vector<Territory*> HumanPlayerStrategy::ToAttack() const {
 
 }
 
-vector<Territory*> HumanPlayerStrategy::ToDefend() const {
+std::vector<Territory*> HumanPlayerStrategy::ToDefend() const {
     
 }
 
@@ -25,11 +26,11 @@ void HumanPlayerStrategy::IssueOrder() {
 
 
 // ----- Aggressive -----
-vector<Territory*> AggressivePlayerStrategy::ToAttack() const {
+std::vector<Territory*> AggressivePlayerStrategy::ToAttack() const {
 
 }
 
-vector<Territory*> AggressivePlayerStrategy::ToDefend() const {
+std::vector<Territory*> AggressivePlayerStrategy::ToDefend() const {
     
 }
 
@@ -40,11 +41,11 @@ void AggressivePlayerStrategy::IssueOrder() {
 
 
 // ----- Benevolent -----
-vector<Territory*> BenevolentPlayerStrategy::ToAttack() const {
+std::vector<Territory*> BenevolentPlayerStrategy::ToAttack() const {
 
 }
 
-vector<Territory*> BenevolentPlayerStrategy::ToDefend() const {
+std::vector<Territory*> BenevolentPlayerStrategy::ToDefend() const {
     
 }
 
@@ -55,11 +56,11 @@ void BenevolentPlayerStrategy::IssueOrder() {
 
 
 // ----- Neutral -----
-vector<Territory*> NeutralPlayerStrategy::ToAttack() const {
+std::vector<Territory*> NeutralPlayerStrategy::ToAttack() const {
 
 }
 
-vector<Territory*> NeutralPlayerStrategy::ToDefend() const {
+std::vector<Territory*> NeutralPlayerStrategy::ToDefend() const {
     
 }
 
@@ -70,11 +71,11 @@ void NeutralPlayerStrategy::IssueOrder() {
 
 
 // ----- Cheater -----
-vector<Territory*> CheaterPlayerStrategy::ToAttack() const {
+std::vector<Territory*> CheaterPlayerStrategy::ToAttack() const {
 
 }
 
-vector<Territory*> CheaterPlayerStrategy::ToDefend() const {
+std::vector<Territory*> CheaterPlayerStrategy::ToDefend() const {
     
 }
 
