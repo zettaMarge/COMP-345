@@ -319,15 +319,46 @@ void NeutralPlayerStrategy::IssueOrder() {
 
 
 // ----- Cheater -----
+
+// Gets all adjacent territories that are not owned by the cheater player.
 std::vector<Territory*> CheaterPlayerStrategy::ToAttack() const {
-
+    std::vector<Territory*> adjacentEnemies;
+    for (Territory* territory : player->GetPlayerTerritories()) {
+        for (Territory* neighbor : territory->AdjacentTerritories()) {
+            if (neighbor->GetOwner() != player && std::find(adjacentEnemies.begin(), adjacentEnemies.end(), neighbor) == adjacentEnemies.end()) {
+                adjacentEnemies.push_back(neighbor);
+            }
+        }
+    }
+    return adjacentEnemies;
 }
 
+// The cheater player does not really defend any territories, it focuses on conquering.
 std::vector<Territory*> CheaterPlayerStrategy::ToDefend() const {
-    
+    std::vector<Territory*> empty;
+    return empty;
 }
 
+// Conquers all adjacent territories.
 void CheaterPlayerStrategy::IssueOrder() {
-    
+    int i = GameEngine::instance->GetPlayerIndex(player);
+    std::vector<Territory*> toConquer = ToAttack();
+
+    if (toConquer.empty()) {
+        std::cout << "No adjacent territories to conquer. Ending turn.\n";
+        GameEngine::instance->finishedPlayers[i] = true;
+        return;
+    }
+
+    for (Territory* enemyTerritory : toConquer) {
+        Player* currentOwner = enemyTerritory->GetOwner();
+        if (currentOwner != nullptr && currentOwner != player) {
+            std::cout << "Conquered " << enemyTerritory->GetName() << " from " << currentOwner->GetName() << std::endl;
+            currentOwner->SwitchTerritory(enemyTerritory, player);
+        }
+    }
+
+    std::cout << player->GetName() << " conquered " << toConquer.size() << " territories. Ending turn.\n";
+    GameEngine::instance->finishedPlayers[i] = true;
 }
 // ----- Cheater -----
