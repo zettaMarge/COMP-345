@@ -158,7 +158,7 @@ void HumanPlayerStrategy::IssueOrder() {
 
             //getting user input for blockade order
             std::cout << "You chose to issue a Blockade order.\nPlease enter the target territory: "<< std::endl;
-            std:: >> targetTerritory;
+            std::cin >> targetTerritory;
 
             //creating and issuing the blockade order
             int cardIndex = player->GetPlayerHand()->GetCardIndex(BlockadeEnum);
