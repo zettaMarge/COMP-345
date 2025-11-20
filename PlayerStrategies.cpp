@@ -290,15 +290,71 @@ void AggressivePlayerStrategy::IssueOrder() {
 
 // ----- Benevolent -----
 std::vector<Territory*> BenevolentPlayerStrategy::ToAttack() const {
-
+    return nullptr;
 }
 
 std::vector<Territory*> BenevolentPlayerStrategy::ToDefend() const {
-    
+    std::vector<Territory*> toDefendList;
+
+    for (Territory* territory : player->GetPlayerTerritories()) {
+        for (Territory* neighbor : territory->AdjacentTerritories()) {
+            if (neighbor->GetOwner() != player && neighbor->GetOwner() != GameEngine::instance->neutralPlayer) { //neutral territories dont attack, not to be confused with the neutral player strategy
+                toDefendList.push_back(territory);
+                break;
+            }
+        }
+    }
+
+    if (toDefendList.empty()) {
+        std::cout << "No territories to defend." << endl;
+    }
+
+    return toDefendList;
 }
 
 void BenevolentPlayerStrategy::IssueOrder() {
-    
+    std::vector<OrderNames> orders = player->availableOrders();
+    int PlayerIndex = GameEngine::instance->GetPlayerIndex(player);
+
+    if (orders.empty()) {
+        std::cout << "No available orders for player " << player->GetName() << ". Ending turn.\n";
+        GameEngine::instance->finishedPlayers[PlayerIndex] = true;
+        return;
+    }
+
+    int reinforcements = player->GetReinforcements();
+    std::vector<Territory*> defendList = ToDefend();
+
+    while (reinforcements > 0) {
+        Territory* territory = findWeakestTerritory(defendList);
+        if (territory == nullptr) {
+            std::cout << "No territories to defend." << std::endl;
+            return;
+        }
+        
+    }
+
+}
+
+int unitsToDeploy = std::min(1, reinforcements); // Deploy at least 1 unit or the remaining reinforcements
+                Deploy* deployOrder = new Deploy(player, unitsToDeploy, territory);
+                player->AddOrderToList(deployOrder);
+                player->SetReinforcements(reinforcements - unitsToDeploy);
+                deployedFinished = false; // Continue deploying until all territories have at least 1 unit
+
+
+Territory* BenevolentPlayerStrategy::findWeakestTerritory(const std::vector<Territory*>& territories) {
+    if (territories.empty()) {
+        return nullptr;
+    }
+
+    Territory* weakest = territories[0];
+    for (Territory* territory : territories) {
+        if (territory->GetUnits() < weakest->GetUnits()) {
+            weakest = territory;
+        }
+    }
+    return weakest;
 }
 // ----- Benevolent -----
 
