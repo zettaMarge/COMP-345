@@ -56,6 +56,7 @@ class BenevolentPlayerStrategy : public PlayerStrategies {
         void IssueOrder();
     private:
         Territory* findWeakestTerritory(const std::vector<Territory*>& territories) const;
+        Territory* findStrongestTerritory(const std::vector<Territory*>& territories) const;
 };
 
 class NeutralPlayerStrategy : public PlayerStrategies {

@@ -308,7 +308,7 @@ std::vector<Territory*> BenevolentPlayerStrategy::ToDefend() const {
     if (toDefendList.empty()) {
         std::cout << "No territories to defend." << endl;
     }
-
+    
     return toDefendList;
 }
 
@@ -322,26 +322,85 @@ void BenevolentPlayerStrategy::IssueOrder() {
         return;
     }
 
-    int reinforcements = player->GetReinforcements();
-    std::vector<Territory*> defendList = ToDefend();
-
-    while (reinforcements > 0) {
-        Territory* territory = findWeakestTerritory(defendList);
-        if (territory == nullptr) {
-            std::cout << "No territories to defend." << std::endl;
-            return;
-        }
+    for (OrderNames order : orders) {
+        switch (order) {
+        case DeployEnum:
+            // Deploy reinforcements to weakest territory as long as there are reinforcements left
+            while (reinforcements > 0) {
+                Territory* territory = findWeakestTerritory(defendList);
         
+                if (defendList.empty()) {
+                    std::cout << "No territories to defend." << std::endl;
+                    break;
+                }
+
+                if (defendList.size() == 1){
+                    // Only one territory left to defend, deploy all remaining reinforcements
+                    Deploy* deployOrder = new Deploy(player, reinforcements, territory);
+                    player->AddOrderToList(deployOrder);
+                    player->SetReinforcements(0);
+                    reinforcements = 0;
+                } else {
+                    int unitsToDeploy = std::min(1, reinforcements); // Deploy at least 1 unit or the remaining reinforcements
+                    std::cout<<"Player:"<< player->GetName() << " deploying " << unitsToDeploy << " units to " << territory->GetName() << std::endl;
+                    Deploy* deployOrder = new Deploy(player, unitsToDeploy, territory);
+                    player->AddOrderToList(deployOrder);
+                    player->SetReinforcements(reinforcements - unitsToDeploy);
+                }
+            }
+            std::cout << "All reinforcements deployed for player " << player->GetName() << std::endl;
+            break;
+        case BombEnum:
+            // Benevolent player does not issue Bomb orders
+            break;
+        case AdvanceEnum:
+            Territory* weakestTerritoryToDefend = findWeakestTerritory(defendList);
+            if (weakestTerritoryToDefend != nullptr) {
+                std::vector<Territory*> adjacentTerritories = weakestTerritoryToDefend->AdjacentTerritories();
+                int biggestUnits = 0;
+                for (Territory* neighbor : adjacentTerritories) {
+                    if (neighbor->GetOwner() == player && neighbor->GetUnits() > biggestUnits) {
+                        biggestUnits = neighbor->GetUnits();
+                    }
+                }
+                if (biggestUnits > 0) {
+                    int unitToMove = (biggestUnits - weakestTerritoryToDefend->GetUnits()) / 2; //equalizes units between territories
+                    if (unitToMove <= 0) {
+                        unitToMove = 1; //move at least one unit
+                    }
+                    Advance* advanceOrder = new Advance(player, unitToMove, neighbor, weakestTerritoryToDefend);
+                    player->AddOrderToList(advanceOrder);
+                    std::cout << "Advance order issued to defend " << weakestTerritoryToDefend->GetName() << ".\n";
+                }
+            }
+            break;
+        case AirliftEnum:
+            Territory* weakestTerritory = findWeakestTerritory(defendList);
+            if (weakestTerritory != nullptr) {
+                int cardIndex = player->GetPlayerHand()->GetCardIndex(AirliftEnum);
+
+                if (cardIndex != player->GetPlayerHand()->GetHandSize()) {
+                    player->GetPlayerHand()->PlayCard(cardIndex);
+                    Airlift* airliftOrder = new Airlift(player, 1, weakestTerritory, weakestTerritory);
+                    player->AddOrderToList(airliftOrder);
+                    std::cout << "Airlift order issued to " << weakestTerritory->GetName() << ".\n";
+                }
+            }
+            break;
+        case BlockadeEnum:
+            // Benevolent player does not issue Blockade orders
+            break;
+        case NegotiateEnum:
+            Player* targetPlayer = GameEngine::players[ (PlayerIndex + 1) % GameEngine::instance->players.size() ]; //simple logic to pick the next player in the list
+            Negotiate* negotiateOrder = new Negotiate(player, targetPlayer);
+            player->AddOrderToList(negotiateOrder);
+            std::cout << "Negotiate order issued with player " << targetPlayer->GetName() << ".\n";
+            break;
+        default:
+            break;
+        }
     }
-
 }
-
-int unitsToDeploy = std::min(1, reinforcements); // Deploy at least 1 unit or the remaining reinforcements
-                Deploy* deployOrder = new Deploy(player, unitsToDeploy, territory);
-                player->AddOrderToList(deployOrder);
-                player->SetReinforcements(reinforcements - unitsToDeploy);
-                deployedFinished = false; // Continue deploying until all territories have at least 1 unit
-
 
 Territory* BenevolentPlayerStrategy::findWeakestTerritory(const std::vector<Territory*>& territories) {
     if (territories.empty()) {
@@ -355,6 +414,20 @@ Territory* BenevolentPlayerStrategy::findWeakestTerritory(const std::vector<Terr
         }
     }
     return weakest;
+}
+
+Territory* BenevolentPlayerStrategy::findStrongestTerritory(const std::vector<Territory*>& territories) const {
+    if (territories.empty()) {
+        return nullptr;
+    }
+
+    Territory* strongest = territories[0];
+    for (Territory* territory : territories) {
+        if (territory->GetUnits() > strongest->GetUnits()) {
+            strongest = territory;
+        }
+    }
+    return strongest;
 }
 // ----- Benevolent -----
 
