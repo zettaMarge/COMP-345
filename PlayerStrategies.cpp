@@ -453,32 +453,32 @@ Territory* BenevolentPlayerStrategy::findStrongestTerritory(const std::vector<Te
 
 // ----- Neutral -----
 std::vector<Territory*> NeutralPlayerStrategy::ToAttack() const {
-
+    //doesnt attack
+    return nullptr;
 }
 
 std::vector<Territory*> NeutralPlayerStrategy::ToDefend() const {
-    
+    //doesn't defend
+    return nullptr;
 }
 
 void NeutralPlayerStrategy::IssueOrder() {
-    
+     //doesnt issue orders
+    return;
 }
 // ----- Neutral -----
 
 
 // ----- Cheater -----
 std::vector<Territory*> CheaterPlayerStrategy::ToAttack() const {
-    //doesnt attack
-    return nullptr;
+    
 }
 
 std::vector<Territory*> CheaterPlayerStrategy::ToDefend() const {
-    //doesn't defend
-    return nullptr;
+    
 }
 
 void CheaterPlayerStrategy::IssueOrder() {
-    //doesnt issue orders
-    return;
+   
 }
 // ----- Cheater -----
