@@ -284,15 +284,69 @@ void HumanPlayerStrategy::IssueOrder() {
 
 // ----- Aggressive -----
 std::vector<Territory*> AggressivePlayerStrategy::ToAttack() const {
+    std::vector<Territory*> toAttackList;
+    Territory* strongest = findStrongestTerritory(player->GetPlayerTerritories());
 
+    for (Territory* neighbor : strongest->AdjacentTerritories()) {
+        if (neighbor->GetOwner() != player) {
+            toAttackList.push_back(neighbor);
+        }
+    }
+
+    if (toAttackList.empty()) {
+        std::cout << "No territories to attack." << endl;
+    }
+
+    return toAttackList;
 }
 
 std::vector<Territory*> AggressivePlayerStrategy::ToDefend() const {
-    
+    return player->GetPlayerTerritories();
 }
 
+//Deploys all reinforcements to strongest territory then advances from there to all adjacent enemy territories
 void AggressivePlayerStrategy::IssueOrder() {
-    
+    Territory* strong = findStrongest();
+    if (player->GetPlayerTerritories().empty()) {
+        std::cout << "Aggressive player has no territories — no orders issued.\n";
+        return;
+}
+    if (player->GetReinforcements() > 0) {
+        Deploy* d = new Deploy(player, player->GetReinforcements(), strong);
+        player->AddOrderToList(d);
+        player->SetReinforcements(0);
+    }
+    for (Territory* enemy : strong->AdjacentTerritories()) {
+        if (enemy->GetOwner() != player) {
+            Advance* a = new Advance(player, strong->GetUnits() - 1, strong, enemy);
+            player->AddOrderToList(a);
+        }
+    }
+
+    for (Card* Card : player->GetPlayerHand()->GetCards()) {
+        if (Card->isCardAggressive()) {
+            int cardIndex = player->GetPlayerHand()->GetCardIndex(Card->GetType());
+            player->GetPlayerHand()->PlayCard(cardIndex);
+        }
+    }
+    if (player->GetReinforcements() == 0 && strong->GetUnits() <= 1) {
+        int playerIndex = GameEngine::instance->GetPlayerIndex(player);
+        GameEngine::instance->finishedPlayers[playerIndex] = true;
+    }
+}
+
+Territory* AggressivePlayerStrategy::findStrongestTerritory(const std::vector<Territory*>& territories) const {
+    Territory* strongest = nullptr;
+    int maxUnits = -1;
+
+    for (Territory* territory : territories) {
+        if (territory->GetUnits() > maxUnits) {
+            maxUnits = territory->GetUnits();
+            strongest = territory;
+        }
+    }
+
+    return strongest;
 }
 // ----- Aggressive -----
 
@@ -463,7 +517,8 @@ std::vector<Territory*> NeutralPlayerStrategy::ToDefend() const {
 }
 
 void NeutralPlayerStrategy::IssueOrder() {
-     //doesnt issue orders
+    int playerIndex = GameEngine::instance->GetPlayerIndex(player);
+    GameEngine::instance->finishedPlayers[playerIndex] = true;
     return;
 }
 // ----- Neutral -----
