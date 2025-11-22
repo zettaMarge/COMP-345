@@ -272,6 +272,15 @@ void HumanPlayerStrategy::IssueOrder() {
 }
 // ----- Human -----
 
+//-----------------------------------------------------
+//Mia Letendre 40274681
+//COMP-345-D 2252 Assignment 3 PlayerStategies.cpp
+//Dr. Hamed Jafarpour
+//Submitted: TBD
+//Due: November 26, 2025 
+//I certify that this submission is my original work and meets the Faculty’s Expectations of Originality 
+//Mia Letendre
+//-----------------------------------------------------
 
 // ----- Aggressive -----
 std::vector<Territory*> AggressivePlayerStrategy::ToAttack() const {
@@ -432,6 +441,16 @@ Territory* BenevolentPlayerStrategy::findStrongestTerritory(const std::vector<Te
 // ----- Benevolent -----
 
 
+//-----------------------------------------------------
+//Mia Letendre 40274681
+//COMP-345-D 2252 Assignment 3 PlayerStategies.cpp
+//Dr. Hamed Jafarpour
+//Submitted: TBD
+//Due: November 26, 2025 
+//I certify that this submission is my original work and meets the Faculty’s Expectations of Originality 
+//Mia Letendre
+//-----------------------------------------------------
+
 // ----- Neutral -----
 std::vector<Territory*> NeutralPlayerStrategy::ToAttack() const {
 
@@ -449,14 +468,17 @@ void NeutralPlayerStrategy::IssueOrder() {
 
 // ----- Cheater -----
 std::vector<Territory*> CheaterPlayerStrategy::ToAttack() const {
-
+    //doesnt attack
+    return nullptr;
 }
 
 std::vector<Territory*> CheaterPlayerStrategy::ToDefend() const {
-    
+    //doesn't defend
+    return nullptr;
 }
 
 void CheaterPlayerStrategy::IssueOrder() {
-    
+    //doesnt issue orders
+    return;
 }
 // ----- Cheater -----

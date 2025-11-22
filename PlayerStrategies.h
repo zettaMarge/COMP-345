@@ -24,7 +24,6 @@ class PlayerStrategies {
                 DeployEnum = 3,
                 NegotiateEnum = 4
             };
-
         ~PlayerStrategies(); // Destructor
         virtual std::vector<Territory*> ToAttack() const = 0; //returns list of territories to attack
         virtual std::vector<Territory*> ToDefend() const = 0; //returns list of territories to defend

@@ -331,6 +331,27 @@ PlayerStrategies* Player::GetStrategy() {
     return playerStrategy;
 }
 
+string Player::GetStrategyName() {
+    if (dynamic_cast<HumanPlayerStrategy*>(playerStrategy)) {
+        return "Human";
+    }
+    else if (dynamic_cast<AggressivePlayerStrategy*>(playerStrategy)) {
+        return "Aggressive";
+    }
+    else if (dynamic_cast<BenevolentPlayerStrategy*>(playerStrategy)) {
+        return "Benevolent";
+    }
+    else if (dynamic_cast<NeutralPlayerStrategy*>(playerStrategy)) {
+        return "Neutral";
+    }
+    else if (dynamic_cast<CheaterPlayerStrategy*>(playerStrategy)) {
+        return "Cheater";
+    }
+    else {
+        return "Unknown Strategy";
+    }
+}
+
 void Player::SetStrategy(PlayerStrategies* strategy) {
     playerStrategy = strategy;
     playerStrategy->SetPlayer(this);

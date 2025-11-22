@@ -57,6 +57,7 @@ public:
     void SetConqueredThisTurn(bool state);
     bool IsNegotiatingWith(Player* p);
     PlayerStrategies* GetStrategy();
+    string GetStrategyName();
     void SetStrategy(PlayerStrategies* strategy);
     std::vector<PlayerStrategies::OrderNames> availableOrders();
 
