@@ -38,7 +38,7 @@ void GameEngine::RunTournament(const TournamentParameters& params)
     for (int m = 0; m < params.maps.size(); ++m) {
             for (int g = 1; g <= params.games; ++g) {
                 std::cout << "  Game " << g << " of " << params.games << "... ";
-				//simulate game here
+				//game simulation starts
                 auto loadMapCmd = std::make_shared<LoadMapCommand>(params.maps[m]);
                 loadMapCmd->Execute();
 				auto validateMapCmd = std::make_shared<ValidateMapCommand>();
@@ -50,12 +50,12 @@ void GameEngine::RunTournament(const TournamentParameters& params)
 				}
                 auto gameStartCmd =  std::make_shared<GameStartCommand>(std::to_string(params.maxTurns));
                 std::string winner = gameStartCmd->Execute();
-
+				std::cout << "Winner: " << winner << "\n";
                 // Record results
                 for (int s = 0; s < params.strategies.size(); ++s) {
                     std::string playerName = "Player" + std::to_string(s + 1) + "_" + params.strategies[s];
                     if (winner == "Draw") {
-                        results[m][s].push_back("-");
+                        results[m][s].push_back("draw");
                     }
                     else if (winner == playerName) {
                         results[m][s].push_back("W");
@@ -73,6 +73,7 @@ void GameEngine::RunTournament(const TournamentParameters& params)
     std::cout << "\n=== TOURNAMENT RESULTS ===\n\n";
 
     std::cout << "Map \\ Strategy";
+    std::cout << "\t";
     for (const auto& strat : params.strategies)
         std::cout << "\t" << strat;
     std::cout << "\"\n";
@@ -275,37 +276,35 @@ std::string GameStartCommand::Execute() {
     this->effect = "Game started successfully";
     std::cout << this->effect << "\n";
 
-    
-    GameEngine::instance->changeState(GameEngine::instance->winState.get());
-
-    return this->effect;
-
     // Shuffle players
-    std::random_device rd;
-    std::mt19937 g(rd());
-    std::shuffle(GameEngine::instance->players.begin(), GameEngine::instance->players.end(), g);
+    //std::random_device rd;
+    //std::mt19937 g(rd());
+    //std::shuffle(GameEngine::instance->players.begin(), GameEngine::instance->players.end(), g);
 
-    // Distribute territories round-robin
-    std::vector<Territory*> territories = GameEngine::instance->gameMap->territories;
-    int numPlayers = GameEngine::instance->players.size();
-    for (int i = 0; i < territories.size(); i++) {
-        Player* currentPlayer = GameEngine::instance->players[i % numPlayers];
-        Territory* currentTerritory = territories[i];
-        currentPlayer->AddTerritory(currentTerritory);
-    }
+    //// Distribute territories round-robin
+    //std::vector<Territory*> territories = GameEngine::instance->gameMap->territories;
+    //int numPlayers = GameEngine::instance->players.size();
+    //for (int i = 0; i < territories.size(); i++) {
+    //    Player* currentPlayer = GameEngine::instance->players[i % numPlayers];
+    //    Territory* currentTerritory = territories[i];
+    //    currentPlayer->AddTerritory(currentTerritory);
+    //}
 
-    //50 initial army units to players
-    for (int i = 0; i < GameEngine::instance->players.size(); i++) {
-        Player* player = GameEngine::instance->players[i];
-        player->AddReinforcements(50);
-    }
+    ////50 initial army units to players
+    //for (int i = 0; i < GameEngine::instance->players.size(); i++) {
+    //    Player* player = GameEngine::instance->players[i];
+    //    player->AddReinforcements(50);
+    //}
 
-    //each player draws 2 initial cards from the deck
-    for (int i = 0; i < GameEngine::instance->players.size(); i++) {
-        Player* player = GameEngine::instance->players[i];
-        player->GetPlayerHand()->AddCard();
-        player->GetPlayerHand()->AddCard();
-    }
+    ////each player draws 2 initial cards from the deck
+    //for (int i = 0; i < GameEngine::instance->players.size(); i++) {
+    //    Player* player = GameEngine::instance->players[i];
+    //    player->GetPlayerHand()->AddCard();
+    //    player->GetPlayerHand()->AddCard();
+    //}
+   // GameEngine::instance->changeState(GameEngine::instance->winState.get());
+    return GameEngine::instance->mainGameLoop().GetName();
+
 };
 
 std::string ReplayCommand::Execute() {
@@ -725,7 +724,7 @@ int TestGameEngine() {
 // Part 3: Game play: main game loop
 
 //Main game loop that cycles through the three phases
-void GameEngine::mainGameLoop() {
+Player GameEngine::mainGameLoop() {
     bool gameWon = false;
     while (!gameWon) {
         reinforcementPhase();
@@ -734,6 +733,7 @@ void GameEngine::mainGameLoop() {
         checkPlayerElimination();
         gameWon = checkWinCondition();
     }
+    return GetWinner();
 }
 
 // Reinforcement phase - Players are given a number of army units that depends on the number of
@@ -1074,6 +1074,13 @@ bool GameEngine::checkWinCondition() {
     return false;
 }
 
+Player GameEngine::GetWinner() {
+    if (players.size() == 1) {
+        return *players[0];
+    }
+    throw std::runtime_error("No winner yet");
+}
+
 // Check for player elimination - returns the number of players eliminated in the current turn
 void GameEngine::checkPlayerElimination() {
 
@@ -1205,7 +1212,7 @@ void GameEngine::GameStart() {
 
 
     //swicthe game to play phase
-    mainGameLoop();
+  //  mainGameLoop();
 }
 
 void GameEngine::StartupPhase() {

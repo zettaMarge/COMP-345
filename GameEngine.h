@@ -315,11 +315,12 @@ public:
 	int Run(); // main game loop
 //	bool ProcessInput(const std::string& input); // process user input
 	void ExecuteCommand(const std::shared_ptr<ICommand>& cmd); // execute command
-    void mainGameLoop();
+    Player mainGameLoop();
     bool IsValidCommand(const std::string& cmd); // validate command
 	void changeState(IState* next); // change current state
     std::string StringToLog();
 
+    Player GetWinner();
     // Code for assignment 2
     // Part 3: Game play: main game loop
 private:
