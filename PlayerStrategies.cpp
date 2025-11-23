@@ -1,3 +1,4 @@
+
 #include "PlayerStrategies.h"
 #include "GameEngine.h"
 #include "Player.h"
@@ -306,7 +307,7 @@ std::vector<Territory*> AggressivePlayerStrategy::ToDefend() const {
 
 //Deploys all reinforcements to strongest territory then advances from there to all adjacent enemy territories
 void AggressivePlayerStrategy::IssueOrder() {
-    Territory* strong = findStrongest();
+    Territory* strong = findStrongestTerritory(player->GetPlayerTerritories());
     if (player->GetPlayerTerritories().empty()) {
         std::cout << "Aggressive player has no territories — no orders issued.\n";
         return;
@@ -335,7 +336,7 @@ void AggressivePlayerStrategy::IssueOrder() {
     }
 }
 
-Territory* AggressivePlayerStrategy::findStrongestTerritory(const std::vector<Territory*>& territories) const {
+Territory* AggressivePlayerStrategy::findStrongestTerritory(const std::vector<Territory*>& territories) {
     Territory* strongest = nullptr;
     int maxUnits = -1;
 
@@ -352,8 +353,21 @@ Territory* AggressivePlayerStrategy::findStrongestTerritory(const std::vector<Te
 
 
 // ----- Benevolent -----
+
+//-----------------------------------------------------
+//Alexandre Godfroy 40300165
+//COMP-345-D 2252 Assignment 3 PlayerStategies.cpp
+//Dr. Hamed Jafarpour
+//Submitted: TBD
+//Due: November 26, 2025 
+//I certify that this submission is my original work and meets the Faculty’s Expectations of Originality 
+//Alexandre Godfroy
+//-----------------------------------------------------
+
 std::vector<Territory*> BenevolentPlayerStrategy::ToAttack() const {
-    return nullptr;
+    std::vector<Territory*> toAttackList;
+    // Benevolent player does not attack
+    return toAttackList;
 }
 
 std::vector<Territory*> BenevolentPlayerStrategy::ToDefend() const {
@@ -378,6 +392,7 @@ std::vector<Territory*> BenevolentPlayerStrategy::ToDefend() const {
 void BenevolentPlayerStrategy::IssueOrder() {
     std::vector<OrderNames> orders = player->availableOrders();
     int PlayerIndex = GameEngine::instance->GetPlayerIndex(player);
+    std::vector<Territory*> defendList = ToDefend();
 
     if (orders.empty()) {
         std::cout << "No available orders for player " << player->GetName() << ". Ending turn.\n";
@@ -387,8 +402,10 @@ void BenevolentPlayerStrategy::IssueOrder() {
 
     for (OrderNames order : orders) {
         switch (order) {
-        case DeployEnum:
+        case DeployEnum:{
             // Deploy reinforcements to weakest territory as long as there are reinforcements left
+            int reinforcements = player->GetReinforcements();
+
             while (reinforcements > 0) {
                 Territory* territory = findWeakestTerritory(defendList);
         
@@ -409,21 +426,26 @@ void BenevolentPlayerStrategy::IssueOrder() {
                     Deploy* deployOrder = new Deploy(player, unitsToDeploy, territory);
                     player->AddOrderToList(deployOrder);
                     player->SetReinforcements(reinforcements - unitsToDeploy);
+                    reinforcements -= unitsToDeploy;
                 }
             }
             std::cout << "All reinforcements deployed for player " << player->GetName() << std::endl;
             break;
-        case BombEnum:
+        }
+        case BombEnum:{
             // Benevolent player does not issue Bomb orders
             break;
-        case AdvanceEnum:
+        }
+        case AdvanceEnum: {
             Territory* weakestTerritoryToDefend = findWeakestTerritory(defendList);
             if (weakestTerritoryToDefend != nullptr) {
                 std::vector<Territory*> adjacentTerritories = weakestTerritoryToDefend->AdjacentTerritories();
                 int biggestUnits = 0;
+                Territory* biggestNeighbor = nullptr;
                 for (Territory* neighbor : adjacentTerritories) {
                     if (neighbor->GetOwner() == player && neighbor->GetUnits() > biggestUnits) {
                         biggestUnits = neighbor->GetUnits();
+                        biggestNeighbor = neighbor;
                     }
                 }
                 if (biggestUnits > 0) {
@@ -431,41 +453,51 @@ void BenevolentPlayerStrategy::IssueOrder() {
                     if (unitToMove <= 0) {
                         unitToMove = 1; //move at least one unit
                     }
-                    Advance* advanceOrder = new Advance(player, unitToMove, neighbor, weakestTerritoryToDefend);
+                    Advance* advanceOrder = new Advance(player, unitToMove, biggestNeighbor, weakestTerritoryToDefend);
                     player->AddOrderToList(advanceOrder);
                     std::cout << "Advance order issued to defend " << weakestTerritoryToDefend->GetName() << ".\n";
                 }
             }
             break;
-        case AirliftEnum:
+        }
+        case AirliftEnum: {
             Territory* weakestTerritory = findWeakestTerritory(defendList);
+            Territory* strongestTerritory = findStrongestTerritory(defendList);
             if (weakestTerritory != nullptr) {
                 int cardIndex = player->GetPlayerHand()->GetCardIndex(AirliftEnum);
 
                 if (cardIndex != player->GetPlayerHand()->GetHandSize()) {
                     player->GetPlayerHand()->PlayCard(cardIndex);
-                    Airlift* airliftOrder = new Airlift(player, 1, weakestTerritory, weakestTerritory);
+                    int unitsToAirlift = (strongestTerritory->GetUnits() - weakestTerritory->GetUnits()) / 2; //equalizes units between territories
+                    if (unitsToAirlift <= 0) {
+                        unitsToAirlift = 1; //airlift at least one unit
+                    }
+                    Airlift* airliftOrder = new Airlift(player, unitsToAirlift, strongestTerritory, weakestTerritory);
                     player->AddOrderToList(airliftOrder);
-                    std::cout << "Airlift order issued to " << weakestTerritory->GetName() << ".\n";
+                    std::cout << "Airlift order issued from " << strongestTerritory << " to " << weakestTerritory->GetName() << "for " << unitsToAirlift << " units.\n";
                 }
             }
             break;
-        case BlockadeEnum:
+        }
+        case BlockadeEnum: {
             // Benevolent player does not issue Blockade orders
             break;
-        case NegotiateEnum:
-            Player* targetPlayer = GameEngine::players[ (PlayerIndex + 1) % GameEngine::instance->players.size() ]; //simple logic to pick the next player in the list
+        }
+        case NegotiateEnum:{
+            Player* targetPlayer = GameEngine::instance -> players[ (PlayerIndex + 1) % GameEngine::instance->players.size() ]; //simple logic to pick the next player in the list
             Negotiate* negotiateOrder = new Negotiate(player, targetPlayer);
             player->AddOrderToList(negotiateOrder);
             std::cout << "Negotiate order issued with player " << targetPlayer->GetName() << ".\n";
             break;
-        default:
+        }
+        default:{
             break;
+        }
         }
     }
 }
 
-Territory* BenevolentPlayerStrategy::findWeakestTerritory(const std::vector<Territory*>& territories) {
+Territory* BenevolentPlayerStrategy::findWeakestTerritory(const std::vector<Territory*>& territories) const {
     if (territories.empty()) {
         return nullptr;
     }
