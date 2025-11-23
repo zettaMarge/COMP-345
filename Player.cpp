@@ -57,39 +57,62 @@ Player::Player(std::string& name, vector<Territory*> playerTerritories, Hand &pl
 //aslo assumes that the territories var hold all the territories owned by the player
 // Compares Owner pointer to this Player instance
 vector<Territory*> Player::ToAttack() const {
-    vector<Territory*> toAttackList;
-    for (Territory* territory : playerTerritories) {
-        for (Territory* neighbor : territory->AdjacentTerritories()) {
-            if (std::find(toAttackList.begin(), toAttackList.end(), neighbor) == toAttackList.end()) {
-                if (neighbor->GetOwner() != this) {
-                    toAttackList.push_back(neighbor);
-                }
-            }
-        }
-    }
-    if (toAttackList.empty()) {
-        cout << "No territories to attack." << endl;
-    }
-    return toAttackList;
+    return playerStrategy->ToAttack();
 };
 
 //This is a stub meant to be able to code players class
 //will return all the territiories that are owned by the player and can be defended
 // Compares Owner pointer to this Player instance
 vector<Territory*> Player::ToDefend() const {
-
-    if (playerTerritories.empty()) {
-        cout << "No territories to defend." << endl;
-    }
-    return playerTerritories;
+    return playerStrategy->ToDefend();
 };
 
 
 //This is a stub meant to be able to code players class
-// will add newOrder to players list of orders
-void Player::IssueOrder(Order* x) {
+//Processes which order to make
+void Player::IssueOrder() {
+    playerStrategy->IssueOrder();
+};
+
+//Adds an order to the player's list of orders
+void Player::AddOrderToList(Order* x) {
     playersOrders->Add(x);
 };
+
+std::vector<PlayerStrategies::OrderNames> Player::availableOrders() {
+    std::vector<PlayerStrategies::OrderNames> orders;
+
+    //while there are still reinforcements, deploy is the only available order
+    if (GetReinforcements() > 0) {
+        orders.push_back(PlayerStrategies::DeployEnum);
+    }
+    else {
+        orders.push_back(PlayerStrategies::AdvanceEnum);
+
+        for (Card card : GetPlayerHand()->GetCards()) {
+            Card* ptr = &card;
+            int type = ptr->GetType();
+            switch (type) {
+                case PlayerStrategies::AirliftEnum:
+                    orders.push_back(PlayerStrategies::AirliftEnum);
+                    break;
+                case PlayerStrategies::BombEnum:
+                    orders.push_back(PlayerStrategies::BombEnum);
+                    break;
+                case PlayerStrategies::BlockadeEnum:
+                    orders.push_back(PlayerStrategies::BlockadeEnum);
+                    break;
+                case PlayerStrategies::NegotiateEnum:
+                    orders.push_back(PlayerStrategies::NegotiateEnum);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    return orders;
+}
 
 void Player::AddReinforcements(int num) {
     reinforcements += num;
@@ -224,8 +247,10 @@ ostream& operator<<(ostream& os, const Player& p) {
 // Clean up dynamically allocated Orders
 // Note: Territories are not deleted here as they may be shared among players
 Player::~Player() {
-
     playerTerritories.clear();
+    negotiators.clear();
+    delete playerStrategy;
+    playerStrategy = NULL;
 }
 
 string Player::GetName() {
@@ -279,6 +304,7 @@ void Player::SetPlayerTerritories(vector<Territory*> territories) {
         this->AddTerritory(t);
     }
 };
+
 void Player::SetPlayerHand(Hand* hand) {
     delete playerHand;
     playerHand = new Hand(*hand);
@@ -296,6 +322,16 @@ bool Player::HasConqueredThisTurn() {
 void Player::SetConqueredThisTurn(bool state) {
     conqueredThisTurn = state;
 }
+
 void Player::SetReinforcements(int reinforcements) {
     this->reinforcements = reinforcements;
 };
+
+PlayerStrategies* Player::GetStrategy() {
+    return playerStrategy;
+}
+
+void Player::SetStrategy(PlayerStrategies* strategy) {
+    playerStrategy = strategy;
+    playerStrategy->SetPlayer(this);
+}

@@ -7,6 +7,7 @@
 #include <random>
 #include <algorithm>
 #include "Orders.h"
+#include "PlayerStrategies.h"
 
 void GameEngine::RunTournament(const TournamentParameters& params)
 {
@@ -772,269 +773,40 @@ void GameEngine::reinforcementPhase() {
 // and fortifying their positions
 void GameEngine::issueOrdersPhase() {
     std::cout << "Issue Orders Phase started.\n";
-    std::vector<bool> isFinished(players.size(), false);
-    int finishedPlayers = 0;
-    while (finishedPlayers < players.size()) {
+    int isFinished = 0;
+
+    while (isFinished < players.size()) {
         for (int i = 0; i < players.size(); i++) {
-            if (isFinished[i]) {
+            if (finishedPlayers[i]) {
                 continue; // Skip players who have finished issuing orders
             }
 
             Player* player = players[i]; // players vector needs to be defined somewhere in GameEngine
             std::cout << "Player " << player->GetName() << "'s turn to issue an order.\n";
-            std::vector<OrderNames> orders = availableOrders(i);
-            if (orders.empty()) {
-                std::cout << "No available orders for player " << player->GetName() << ". Ending turn.\n";
-                isFinished[i] = true;
-                finishedPlayers++;
-                continue;
-            }
-            std::cout << "Available orders:\n";
-            for (int j = 0; j < orders.size(); j++) {
-                switch (orders[j]) {
-                case DeployEnum:
-                    std::cout << j << " - Deploy\n";
-                    break;
+            player->IssueOrder();
+        }
 
-                case AdvanceEnum:
-                    std::cout << j << " - Advance\n";
-                    break;
-
-                case BombEnum:
-                    std::cout << j << " - Bomb\n";
-                    break;
-
-                case AirliftEnum:
-                    std::cout << j << " - Airlift\n";
-                    break;
-
-                case BlockadeEnum:
-                    std::cout << j << " - Blockade\n";
-                    break;
-
-                case NegotiateEnum:
-                    std::cout << j << " - Negotiate\n";
-                    break;
-
-                default:
-                    break;
-                }
-            }
-
-            std::cout << "Enter the number of the order to issue, or -1 to end your turn: ";
-            int choice;
-            std::cin >> choice;
-            // Issue the selected order
-            switch (orders[choice]) {
-                case  AdvanceEnum:{
-                    string startTerritory;
-                    string targetTerritory;
-                    int numUnits;
-
-                    //getting user input for advance order
-                    std::cout << "You chose to issue an Advance order.\nPlease enter the starting territory: "<< std::endl;
-                    cin >> startTerritory;
-                    std::cout << "Please enter the target territory: "<< std::endl;
-                    cin >> targetTerritory;
-                    std::cout << "Please enter the number of units to move: "<< std::endl;
-                    cin >> numUnits;
-                
-                    //creating and issuing the advance order
-                    Advance* advanceOrder = new Advance(player, numUnits, gameMap->GetTerritoryByName(startTerritory), gameMap->GetTerritoryByName(targetTerritory));
-                    Advance* ptr = advanceOrder;
-                    player->IssueOrder(ptr);
-
-                    std::cout << "Advance order issued.\n";
-                    break;
-
-                }case AirliftEnum:{
-                    string startTerritory;
-                    string targetTerritory;
-                    int numUnits = 5;  // Example number of units to airlift    
-
-                    //getting user input for airlift order
-                    std::cout << "You chose to issue an Airlift order.\nPlease enter the starting territory: "<< std::endl;
-                    cin >> startTerritory;
-                    std::cout << "Please enter the target territory: "<< std::endl;
-                    cin >> targetTerritory;
-                    std::cout << "Please enter the number of units to move: "<< std::endl;
-                    cin >> numUnits;
-
-                    //creating and issuing the airlift order
-                    int cardIndex = player->GetPlayerHand()->GetCardIndex(AirliftEnum);
-
-                    if (cardIndex == player->GetPlayerHand()->GetHandSize()) {
-                        std::cout << "ERROR: could not find the card in hand, please try again.";
-                        --i;
-                        break;
-                    }
-
-                    player->GetPlayerHand()->PlayCard(cardIndex);
-                    Airlift* airliftOrder = new Airlift(player, numUnits, gameMap->GetTerritoryByName(startTerritory), gameMap->GetTerritoryByName(targetTerritory));
-                    Airlift* ptr = airliftOrder;
-                    player->IssueOrder(ptr);
-
-                    std::cout << "Airlift order issued.\n";
-                    break;
-
-                }case BlockadeEnum:{
-                    string targetTerritory;
-
-                    //getting user input for blockade order
-                    std::cout << "You chose to issue a Blockade order.\nPlease enter the target territory: "<< std::endl;
-                    cin >> targetTerritory;
-
-                    //creating and issuing the blockade order
-                    int cardIndex = player->GetPlayerHand()->GetCardIndex(BlockadeEnum);
-
-                    if (cardIndex == player->GetPlayerHand()->GetHandSize()) {
-                        std::cout << "ERROR: could not find the card in hand, please try again.";
-                        --i;
-                        break;
-                    }
-
-                    player->GetPlayerHand()->PlayCard(cardIndex);
-                    Blockade* blockadeOrder = new Blockade(player, gameMap->GetTerritoryByName(targetTerritory));
-                    Blockade* ptr = blockadeOrder;
-                    player->IssueOrder(ptr);
-
-                    std::cout << "Blockade order issued.\n";
-                    break;
-
-                }case BombEnum:{
-                    string targetTerritory;
-
-                    //getting user input for bomb order
-                    std::cout << "You chose to issue a Bomb order.\nPlease enter the target territory: "<< std::endl;
-                    cin >> targetTerritory;
-
-                    //creating and issuing the bomb order
-                    int cardIndex = player->GetPlayerHand()->GetCardIndex(BombEnum);
-
-                    if (cardIndex == player->GetPlayerHand()->GetHandSize()) {
-                        std::cout << "ERROR: could not find the card in hand, please try again.";
-                        --i;
-                        break;
-                    }
-
-                    player->GetPlayerHand()->PlayCard(cardIndex);
-                    Bomb* bombOrder = new Bomb(player, gameMap->GetTerritoryByName(targetTerritory));
-                    Bomb* ptr = bombOrder;
-                    player->IssueOrder(ptr);
-
-                    std::cout << "Bomb order issued.\n";
-                    break;
-
-                }case DeployEnum:{
-                    string targetTerritory;
-                    int numUnits;
-
-                   //getting user input for deploy order
-                    std::cout << "You chose to issue a Deploy order.\nPlease enter the target territory: "<< std::endl;
-                    cin >> targetTerritory;
-                    std::cout << "Please enter the number of units to deploy: "<< std::endl;
-                    cin >> numUnits;
-
-                    while (numUnits < 0 || numUnits > player->GetReinforcements()) {
-                        std::cout << "Please enter a valid number of units to deploy: "<< std::endl;
-                        cin >> numUnits;
-                    }
-
-                    //creating and issuing the deploy order
-                    Deploy* deployOrder = new Deploy(player, numUnits, gameMap->GetTerritoryByName(targetTerritory));
-                    Deploy* ptr = deployOrder;
-                    player->IssueOrder(ptr);
-                    player->SetReinforcements(player->GetReinforcements() - numUnits); //in order to be able to issue other kinds of orders this turn
-
-                    std::cout << "Deploy order issued.\n";
-                    break;
-
-                }case NegotiateEnum:{
-                    string targetPlayerName;
-
-                    //getting user input for negotiate order
-                    std::cout << "You chose to issue a Negotiate order.\nPlease enter the target player name: "<< std::endl;
-                    cin >> targetPlayerName;
-                    Player* targetPlayer = FindPlayerByName(targetPlayerName);
-
-                    while (targetPlayer == nullptr) {
-                        std::cout << "Could not find a player by that name, please try again: " << std::endl;
-                        cin >> targetPlayerName;
-                        targetPlayer = FindPlayerByName(targetPlayerName);
-                    }
-
-                    //creating and issuing the negotiate order
-                    int cardIndex = player->GetPlayerHand()->GetCardIndex(NegotiateEnum);
-
-                    if (cardIndex == player->GetPlayerHand()->GetHandSize()) {
-                        std::cout << "ERROR: could not find the card in hand, please try again.";
-                        --i;
-                        break;
-                    }
-
-                    player->GetPlayerHand()->PlayCard(cardIndex);
-                    Negotiate* negotiateOrder = new Negotiate(player, targetPlayer);
-                    Negotiate* ptr = negotiateOrder;
-                    player->IssueOrder(ptr);
-
-                    std::cout << "Negotiate order issued.\n";
-                    break;
-                } default:{
-                    if (choice == -1){
-                        isFinished[i] = true;
-                        finishedPlayers++;
-                        std::cout << "Player " << player->GetName() << " has ended their turn.\n";
-                    }else {
-                        std::cout << "Invalid choice. Please try again.\n";
-                    i--; // Repeat this player's turn
-                    }
-                    break;
-                }
+        isFinished = 0;
+        
+        for (int i = 0; i < players.size(); i++) {
+            if (finishedPlayers[i]) {
+                ++isFinished;
             }
         }
     }
+
+    ResetFinishedPlayers();
     std::cout << "Issue Orders Phase ended.\n";
-}
-
-std::vector<GameEngine::OrderNames> GameEngine::availableOrders(int playerID) {
-    std::vector<GameEngine::OrderNames> orders;
-    //while there are still reinforcements, deploy is the only available order
-    if (players[playerID]->GetReinforcements() > 0) {
-        orders.push_back(DeployEnum);
-    } else {
-        orders.push_back(AdvanceEnum);
-        for (Card card : players[playerID]->GetPlayerHand()->GetCards()) {
-            Card* ptr = &card;
-            int type = ptr->GetType();
-            switch (type) {
-                case AirliftEnum:
-                    orders.push_back(AirliftEnum);
-                    break;
-                case BombEnum:
-                    orders.push_back(BombEnum);
-                    break;
-                case BlockadeEnum:
-                    orders.push_back(BlockadeEnum);
-                    break;
-                case NegotiateEnum:
-                    orders.push_back(NegotiateEnum);
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-    return orders;
 }
 
 // Execute Orders phase - The issued orders are executed in the order they were issued
 void GameEngine::executeOrdersPhase() {
     std::cout << "Execute Orders Phase started.\n";
-    std::vector<bool> isFinished(players.size(), false);
-    int finishedPlayers = 0;
-    while (finishedPlayers < players.size()) {
+    int isFinished = 0;
+
+    while (isFinished < players.size()) {
         for (int i = 0; i < players.size(); i++) {
-            if (isFinished[i]) {
+            if (finishedPlayers[i]) {
                 continue; // Skip players who have finished executing orders
             }
 
@@ -1042,8 +814,8 @@ void GameEngine::executeOrdersPhase() {
             OrdersList* ordersList = player->GetPlayerOrders();
             if (ordersList->IsEmpty()) {
                 std::cout << "No more orders for player " << player->GetName() << ". Ending turn.\n";
-                isFinished[i] = true;
-                finishedPlayers++;
+                finishedPlayers[i] = true;
+                isFinished++;
                 continue;
             }
 
@@ -1062,6 +834,7 @@ void GameEngine::executeOrdersPhase() {
         player->ResetNegotiationsAndConquer();
     }
 
+    ResetFinishedPlayers();
     std::cout << "Execute Orders Phase ended.\n";
 }
 
@@ -1215,6 +988,26 @@ void GameEngine::GameStart() {
   //  mainGameLoop();
 }
 
+void GameEngine::InitFinishedPlayers() {
+    finishedPlayers.insert(finishedPlayers.end(), players.size(), false);
+}
+
+void GameEngine::ResetFinishedPlayers() {
+    for (int i = 0; i < finishedPlayers.size(); i++) {
+        finishedPlayers[i] = false;
+    }
+}
+
+int GameEngine::GetPlayerIndex(Player* p) {
+    for (int i = 0; i < players.size(); i++) {
+        if (players[i] == p) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
 void GameEngine::StartupPhase() {
     std::string input;
     std::cout << "Starting game... Please input the name of the directory containing the maps, or input \"default\" to use the current directory: \n";
@@ -1254,6 +1047,8 @@ void GameEngine::StartupPhase() {
         std::cin >> playerName;
         AddPlayers(playerName);
     }
+
+    InitFinishedPlayers();
     std::cout << "Players added successfully. Start up phase complete!\n";
 }
 
@@ -1306,22 +1101,27 @@ void GameEngine::TestOrderExecution() {
     GameEngine::instance->AddPlayers("Player2");
 
     Player* p1 = GameEngine::instance->players[0];
+    PlayerStrategies* s1 = new HumanPlayerStrategy();
     p1->AddTerritory(tB);
     p1->AddTerritory(tC);
     p1->SetReinforcements(3);
     Hand* hand1 = new Hand(*deck);
     hand1->SetTestCards();
     p1->SetPlayerHand(hand1);
+    p1->SetStrategy(s1);
 
     Player* p2 = GameEngine::instance->players[1];
+    PlayerStrategies* s2 = new HumanPlayerStrategy();
     p2->AddTerritory(tA);
     p2->AddTerritory(tD);
     p2->SetReinforcements(3);
     Hand* hand2 = new Hand(*deck);
     hand2->SetTestCards();
     p2->SetPlayerHand(hand2);
+    p2->SetStrategy(s2);
 
     //test the phases
+    InitFinishedPlayers();
     GameEngine::instance->issueOrdersPhase();
     GameEngine::instance->executeOrdersPhase();
 }

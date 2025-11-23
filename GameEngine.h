@@ -301,6 +301,10 @@ public:
 	IState* currentState = nullptr; // current state pointer
     Map* gameMap; //pointer to the map being used in the game
     std::vector<Player*> players; //list of players in the game
+    std::vector<bool> finishedPlayers; //used during order issuing/executing
+    void InitFinishedPlayers(); //fills up finishedPlayers based on how many players there are
+    void ResetFinishedPlayers(); //resets the values in finishedPlayers
+    int GetPlayerIndex(Player* p); //get the player's index in GameEngine's list
 
 
 	GameEngine(); // constructor
@@ -328,19 +332,9 @@ private:
     void issueOrdersPhase();
     void executeOrdersPhase();
 
-    enum OrderNames {
-        AdvanceEnum = 5,
-        AirliftEnum = 0,
-        BlockadeEnum = 1,
-        BombEnum = 2,
-        DeployEnum = 3,
-        NegotiateEnum = 4
-    };
-
     //Additional methods
     bool checkWinCondition();
     void checkPlayerElimination();
-    std::vector<OrderNames> availableOrders(int playerID);
 
     //Code for Assignemnt 2 Part 2
 //-----------------------------------------------------
@@ -353,14 +347,14 @@ private:
 //Mia Letendre
 //-----------------------------------------------------
     void StartupPhase(); //Handles the startup phase of the game
-    void AddPlayers(const string &playerName); //Adds a new player to the game
+    void AddPlayers(const std::string &playerName); //Adds a new player to the game
     bool ValidateMap(); //Validates the map according to assignment specifications
-    void LoadMap(const string &fileName); //Loads a map from a file
+    void LoadMap(const std::string &fileName); //Loads a map from a file
     void GameStart(); //Starts the game
 
 public:
     Player* neutralPlayer; //pointer to the neutral player
-    Player* FindPlayerByName(const string &name); //Returns the first player pointer matching the name, or nullptr if not found
+    Player* FindPlayerByName(const std::string &name); //Returns the first player pointer matching the name, or nullptr if not found
     void TestStartupPhase(); //Tests the startup phase
     void TestOrderExecution(); //Purely for testing order issuing & execution
 };
