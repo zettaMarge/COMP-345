@@ -324,9 +324,9 @@ void AggressivePlayerStrategy::IssueOrder() {
         }
     }
 
-    for (Card* Card : player->GetPlayerHand()->GetCards()) {
-        if (Card->isCardAggressive()) {
-            int cardIndex = player->GetPlayerHand()->GetCardIndex(Card->GetType());
+    for (Card Card : player->GetPlayerHand()->GetCards()) {
+        if (Card.isCardAggressive()) {
+            int cardIndex = player->GetPlayerHand()->GetCardIndex(Card.GetType());
             player->GetPlayerHand()->PlayCard(cardIndex);
         }
     }
@@ -336,7 +336,7 @@ void AggressivePlayerStrategy::IssueOrder() {
     }
 }
 
-Territory* AggressivePlayerStrategy::findStrongestTerritory(const std::vector<Territory*>& territories) {
+Territory* AggressivePlayerStrategy::findStrongestTerritory(const std::vector<Territory*>& territories) const{
     Territory* strongest = nullptr;
     int maxUnits = -1;
 
@@ -539,13 +539,13 @@ Territory* BenevolentPlayerStrategy::findStrongestTerritory(const std::vector<Te
 
 // ----- Neutral -----
 std::vector<Territory*> NeutralPlayerStrategy::ToAttack() const {
-    //doesnt attack
-    return nullptr;
+    std::vector<Territory*> toAttackList;
+    return toAttackList;
 }
 
 std::vector<Territory*> NeutralPlayerStrategy::ToDefend() const {
-    //doesn't defend
-    return nullptr;
+    std::vector<Territory*> toDefendList;
+    return toDefendList;
 }
 
 void NeutralPlayerStrategy::IssueOrder() {

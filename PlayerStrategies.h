@@ -46,7 +46,7 @@ class AggressivePlayerStrategy : public PlayerStrategies {
         std::vector<Territory*> ToAttack() const;
         std::vector<Territory*> ToDefend() const;
         void IssueOrder();
-        void Territory* findStrongestTerritory(const std::vector<Territory*>& territories) const;};
+        Territory* findStrongestTerritory(const std::vector<Territory*>& territories) const;};
 
 class BenevolentPlayerStrategy : public PlayerStrategies {
     public:
