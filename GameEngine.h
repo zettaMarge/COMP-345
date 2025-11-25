@@ -299,9 +299,12 @@ public:
     std::unique_ptr<IState> winState;
 
 	IState* currentState = nullptr; // current state pointer
+	Deck* gameDeck; //deck used in the game
     Map* gameMap; //pointer to the map being used in the game
     std::vector<Player*> players; //list of players in the game
     std::vector<bool> finishedPlayers; //used during order issuing/executing
+	int maxTurns; //maximum number of turns for tournament mode
+	int currentTurn; //current turn number 
     void InitFinishedPlayers(); //fills up finishedPlayers based on how many players there are
     void ResetFinishedPlayers(); //resets the values in finishedPlayers
     int GetPlayerIndex(Player* p); //get the player's index in GameEngine's list
@@ -319,12 +322,13 @@ public:
 	int Run(); // main game loop
 //	bool ProcessInput(const std::string& input); // process user input
 	void ExecuteCommand(const std::shared_ptr<ICommand>& cmd); // execute command
-    Player mainGameLoop();
+    string mainGameLoop();
     bool IsValidCommand(const std::string& cmd); // validate command
 	void changeState(IState* next); // change current state
     std::string StringToLog();
 
-    Player GetWinner();
+    string GetWinner();
+    void PerformCleanUp();
     // Code for assignment 2
     // Part 3: Game play: main game loop
 private:

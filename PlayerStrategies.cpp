@@ -55,7 +55,12 @@ std::vector<Territory*> HumanPlayerStrategy::ToDefend() const {
 }
 
 void HumanPlayerStrategy::IssueOrder() {
-    std::vector<OrderNames> orders = player->availableOrders();
+
+	std::vector<OrderNames> orders = player->availableOrders();
+
+    std::cout << "Player " << player->GetName() << ", it's your turn to issue an order." << std::endl;
+
+
     int i = GameEngine::instance->GetPlayerIndex(player);
 
     if (orders.empty()) {
@@ -99,6 +104,11 @@ void HumanPlayerStrategy::IssueOrder() {
     std::cout << "Enter the number of the order to issue, or -1 to end your turn: ";
     int choice;
     std::cin >> choice;
+    if(choice == -1) {
+        std::cout << "Ending turn for player " << player->GetName() << ".\n";
+        GameEngine::instance->finishedPlayers[i] = true;
+        return;
+	}
 
     // Issue the selected order
     switch (orders[choice]) {
@@ -258,7 +268,7 @@ void HumanPlayerStrategy::IssueOrder() {
         }
         default: {
             if (choice == -1){
-                GameEngine::instance->finishedPlayers[i] = true;
+            //    GameEngine::instance->finishedPlayers[i] = true;
                 std::cout << "Player " << player->GetName() << " has ended their turn.\n";
             }
             else {
@@ -274,47 +284,47 @@ void HumanPlayerStrategy::IssueOrder() {
 
 
 // ----- Aggressive -----
-std::vector<Territory*> AggressivePlayerStrategy::ToAttack() const {
-
-}
-
-std::vector<Territory*> AggressivePlayerStrategy::ToDefend() const {
-    
-}
-
-void AggressivePlayerStrategy::IssueOrder() {
-    
-}
-// ----- Aggressive -----
-
-
-// ----- Benevolent -----
-std::vector<Territory*> BenevolentPlayerStrategy::ToAttack() const {
-
-}
-
-std::vector<Territory*> BenevolentPlayerStrategy::ToDefend() const {
-    
-}
-
-void BenevolentPlayerStrategy::IssueOrder() {
-    
-}
-// ----- Benevolent -----
-
-
-// ----- Neutral -----
-std::vector<Territory*> NeutralPlayerStrategy::ToAttack() const {
-
-}
-
-std::vector<Territory*> NeutralPlayerStrategy::ToDefend() const {
-    
-}
-
-void NeutralPlayerStrategy::IssueOrder() {
-    
-}
+//std::vector<Territory*> AggressivePlayerStrategy::ToAttack() const {
+//
+//}
+//
+//std::vector<Territory*> AggressivePlayerStrategy::ToDefend() const {
+//    
+//}
+//
+//void AggressivePlayerStrategy::IssueOrder() {
+//    
+//}
+//// ----- Aggressive -----
+//
+//
+//// ----- Benevolent -----
+//std::vector<Territory*> BenevolentPlayerStrategy::ToAttack() const {
+//
+//}
+//
+//std::vector<Territory*> BenevolentPlayerStrategy::ToDefend() const {
+//    
+//}
+//
+//void BenevolentPlayerStrategy::IssueOrder() {
+//    
+//}
+//// ----- Benevolent -----
+//
+//
+//// ----- Neutral -----
+//std::vector<Territory*> NeutralPlayerStrategy::ToAttack() const {
+//
+//}
+//
+//std::vector<Territory*> NeutralPlayerStrategy::ToDefend() const {
+//    
+//}
+//
+//void NeutralPlayerStrategy::IssueOrder() {
+//    
+//}
 // ----- Neutral -----
 
 
@@ -353,7 +363,7 @@ void CheaterPlayerStrategy::IssueOrder() {
     for (Territory* enemyTerritory : toConquer) {
         Player* currentOwner = enemyTerritory->GetOwner();
         if (currentOwner != nullptr && currentOwner != player) {
-            std::cout << "Conquered " << enemyTerritory->GetName() << " from " << currentOwner->GetName() << std::endl;
+            std::cout <<player->GetName()<< "Conquered " << enemyTerritory->GetName() << " from " << currentOwner->GetName() << std::endl;
             currentOwner->SwitchTerritory(enemyTerritory, player);
         }
     }

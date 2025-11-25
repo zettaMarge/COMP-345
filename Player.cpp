@@ -71,6 +71,7 @@ vector<Territory*> Player::ToDefend() const {
 //This is a stub meant to be able to code players class
 //Processes which order to make
 void Player::IssueOrder() {
+	std::cout << "Player " << name << " is issuing an order using their strategy." << std::endl;
     playerStrategy->IssueOrder();
 };
 
@@ -89,24 +90,21 @@ std::vector<PlayerStrategies::OrderNames> Player::availableOrders() {
     else {
         orders.push_back(PlayerStrategies::AdvanceEnum);
 
-        for (Card card : GetPlayerHand()->GetCards()) {
-            Card* ptr = &card;
-            int type = ptr->GetType();
+        for (Card& card : GetPlayerHand()->GetCards()) {
+            int type = card.GetType();
             switch (type) {
-                case PlayerStrategies::AirliftEnum:
-                    orders.push_back(PlayerStrategies::AirliftEnum);
-                    break;
-                case PlayerStrategies::BombEnum:
-                    orders.push_back(PlayerStrategies::BombEnum);
-                    break;
-                case PlayerStrategies::BlockadeEnum:
-                    orders.push_back(PlayerStrategies::BlockadeEnum);
-                    break;
-                case PlayerStrategies::NegotiateEnum:
-                    orders.push_back(PlayerStrategies::NegotiateEnum);
-                    break;
-                default:
-                    break;
+            case PlayerStrategies::AirliftEnum:
+                orders.push_back(PlayerStrategies::AirliftEnum);
+                break;
+            case PlayerStrategies::BombEnum:
+                orders.push_back(PlayerStrategies::BombEnum);
+                break;
+            case PlayerStrategies::BlockadeEnum:
+                orders.push_back(PlayerStrategies::BlockadeEnum);
+                break;
+            case PlayerStrategies::NegotiateEnum:
+                orders.push_back(PlayerStrategies::NegotiateEnum);
+                break;
             }
         }
     }
@@ -143,16 +141,20 @@ void Player::AddTerritory(Territory* t) {
 //also sets territory owner to nullptr if this player owns it
 //needs to be updated to actually erase from vector
 void Player::SwitchTerritory(Territory* t, Player* p) {
-    auto it = std::remove(playerTerritories.begin(), playerTerritories.end(), t);
+    auto it = std::find(playerTerritories.begin(), playerTerritories.end(), t);
 
-    if (it != playerTerritories.end()) {
-        playerTerritories.erase(it, playerTerritories.end());
-        p->AddTerritory(t);
+    if (it == playerTerritories.end()) {
+        std::cout << "Territory not found in player's list.\n";
+        return;
     }
-    else {
-        cout << "Territory not found in player's list." << endl;
-    }
-    playerTerritories.erase(it, playerTerritories.end());
+
+    playerTerritories.erase(it);
+    p->AddTerritory(t);
+
+    std::cout << "Switching territory " << t->GetName()
+        << " from player " << this->GetName()
+        << " to player " << p->GetName()
+        << std::endl;
 }
 
 //Add a player to be in negotiations with the current player, if they aren't already

@@ -19,6 +19,7 @@ class CardTypes {
 public:
     std::string getType() const;
     virtual void Play() = 0;
+    virtual ~CardTypes() = default;
 protected:
     std::string type;
 };
