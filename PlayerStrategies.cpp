@@ -317,16 +317,23 @@ std::vector<Territory*> AggressivePlayerStrategy::ToDefend() const {
 
 //Deploys all reinforcements to strongest territory then advances from there to all adjacent enemy territories
 void AggressivePlayerStrategy::IssueOrder() {
+    //kalle added this-----------******************
+    int PlayerIndex = GameEngine::instance->GetPlayerIndex(player);
+    GameEngine::instance->finishedPlayers[PlayerIndex] = true;
+    //---------------------------**************8**88
+
     Territory* strong = findStrongestTerritory(player->GetPlayerTerritories());
     if (player->GetPlayerTerritories().empty()) {
         std::cout << "Aggressive player has no territories — no orders issued.\n";
         return;
 }
+
     if (player->GetReinforcements() > 0) {
         Deploy* d = new Deploy(player, player->GetReinforcements(), strong);
         player->AddOrderToList(d);
         player->SetReinforcements(0);
     }
+
     for (Territory* enemy : strong->AdjacentTerritories()) {
         if (enemy->GetOwner() != player) {
             Advance* a = new Advance(player, strong->GetUnits() - 1, strong, enemy);
@@ -340,6 +347,7 @@ void AggressivePlayerStrategy::IssueOrder() {
             player->GetPlayerHand()->PlayCard(cardIndex);
         }
     }
+
     if (player->GetReinforcements() == 0 && strong->GetUnits() <= 1) {
         int playerIndex = GameEngine::instance->GetPlayerIndex(player);
         GameEngine::instance->finishedPlayers[playerIndex] = true;
@@ -359,7 +367,6 @@ Territory* AggressivePlayerStrategy::findStrongestTerritory(const std::vector<Te
 
     return strongest;
 }
-// ----- Aggressive -----
 
 
 // ----- Benevolent -----
@@ -409,6 +416,10 @@ void BenevolentPlayerStrategy::IssueOrder() {
         GameEngine::instance->finishedPlayers[PlayerIndex] = true;
         return;
     }
+
+	//kalle added this-----------***********
+    GameEngine::instance->finishedPlayers[PlayerIndex] = true;
+	//---------------------------*****************
 
     for (OrderNames order : orders) {
         switch (order) {
@@ -561,6 +572,7 @@ std::vector<Territory*> NeutralPlayerStrategy::ToDefend() const {
 void NeutralPlayerStrategy::IssueOrder() {
     int playerIndex = GameEngine::instance->GetPlayerIndex(player);
     GameEngine::instance->finishedPlayers[playerIndex] = true;
+	std::cout << "Neutral player " << player->GetName() << " does not issue any orders. Ending turn.\n";
     return;
 }
 // ----- Neutral -----

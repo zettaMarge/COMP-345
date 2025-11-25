@@ -25,6 +25,7 @@ void GameEngine::RunTournament(const TournamentParameters& params)
 
     std::cout << "Number of Games (G): " << params.games << "\n";
     std::cout << "Max Turns (D): " << params.maxTurns << "\n";
+    GameEngine::instance->maxTurns = params.maxTurns;
 
     std::cout << "=====================================\n";
     // Results matrix: rows = maps, columns = strategies
@@ -43,8 +44,8 @@ void GameEngine::RunTournament(const TournamentParameters& params)
         
             for (int g = 1; g <= params.games; ++g) {
                 std::cout << "  Game " << g << " of " << params.games << "... ";
+				instance->currentTurn = 1;
 				//game simulation starts
-				GameEngine::instance->maxTurns = params.maxTurns;
                 GameEngine::instance->gameMap = new Map();
                 auto loadMapCmd = std::make_shared<LoadMapCommand>(params.maps[m]);
                 loadMapCmd->Execute();
@@ -60,23 +61,23 @@ void GameEngine::RunTournament(const TournamentParameters& params)
                     //assign player to a strategy
 					Player* currentPlayer = GameEngine::instance->players.back();
                     if (params.strategies[p] == "aggressive") {
-                      //  currentPlayer->SetStrategy(new AggressivePlayerStrategy());
+                        currentPlayer->SetStrategy(new AggressivePlayerStrategy());
                     }
                     else if (params.strategies[p] == "benevolent") {
-                     //   currentPlayer->SetStrategy(new BenevolentPlayerStrategy());
+                        currentPlayer->SetStrategy(new BenevolentPlayerStrategy());
                     }
 
                     else if (params.strategies[p] == "cheater") {
                         currentPlayer->SetStrategy(new CheaterPlayerStrategy());
                     }
                     else if (params.strategies[p] == "neutral") {
-                       // currentPlayer->SetStrategy(new NeutralPlayerStrategy());
+                        currentPlayer->SetStrategy(new NeutralPlayerStrategy());
 					}
                     else if (params.strategies[p] == "human") {
                         currentPlayer->SetStrategy(new HumanPlayerStrategy());
 					}
                     else {
-                        std::cout << "Unknown strategy: ";
+                        std::cout << "Unknown strategy: "<< params.strategies[p]<<"assigning neutral instead ";
 					}
                     tournamentPlayerNames.push_back(currentPlayer->GetName());
 				}
@@ -763,13 +764,21 @@ int TestGameEngine() {
 //Main game loop that cycles through the three phases
 string GameEngine::mainGameLoop() {
     bool gameWon = false;
-    while (!gameWon && instance->currentTurn<=instance->maxTurns) {
+    while (!gameWon) {
         reinforcementPhase();
         issueOrdersPhase();
         executeOrdersPhase();
         checkPlayerElimination();
         gameWon = checkWinCondition();
+        std::cout << "----- End of Turn " << instance->currentTurn << " -----\n";
 		instance->currentTurn++;
+        if(instance->currentTurn > instance->maxTurns) {
+            std::cout << "===================Maximum number of turns reached. The game is a draw.===================\n";
+            break;
+		}
+        else {
+			std::cout << "===================Starting Turn " << instance->currentTurn << "===================\n";
+        }
     }
     string winner = GetWinner();
     PerformCleanUp();
@@ -789,12 +798,12 @@ void GameEngine::PerformCleanUp() {
         delete player;
     }
     GameEngine::instance->players.clear();
+	GameEngine::instance->finishedPlayers.clear();
     // Clean up map
     // Clean up deck
     GameEngine::instance->gameDeck = new Deck();
     // Reset turn counter
-    GameEngine::instance->currentTurn = 1;
-
+    instance->currentTurn = 1;
 }
 
 // Reinforcement phase - Players are given a number of army units that depends on the number of
@@ -919,7 +928,8 @@ string GameEngine::GetWinner() {
         return players[0]->GetName();
     }
     else {
-        return "draw";
+        GameEngine::instance->changeState(GameEngine::instance->winState.get());
+        return "Draw";
     }
     throw std::runtime_error("No winner yet");
 }

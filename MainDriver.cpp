@@ -8,7 +8,7 @@ void testOrderExecution();
 int main() {
 
 	//Assignement 2 tests
-	//TestCommandProcessing();
+	TestCommandProcessing();
 	//GameEngine* game = new GameEngine();
 	//GameEngine::instance = game;
 	//game->TestStartupPhase();
