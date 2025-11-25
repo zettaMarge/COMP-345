@@ -9,7 +9,139 @@
 #include "Orders.h"
 #include "PlayerStrategies.h"
 
+void GameEngine::RunTournament(const TournamentParameters& params)
+{
+    std::cout << "=== Running Tournament Mode ===\n";
+    std::cout << "Maps (" << params.maps.size() << "): ";
+    for (const auto& m : params.maps)
+        std::cout << m << " ";
+    std::cout << "\n";
 
+    std::cout << "Player Strategies (" << params.strategies.size() << "): ";
+    for (const auto& p : params.strategies)
+        std::cout << p << " ";
+    std::cout << "\n";
+    std::vector<std::string> tournamentPlayerNames;
+
+    std::cout << "Number of Games (G): " << params.games << "\n";
+    std::cout << "Max Turns (D): " << params.maxTurns << "\n";
+
+    std::cout << "=====================================\n";
+    // Results matrix: rows = maps, columns = strategies
+    // each cell stores list of results like ["A", "-", "W"]
+    std::vector<std::vector<std::vector<std::string>>> results;
+
+    results.resize(params.maps.size(),
+        std::vector<std::vector<std::string>>(
+            params.strategies.size()
+        )
+    );
+
+    for (int m = 0; m < params.maps.size(); ++m) {
+		std::cout << "\n--- Map " << (m + 1) << " of " << params.maps.size() << ": " << params.maps[m] << " ---\n";
+		GameEngine::instance->players.clear(); // Reset players for new map
+        
+            for (int g = 1; g <= params.games; ++g) {
+                std::cout << "  Game " << g << " of " << params.games << "... ";
+				//game simulation starts
+				GameEngine::instance->maxTurns = params.maxTurns;
+                GameEngine::instance->gameMap = new Map();
+                auto loadMapCmd = std::make_shared<LoadMapCommand>(params.maps[m]);
+                loadMapCmd->Execute();
+				auto validateMapCmd = std::make_shared<ValidateMapCommand>();
+				validateMapCmd->Execute();
+                for (Territory* t : GameEngine::instance->gameMap->territories) {
+					t->SetOwner(nullptr);
+                }
+                for(int p = 0; p < params.strategies.size(); ++p) {
+                    std::string playerName = "Player" + std::to_string(p + 1) + "_" + params.strategies[p];
+                    auto addPlayerCmd = std::make_shared<AddPlayerCommand>(playerName+ params.strategies[p]);
+                    addPlayerCmd->Execute();
+                    //assign player to a strategy
+					Player* currentPlayer = GameEngine::instance->players.back();
+                    if (params.strategies[p] == "aggressive") {
+                      //  currentPlayer->SetStrategy(new AggressivePlayerStrategy());
+                    }
+                    else if (params.strategies[p] == "benevolent") {
+                     //   currentPlayer->SetStrategy(new BenevolentPlayerStrategy());
+                    }
+
+                    else if (params.strategies[p] == "cheater") {
+                        currentPlayer->SetStrategy(new CheaterPlayerStrategy());
+                    }
+                    else if (params.strategies[p] == "neutral") {
+                       // currentPlayer->SetStrategy(new NeutralPlayerStrategy());
+					}
+                    else if (params.strategies[p] == "human") {
+                        currentPlayer->SetStrategy(new HumanPlayerStrategy());
+					}
+                    else {
+                        std::cout << "Unknown strategy: ";
+					}
+                    tournamentPlayerNames.push_back(currentPlayer->GetName());
+				}
+                auto gameStartCmd =  std::make_shared<GameStartCommand>(std::to_string(params.maxTurns));
+                std::string winner = gameStartCmd->Execute();
+				std::cout << "Winner: " << winner << "\n";
+                // Record results
+                for (int s = 0; s < params.strategies.size(); ++s) {
+                    std::string playerName = "Player" + std::to_string(s + 1) + "_" + params.strategies[s];
+                    if (winner == "Draw") {
+                        results[m][s].push_back("draw");
+                    }
+                    else if (winner == tournamentPlayerNames[s]) {
+                        results[m][s].push_back("W");
+                    }
+                    else {
+                        results[m][s].push_back("L");
+                    }
+                }
+				auto replayCmd = std::make_shared<ReplayCommand>();
+				replayCmd->Execute();
+				std::cout << "Done.\n";
+             }
+    }
+
+    std::cout << "\n=== TOURNAMENT RESULTS ===\n\n";
+
+    std::cout << "Map \\ Strategy";
+    std::cout << "\t";
+    for (const auto& strat : params.strategies)
+        std::cout << "\t" << strat;
+    std::cout << "\"\n";
+
+    for (int m = 0; m < params.maps.size(); ++m) {
+        std::cout << params.maps[m];
+
+        for (int s = 0; s < params.strategies.size(); ++s) {
+
+            std::cout << "\t";
+
+            for (const auto& r : results[m][s])
+                std::cout << r;   
+        }
+
+        std::cout << "\n";
+    }
+
+    std::cout << "\n=== Tournament Complete ===\n";
+
+}
+/*  
+ tournament -M "_64_ BIG BLUE.map" "_11_ Against All Odds.map" -P benevolent aggressive neutral -G 2 -D 10
+ */
+std::string TournamentCommand::Execute() {
+    this->effect = "Tournament command under construction.";
+    GameEngine::instance->RunTournament(
+        TournamentParameters{
+            this->mapFiles,
+            this->playerStrategies,
+            this->numberOfGames,
+            this->maxTurns
+        }
+	);
+    return this->effect;
+};
 
 std::string LoadMapCommand::Execute() {
     if (GameEngine::instance->currentState->name != GameEngine::instance->mapLoadedState.get()->name &&
@@ -19,6 +151,7 @@ std::string LoadMapCommand::Execute() {
         std::cout << this->effect << "\n";
         return this->effect;
     }
+
 
     std::filesystem::path mapPath;
 
@@ -176,17 +309,13 @@ std::string GameStartCommand::Execute() {
     this->effect = "Game started successfully";
     std::cout << this->effect << "\n";
 
-    
-    GameEngine::instance->changeState(GameEngine::instance->winState.get());
-
-    return this->effect;
-
-    // Shuffle players
+  //   Shuffle players
     std::random_device rd;
     std::mt19937 g(rd());
     std::shuffle(GameEngine::instance->players.begin(), GameEngine::instance->players.end(), g);
 
-    // Distribute territories round-robin
+   //  Distribute territories round-robin
+	std::cout << "Distributing territories to players...\n";
     std::vector<Territory*> territories = GameEngine::instance->gameMap->territories;
     int numPlayers = GameEngine::instance->players.size();
     for (int i = 0; i < territories.size(); i++) {
@@ -194,19 +323,24 @@ std::string GameStartCommand::Execute() {
         Territory* currentTerritory = territories[i];
         currentPlayer->AddTerritory(currentTerritory);
     }
-
+	std::cout << "Territories distributed successfully.\n";
     //50 initial army units to players
     for (int i = 0; i < GameEngine::instance->players.size(); i++) {
         Player* player = GameEngine::instance->players[i];
         player->AddReinforcements(50);
     }
-
-    //each player draws 2 initial cards from the deck
+	std::cout << "Assigned 50 initial reinforcements to each player.\n";
+    ////each player draws 2 initial cards from the deck
     for (int i = 0; i < GameEngine::instance->players.size(); i++) {
+		std::cout << "giving two cards to player: " << GameEngine::instance->players[i]->GetName() << "\n";
         Player* player = GameEngine::instance->players[i];
+		player->SetPlayerHand(new Hand(*(GameEngine::instance->gameDeck)));
         player->GetPlayerHand()->AddCard();
         player->GetPlayerHand()->AddCard();
     }
+   // GameEngine::instance->changeState(GameEngine::instance->winState.get());
+    return GameEngine::instance->mainGameLoop();
+
 };
 
 std::string ReplayCommand::Execute() {
@@ -358,6 +492,7 @@ GameEngine::GameEngine() {
 	gameMap = nullptr;
 	neutralPlayer = new Player();
     neutralPlayer->SetName("NEUTRAL");
+	gameDeck = new Deck();
     // Create all states
 	//unique pointers to manage state lifetimes that way I dont have do worry about memory leaks
     mainMenuState = std::make_unique<MainMenuState>();
@@ -371,6 +506,10 @@ GameEngine::GameEngine() {
 
     // Hook commands with automatic transitions
 	//I feel like there's probably a more elegant way to do this but whatever
+    
+    mainMenuState->availableCommands.emplace_back(
+		std::make_unique<TournamentCommand>("tournament", nullptr));
+
     mainMenuState->availableCommands.emplace_back(
         std::make_unique<LoadMapCommand>("", mapLoadedState.get()));
 
@@ -622,15 +761,40 @@ int TestGameEngine() {
 // Part 3: Game play: main game loop
 
 //Main game loop that cycles through the three phases
-void GameEngine::mainGameLoop() {
+string GameEngine::mainGameLoop() {
     bool gameWon = false;
-    while (!gameWon) {
+    while (!gameWon && instance->currentTurn<=instance->maxTurns) {
         reinforcementPhase();
         issueOrdersPhase();
         executeOrdersPhase();
         checkPlayerElimination();
         gameWon = checkWinCondition();
+		instance->currentTurn++;
     }
+    string winner = GetWinner();
+    PerformCleanUp();
+    return winner;
+}
+
+void GameEngine::PerformCleanUp() {
+    // Clean up players
+    for (Player* player : GameEngine::instance->players) {
+        for (Territory* t : player->GetPlayerTerritories()) {
+			t->ForceRemoveOwner();
+        }
+        player->SetPlayerTerritories(std::vector<Territory*>{});
+    }
+
+    for (Player* player : players) {
+        delete player;
+    }
+    GameEngine::instance->players.clear();
+    // Clean up map
+    // Clean up deck
+    GameEngine::instance->gameDeck = new Deck();
+    // Reset turn counter
+    GameEngine::instance->currentTurn = 1;
+
 }
 
 // Reinforcement phase - Players are given a number of army units that depends on the number of
@@ -670,13 +834,19 @@ void GameEngine::reinforcementPhase() {
 void GameEngine::issueOrdersPhase() {
     std::cout << "Issue Orders Phase started.\n";
     int isFinished = 0;
+    try{
+        finishedPlayers.resize(players.size(), false);
+    }
+    catch (const std::bad_alloc& e) {
+        std::cerr << "Memory allocation failed for finishedPlayers: " << e.what() << std::endl;
+        return;
+	}
 
     while (isFinished < players.size()) {
         for (int i = 0; i < players.size(); i++) {
             if (finishedPlayers[i]) {
                 continue; // Skip players who have finished issuing orders
             }
-
             Player* player = players[i]; // players vector needs to be defined somewhere in GameEngine
             std::cout << "Player " << player->GetName() << "'s turn to issue an order.\n";
             player->IssueOrder();
@@ -738,9 +908,20 @@ void GameEngine::executeOrdersPhase() {
 bool GameEngine::checkWinCondition() {
     if (players.size() == 1) {
         std::cout << "Player " << players[0]->GetName() << " has won the game!\n";
+		GameEngine::instance->changeState(GameEngine::instance->winState.get());
         return true;
     }
     return false;
+}
+
+string GameEngine::GetWinner() {
+    if (players.size() == 1) {
+        return players[0]->GetName();
+    }
+    else {
+        return "draw";
+    }
+    throw std::runtime_error("No winner yet");
 }
 
 // Check for player elimination - returns the number of players eliminated in the current turn
@@ -765,12 +946,18 @@ void GameEngine::checkPlayerElimination() {
             i--; // Adjust index after removal
         }
     }
-
+	std::cout << eliminatedPlayers.size() << " players eliminated this turn.\n";
     // Remove eliminated players from the game
     for (Player* eliminatedPlayer : eliminatedPlayers) {
+        for (Territory* t : eliminatedPlayer->GetPlayerTerritories()) {
+            t->SetOwner(nullptr);
+        }
+        eliminatedPlayer->SetPlayerTerritories(std::vector<Territory*>{});
         players.erase(std::remove(players.begin(), players.end(), eliminatedPlayer), players.end());
-        delete eliminatedPlayer; // Assuming ownership of Player pointers
+       // delete eliminatedPlayer; // Assuming ownership of Player pointers
     }
+
+//	std::cout << eliminatedPlayers.size() << " players eliminated this turn.\n";
 }
 
 //-----------------------------------------------------
@@ -874,7 +1061,7 @@ void GameEngine::GameStart() {
 
 
     //swicthe game to play phase
-    mainGameLoop();
+  //  mainGameLoop();
 }
 
 void GameEngine::InitFinishedPlayers() {

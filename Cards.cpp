@@ -195,7 +195,8 @@ void DiplomacyCard::Play() {
 //----------------------------------------------------------------
 // Card class implementation
 // Constructor creates a CardTypes object based on the type passed through the enum
-Card::Card(int type){
+Card::Card(int type) : type(static_cast<typeNames>(type)),
+cardType(nullptr) {
     if (type < 0 || type > 4) throw std::invalid_argument("Invalid card type");
     this->type = static_cast<typeNames>(type);
 
@@ -243,8 +244,13 @@ bool Card::isCardAggressive() {
 }
 
 // Copy constructor for Card
-Card::Card(const Card& other) {
+Card::Card(const Card& other) : type(other.type), cardType(nullptr) {
     type = other.type;
+
+    if (other.cardType == nullptr) {
+        cardType = nullptr;
+        return;
+    }
     // Deep copy of CardTypes object based on the type
     switch (type) {
         case bomb:
@@ -383,12 +389,10 @@ Hand::~Hand() {
 
 // Function to add a card to the hand by drawing from the deck
 void Hand::AddCard() {
-    std::cout << "Before the draw:" << std::endl;
-    Print();
-
+    //std::cout << "Before the draw:" << std::endl;
+  //  Print();    
     hand.push_back(deck.Draw());
-
-    std::cout << "After the draw:" << std::endl;
+   // std::cout << "After the draw:" << std::endl;
     Print();
 }
 

@@ -55,6 +55,13 @@ struct CommandLog {
     std::string effect;
 };
 
+struct TournamentParameters {
+    std::vector<std::string> maps;        
+    std::vector<std::string> strategies;  
+    int games;                            
+    int maxTurns;                         
+};
+
 // command processor class
 // processes user input into commands, maintains command history
 class CommandProcessor: public Subject, public ILoggable {
@@ -66,6 +73,8 @@ public:
 
 	// processes user input string into command and executes it
     void processInput(const std::string& userInput);
+
+    TournamentParameters CommandProcessor::ParseTournamentCommand(const std::string& input);
 
 	//saves command name to history
     void SaveCommand(const std::string& cmdName) {

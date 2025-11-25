@@ -43,6 +43,7 @@ class Territory{
         // Setters and Getters
         void SetOwner(Player* _owner);
         Player* GetOwner();
+		void ForceRemoveOwner();
         Continent* GetContinentByTerritory() const;
         const std::vector<Territory*>& AdjacentTerritories() const;
         const std::string& GetName() const;
