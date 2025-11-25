@@ -24,7 +24,6 @@ class PlayerStrategies {
                 DeployEnum = 3,
                 NegotiateEnum = 4
             };
-
         ~PlayerStrategies(); // Destructor
         virtual std::vector<Territory*> ToAttack() const = 0; //returns list of territories to attack
         virtual std::vector<Territory*> ToDefend() const = 0; //returns list of territories to defend
@@ -47,13 +46,16 @@ class AggressivePlayerStrategy : public PlayerStrategies {
         std::vector<Territory*> ToAttack() const;
         std::vector<Territory*> ToDefend() const;
         void IssueOrder();
-};
+        Territory* findStrongestTerritory(const std::vector<Territory*>& territories) const;};
 
 class BenevolentPlayerStrategy : public PlayerStrategies {
     public:
         std::vector<Territory*> ToAttack() const;
         std::vector<Territory*> ToDefend() const;
         void IssueOrder();
+    private:
+        Territory* findWeakestTerritory(const std::vector<Territory*>& territories) const;
+        Territory* findStrongestTerritory(const std::vector<Territory*>& territories) const;
 };
 
 class NeutralPlayerStrategy : public PlayerStrategies {
