@@ -97,7 +97,7 @@ public:
     Card(int type);
 
     int GetType();
-
+    bool isCardAggressive();
     void Play() const;
     void Print() const;
 private:

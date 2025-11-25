@@ -1119,9 +1119,43 @@ void GameEngine::StartupPhase() {
     }
     for (int i = 0; i < numPlayers; i++) {
         std::string playerName;
+        std::string isNPC = "";
         std::cout << "Please input the name of player " + std::to_string(i + 1) + ": \n";
         std::cin >> playerName;
-        AddPlayers(playerName);
+        std::cout << "Are they an NPC? y/yes for yes, anything else for no" + std::to_string(i + 1) + ": \n";
+        std::cin >> isNPC;
+        if (isNPC == "y" || isNPC == "Y" || isNPC == "yes" || isNPC == "YES") {
+            playerName = "NPC_" + playerName;
+            AddPlayers(playerName);
+            Player* npcPlayer = FindPlayerByName(playerName);
+            int stategyChoice = -1;
+            std::cout << "What kind of stategy would you like for them? \n1 for Aggressive\n2 for Benevolent\n3 for Nuetral\n4 for Cheater\nDefault is Nuetral " + std::to_string(i + 1) + ": \n";
+            std::cin >> stategyChoice;
+            switch (stategyChoice) {
+            case 1:
+                npcPlayer->SetStrategy(new AggressivePlayerStrategy());
+                break;
+            case 2: 
+                npcPlayer->SetStrategy(new BenevolentPlayerStrategy());
+                break;
+            case 3:
+                npcPlayer->SetStrategy(new NeutralPlayerStrategy());
+                break;
+            case 4:
+                npcPlayer->SetStrategy(new CheaterPlayerStrategy());
+                break;
+            default:
+                npcPlayer->SetStrategy(new NeutralPlayerStrategy());
+                break;
+            }
+            
+        } else{
+            AddPlayers(playerName);
+            Player* npcPlayer = FindPlayerByName(playerName);
+            npcPlayer->SetStrategy(new HumanPlayerStrategy());
+
+        }
+
     }
 
     InitFinishedPlayers();

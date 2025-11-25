@@ -239,6 +239,10 @@ int Card::GetType(){
     return type;
 }
 
+bool Card::isCardAggressive() {
+    return (type == bomb || type == airlift || type == blockade);
+}
+
 // Copy constructor for Card
 Card::Card(const Card& other) : type(other.type), cardType(nullptr) {
     type = other.type;
