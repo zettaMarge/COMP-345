@@ -419,10 +419,6 @@ void BenevolentPlayerStrategy::IssueOrder() {
         return;
     }
 
-	//kalle added this-----------***********
-    GameEngine::instance->finishedPlayers[PlayerIndex] = true;
-	//---------------------------*****************
-
     for (OrderNames order : orders) {
         switch (order) {
         case DeployEnum:{
@@ -518,6 +514,7 @@ void BenevolentPlayerStrategy::IssueOrder() {
         }
         }
     }
+    GameEngine::instance->finishedPlayers[PlayerIndex] = true;
 }
 
 Territory* BenevolentPlayerStrategy::findWeakestTerritory(const std::vector<Territory*>& territories) const {
