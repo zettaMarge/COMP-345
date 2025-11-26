@@ -563,6 +563,7 @@ void GameEngine::ExecuteCommand(const std::shared_ptr<ICommand>& cmd) {
             std::cout << " - " << cmd->name << "\n";
         }
     }
+    return;
 }
 
 //validate command
