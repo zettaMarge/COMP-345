@@ -581,9 +581,16 @@ void GameEngine::changeState(IState* next) {
         std::cout << "Error: Cannot change to null state.\n";
         return;
     }
-    currentState->OnExit();
+     if (currentState) {
+        currentState->OnExit();
+    }
+    // Change state
     currentState = next;
-    currentState->OnEnter();
+    // Call OnEnter of the new state
+    if (currentState) {
+        currentState->OnEnter();
+    }
+    
     Notify(this);
 }
 
