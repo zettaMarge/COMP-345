@@ -320,25 +320,32 @@ void AggressivePlayerStrategy::IssueOrder() {
         GameEngine::instance->finishedPlayers[playerIndex] = true;
         return;
     }
+    int reinforcements = player->GetReinforcements();
+    int deployUnits = reinforcements /2;
+    int advanceUnits = reinforcements - deployUnits;
     if (!(player->GetPlayerTerritories().empty())) {
-        Deploy* d = new Deploy(player, player->GetReinforcements(), strong);
+        Deploy* d = new Deploy(player, deployUnits, strong);
         player->AddOrderToList(d);
+        strong ->SetUnits(strong->GetUnits() + deployUnits);
         player->SetReinforcements(0);
+        std::cout << "Deployed " << d->GetNbUnits() << " units to " << strong->GetName() << ".\n";
     }
 
     int strongAvailable = strong->GetUnits() - 1; //units available to advance with
-    if (strongAvailable <= 0) {
+    std::cout << "Units available to advance from " << strong->GetName() << ": " << strongAvailable << "\n";
+    if (strongAvailable > 0) {
         for (Territory* enemy : strong->AdjacentTerritories()) {
             if (!enemy || enemy->GetOwner() == player) {
                 continue;
             }
-            int unitsToSend = strong->GetUnits() - 1;
-            if (unitsToSend <= 0) {
+            
+            if (advanceUnits <= 0) {
                 break;
             }
-            Advance* a = new Advance(player, unitsToSend, strong, enemy);
+            Advance* a = new Advance(player, advanceUnits, strong, enemy);
             player->AddOrderToList(a);
-            std::cout << "Advancing " << unitsToSend << " units from " << strong->GetName() << " to " << enemy->GetName() << ".\n";
+            std::cout << "Advancing " << advanceUnits << " units from " << strong->GetName() << " to " << enemy->GetName() << ".\n";
+            break;
             
         }
         }
@@ -357,6 +364,7 @@ void AggressivePlayerStrategy::IssueOrder() {
         }
     }
     }
+    std::cout << player->GetName() << " has finished issuing orders for this turn.\n";
     int playerIndex = GameEngine::instance->GetPlayerIndex(player);
     if (playerIndex >= 0 && playerIndex < GameEngine::instance->finishedPlayers.size()) {
         GameEngine::instance->finishedPlayers[playerIndex] = true;
