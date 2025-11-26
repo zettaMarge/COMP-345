@@ -352,6 +352,8 @@ void AggressivePlayerStrategy::IssueOrder() {
         int playerIndex = GameEngine::instance->GetPlayerIndex(player);
         GameEngine::instance->finishedPlayers[playerIndex] = true;
     }
+    int playerIndex = GameEngine::instance->GetPlayerIndex(player);
+    GameEngine::instance->finishedPlayers[playerIndex] = true;
 }
 
 Territory* AggressivePlayerStrategy::findStrongestTerritory(const std::vector<Territory*>& territories) const{
