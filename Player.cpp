@@ -30,6 +30,7 @@ Player::Player() {
     playerTerritories = vector<Territory*>();
     playerHand = nullptr;
     playersOrders = new OrdersList();
+    reinforcements = 0;
     conqueredThisTurn = false;
     negotiators = vector<Player*>();
 }
@@ -45,6 +46,7 @@ Player::Player(std::string& name, vector<Territory*> playerTerritories, Hand &pl
     this->playerHand = new Hand(playerHand);
     this->playersOrders = new OrdersList(playerOrders);
     this->conqueredThisTurn = false;
+    this->reinforcements = 0;
     this->negotiators = vector<Player*>();
     for (Player* p : negotiators) {
         this->AddNegotiator(p);
@@ -334,6 +336,9 @@ PlayerStrategies* Player::GetStrategy() {
 }
 
 string Player::GetStrategyName() {
+    if (playerStrategy == nullptr) {
+        return "No Strategy Assigned";
+    }
     if (dynamic_cast<HumanPlayerStrategy*>(playerStrategy)) {
         return "Human";
     }

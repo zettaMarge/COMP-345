@@ -331,6 +331,8 @@ void AggressivePlayerStrategy::IssueOrder() {
         return;
     }
 
+
+    
     int reinforcements = player->GetReinforcements();
     int deployUnits = reinforcements /2;
     int advanceUnits = reinforcements - deployUnits;
