@@ -1,11 +1,11 @@
 //-----------------------------------------------------
-//Marjorie Dudemaine 40287779, OTHER NAMES HERE
+//Marjorie Dudemaine 40287779
 //COMP-345-D 2252 Assignment 3 PlayerStrategies.h
 //Dr. Hamed Jafarpour
-//Submitted: TBD
+//Submitted: November 26, 2025 
 //Due: November 26, 2025 
 //We certify that this submission is our original work and meets the Faculty’s Expectations of Originality 
-//Marjorie Dudemaine, OTHER NAMES HERE
+//Marjorie Dudemaine
 //-----------------------------------------------------
 
 #pragma once

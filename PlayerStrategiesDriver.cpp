@@ -3,7 +3,7 @@
 //Mia Letendre 40274681
 //COMP-345-D 2252 Assignment 3 PlayerStategies.cpp
 //Dr. Hamed Jafarpour
-//Submitted: TBD
+//Submitted: November 26, 2025 
 //Due: November 26, 2025 
 //I certify that this submission is my original work and meets the Faculty’s Expectations of Originality 
 //Mia Letendre
