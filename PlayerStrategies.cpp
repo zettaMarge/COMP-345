@@ -16,6 +16,10 @@ PlayerStrategies::~PlayerStrategies() {
 
 
 // ----- Human -----
+PlayerStrategies* HumanPlayerStrategy::clone() const {
+    return new HumanPlayerStrategy(*this); // uses copy constructor
+}
+
 std::vector<Territory*> HumanPlayerStrategy::ToAttack() const {
     std::vector<Territory*> toAttackList;
 
@@ -293,6 +297,10 @@ void HumanPlayerStrategy::IssueOrder() {
 //-----------------------------------------------------
 
 // ----- Aggressive -----
+PlayerStrategies* AggressivePlayerStrategy::clone() const {
+    return new AggressivePlayerStrategy(*this); // uses copy constructor
+}
+
 std::vector<Territory*> AggressivePlayerStrategy::ToAttack() const {
     std::vector<Territory*> toAttackList;
     Territory* strongest = findStrongestTerritory(player->GetPlayerTerritories());
@@ -410,6 +418,10 @@ Territory* AggressivePlayerStrategy::findStrongestTerritory(const std::vector<Te
 //I certify that this submission is my original work and meets the Faculty’s Expectations of Originality 
 //Alexandre Godfroy
 //-----------------------------------------------------
+
+PlayerStrategies* BenevolentPlayerStrategy::clone() const {
+    return new BenevolentPlayerStrategy(*this); // uses copy constructor
+}
 
 std::vector<Territory*> BenevolentPlayerStrategy::ToAttack() const {
     std::vector<Territory*> toAttackList;
@@ -586,6 +598,11 @@ Territory* BenevolentPlayerStrategy::findStrongestTerritory(const std::vector<Te
 //-----------------------------------------------------
 
 // ----- Neutral -----
+
+PlayerStrategies* NeutralPlayerStrategy::clone() const {
+    return new NeutralPlayerStrategy(*this); // uses copy constructor
+}
+
 std::vector<Territory*> NeutralPlayerStrategy::ToAttack() const {
     std::vector<Territory*> toAttackList;
     return toAttackList;
@@ -610,6 +627,10 @@ void NeutralPlayerStrategy::IssueOrder() {
 // ----- Cheater -----
 
 // Gets all adjacent territories that are not owned by the cheater player.
+PlayerStrategies* CheaterPlayerStrategy::clone() const {
+    return new CheaterPlayerStrategy(*this); // uses copy constructor
+}
+
 std::vector<Territory*> CheaterPlayerStrategy::ToAttack() const {
     std::vector<Territory*> adjacentEnemies;
     for (Territory* territory : player->GetPlayerTerritories()) {
