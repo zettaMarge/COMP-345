@@ -30,6 +30,9 @@ void testPlayerStrategies() {
     Territory* t5 = new Territory("Night City", cont);
     Territory* t6 = new Territory("Mexico", cont);
     Territory* t7 = new Territory("Baldurs Gate 3", cont);
+    Territory* t8 = new Territory("Humanland", cont);
+    t8->SetUnits(5);
+
     //Setting adjacency
     testMap->AddAdjacency(t1, t5);
     testMap->AddAdjacency(t5, t4);
@@ -39,8 +42,8 @@ void testPlayerStrategies() {
     testMap->AddAdjacency(t2, t3);
     testMap->AddAdjacency(t1, t6);
     testMap->AddAdjacency(t3, t1);
+    testMap->AddAdjacency(t3, t8);
 
-   
 
     //Creating players, stategies, and giving them territories
     //P1 is semi center of map which is good for aggressive testing
@@ -54,10 +57,12 @@ void testPlayerStrategies() {
     p2->SetStrategy(new BenevolentPlayerStrategy());
     p2->AddTerritory(t2);
     p2->AddTerritory(t4);
+
     Player* p3 = new Player();
     p3->SetName("Mac");
     p3->SetStrategy(new NeutralPlayerStrategy());
     p3->AddTerritory(t3);
+
     Player* p4 = new Player();
     p4->SetName("Dennis");
     //might change to run the code after runniong other tests
@@ -65,8 +70,11 @@ void testPlayerStrategies() {
     p4->AddTerritory(t6);
     p4->AddTerritory(t7);
     p4->SetStrategy(new CheaterPlayerStrategy());
-    
 
+    Player* p5 = new Player();
+    p5->SetName("Human");
+    p5->AddTerritory(t8);
+    p5->SetStrategy(new HumanPlayerStrategy());
     
 
     //showing different players stateges work
@@ -82,19 +90,21 @@ void testPlayerStrategies() {
     cout << "Issuing Orders: ";
     p1->IssueOrder();
 
+
     cout << "Benevolent Strategy" << endl;
     cout << "Attacking list for " + p2->GetName() + ": ";
     for (auto t : p2->ToAttack()) {
         cout << t->GetName() << " ";
     }
-    cout << "Defensing List for " + p2->GetName() + ": ";
+    cout << "Defending List for " + p2->GetName() + ": ";
     for (auto t : p2->ToDefend()) {
         cout << t->GetName() << " ";
     }
     cout << "Issuing Orders: ";
     p2->IssueOrder();
 
-     cout << "Nuetral Strategy Player" << endl;
+
+     cout << "Neutral Strategy Player" << endl;
     cout << "Attacking List for " + p3->GetName() + ": ";
     for (auto t : p3->ToAttack()) {
         cout << t->GetName() << " ";
@@ -106,6 +116,7 @@ void testPlayerStrategies() {
     cout << "Issuing Orders: ";
     p3->IssueOrder();
 
+
     cout << "Cheater Strategy:" << endl;
     cout << "Attacking List for " + p4->GetName() + ": ";
     for (auto t : p4->ToAttack()) {
@@ -116,8 +127,28 @@ void testPlayerStrategies() {
     cout << "Issuing Orders for " + p4->GetName() + ": ";
     p4->IssueOrder();
 
+
+    cout << "Human Strategy:" << endl;
+    cout << "Attacking List for " + p5->GetName() + ": ";
+    for (auto t : p5->ToAttack()) {
+        cout << t->GetName() << " ";
+    }
+    cout << "Defending List for " + p5->GetName() + ": ";
+    for (auto t : p5->ToDefend()) cout << t->GetName() << " ";
+    cout << "Issuing Orders for " + p5->GetName() + ": ";
+    p5->IssueOrder(); //To be sure to test the strategy change, need to input an Advance order towards "David Lynch's Mind"
+    //Executing human order to show the Neutral strategy change to Aggressive (if the order was issued correctly)
+    OrdersList* ordersList = p5->GetPlayerOrders();
+    if (!ordersList->IsEmpty()) {
+        Order* order = ordersList->GetNextOrder();
+        if (order) {
+            order->Execute();
+        }
+    }
+
+    cout << "Initially Neutral player's current strategy: " + p3->GetStrategyName() << endl;
+
     cout << "Player Strategies test completed." << endl;
     //mempory cleanup omitted because its just a temporary test
-
 }
 

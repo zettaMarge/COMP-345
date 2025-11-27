@@ -1146,7 +1146,7 @@ void GameEngine::StartupPhase() {
             AddPlayers(playerName);
             Player* npcPlayer = FindPlayerByName(playerName);
             int stategyChoice = -1;
-            std::cout << "What kind of stategy would you like for them? \n1 for Aggressive\n2 for Benevolent\n3 for Nuetral\n4 for Cheater\nDefault is Nuetral " + std::to_string(i + 1) + ": \n";
+            std::cout << "What kind of stategy would you like for them? \n1 for Aggressive\n2 for Benevolent\n3 for Neutral\n4 for Cheater\nDefault is Neutral " + std::to_string(i + 1) + ": \n";
             std::cin >> stategyChoice;
             switch (stategyChoice) {
             case 1:
