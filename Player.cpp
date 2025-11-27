@@ -184,10 +184,26 @@ void Player::ResetNegotiationsAndConquer() {
 // Clear existing territories and shallow copies, because otherwise there would be two owners of the same territory
 Player::Player(const Player& p) {
     name = p.name;
-    playerTerritories = p.playerTerritories;
-    playerHand = new Hand(*(p.playerHand));
-    playersOrders = new OrdersList(*(p.playersOrders));
-    conqueredThisTurn = p.conqueredThisTurn;
+    if (p.playerHand)
+        playerHand = new Hand(*p.playerHand);
+    else
+        playerHand = nullptr;
+
+    // Deep copy of orders list
+    if (p.playersOrders)
+        playersOrders = new OrdersList(*p.playersOrders);
+    else
+        playersOrders = nullptr;
+
+    // Deep copy of strategy using virtual clone()
+    if (p.playerStrategy)
+        playerStrategy = p.playerStrategy->clone();
+    else
+        playerStrategy = nullptr;
+
+    // Ensure cloned strategy points to THIS player (not original)
+    if (playerStrategy)
+        playerStrategy->SetPlayer(this);
 }
 
 // Assignment operator
@@ -336,7 +352,10 @@ PlayerStrategies* Player::GetStrategy() {
 }
 
 string Player::GetStrategyName() {
-    if (playerStrategy == nullptr) {
+    if (!this || this == nullptr) {
+        return "Invalid Player";
+    }
+    if (!playerStrategy || playerStrategy == nullptr) {
         return "No Strategy Assigned";
     }
     if (dynamic_cast<HumanPlayerStrategy*>(playerStrategy)) {
