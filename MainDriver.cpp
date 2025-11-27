@@ -1,14 +1,14 @@
 #include "GameEngine.h"
 #include "CommandProcessing.h"
 
+void testPlayerStrategies();
 void TestCommandProcessing();
-void TestLoggingObserver();
-void testOrderExecution();
 
 int main() {
+	testPlayerStrategies();
+	TestCommandProcessing();
 
 	//Assignement 2 tests
-	TestCommandProcessing();
 	//GameEngine* game = new GameEngine();
 	//GameEngine::instance = game;
 	//game->TestStartupPhase();

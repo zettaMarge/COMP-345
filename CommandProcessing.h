@@ -74,7 +74,7 @@ public:
 	// processes user input string into command and executes it
     void processInput(const std::string& userInput);
 
-    TournamentParameters CommandProcessor::ParseTournamentCommand(const std::string& input);
+    TournamentParameters ParseTournamentCommand(const std::string& input);
 
 	//saves command name to history
     void SaveCommand(const std::string& cmdName) {

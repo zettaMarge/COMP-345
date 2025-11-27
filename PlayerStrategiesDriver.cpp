@@ -83,10 +83,12 @@ void testPlayerStrategies() {
     for (auto t : p1->ToAttack()) {
         cout << t->GetName() << " ";
     }
+    cout << endl;
     cout << "Defending list for " + p1->GetName() + ": ";
     for (auto t : p1->ToDefend()){
          cout << t->GetName() << " ";
     }
+    cout << endl;
     cout << "Issuing Orders: ";
     p1->IssueOrder();
 
@@ -96,10 +98,12 @@ void testPlayerStrategies() {
     for (auto t : p2->ToAttack()) {
         cout << t->GetName() << " ";
     }
+    cout << endl;
     cout << "Defending List for " + p2->GetName() + ": ";
     for (auto t : p2->ToDefend()) {
         cout << t->GetName() << " ";
     }
+    cout << endl;
     cout << "Issuing Orders: ";
     p2->IssueOrder();
 
@@ -109,10 +113,12 @@ void testPlayerStrategies() {
     for (auto t : p3->ToAttack()) {
         cout << t->GetName() << " ";
     }
+    cout << endl;
     cout << "Defending List for " + p3->GetName() + ": ";
     for (auto t : p3->ToDefend()){
          cout << t->GetName() << " ";
     }
+    cout << endl;
     cout << "Issuing Orders: ";
     p3->IssueOrder();
 
@@ -122,8 +128,12 @@ void testPlayerStrategies() {
     for (auto t : p4->ToAttack()) {
         cout << t->GetName() << " ";
     }
+    cout << endl;
     cout << "Defending List for " + p4->GetName() + ": ";
-    for (auto t : p4->ToDefend()) cout << t->GetName() << " ";
+    for (auto t : p4->ToDefend()) {
+        cout << t->GetName() << " ";
+    }
+    cout << endl;
     cout << "Issuing Orders for " + p4->GetName() + ": ";
     p4->IssueOrder();
 
@@ -133,8 +143,12 @@ void testPlayerStrategies() {
     for (auto t : p5->ToAttack()) {
         cout << t->GetName() << " ";
     }
+    cout << endl;
     cout << "Defending List for " + p5->GetName() + ": ";
-    for (auto t : p5->ToDefend()) cout << t->GetName() << " ";
+    for (auto t : p5->ToDefend()) {
+        cout << t->GetName() << " ";
+    }
+    cout << endl;
     cout << "Issuing Orders for " + p5->GetName() + ": ";
     p5->IssueOrder(); //To be sure to test the strategy change, need to input an Advance order towards "David Lynch's Mind"
     //Executing human order to show the Neutral strategy change to Aggressive (if the order was issued correctly)
