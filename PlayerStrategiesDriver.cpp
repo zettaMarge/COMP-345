@@ -24,26 +24,17 @@ void testPlayerStrategies() {
     GameEngine* gameEngine = new GameEngine();
     //Buncha territories for testing
     Map* testMap = new Map();
-    Continent* cont = new Continent("Cont", 5);
-    Territory* t1 = new Territory("Arlington", cont);
-    Territory* t2 = new Territory("Fortnite", cont);
-    Territory* t3 = new Territory("DavidLynchsMind", cont);
-    Territory* t4 = new Territory("TwinPeaksTheReturn", cont);
-    Territory* t5 = new Territory("NightCity", cont);
-    Territory* t6 = new Territory("Mexico", cont);
-    Territory* t7 = new Territory("BaldursGate3", cont);
-    Territory* t8 = new Territory("Humanland", cont);
+    Continent* cont = testMap->AddContinent("Cont", 5);
+    Territory* t1 = testMap->AddTerritory("Arlington", cont);
+    Territory* t2 = testMap->AddTerritory("Fortnite", cont);
+    Territory* t3 = testMap->AddTerritory("DavidLynchsMind", cont);
+    Territory* t4 = testMap->AddTerritory("TwinPeaksTheReturn", cont);
+    Territory* t5 = testMap->AddTerritory("NightCity", cont);
+    Territory* t6 = testMap->AddTerritory("Mexico", cont);
+    Territory* t7 = testMap->AddTerritory("BaldursGate3", cont);
+    Territory* t8 = testMap->AddTerritory("Humanland", cont);
 
     //Setting adjacency
-    testMap->AddContinent(cont->GetName(), cont->GetPoints());
-    testMap->AddTerritory(t1->GetName(), cont);
-    testMap->AddTerritory(t2->GetName(), cont);
-    testMap->AddTerritory(t3->GetName(), cont);
-    testMap->AddTerritory(t4->GetName(), cont);
-    testMap->AddTerritory(t5->GetName(), cont);
-    testMap->AddTerritory(t6->GetName(), cont);
-    testMap->AddTerritory(t7->GetName(), cont);
-    testMap->AddTerritory(t8->GetName(), cont);
     testMap->AddAdjacency(t1, t5);
     testMap->AddAdjacency(t5, t4);
     testMap->AddAdjacency(t5, t6);
@@ -55,7 +46,7 @@ void testPlayerStrategies() {
     testMap->AddAdjacency(t3, t8);
     gameEngine->gameMap = testMap;
 
-    for (auto t : cont->GetTerritories()) {
+    for (auto t : testMap->territories) {
         t->SetUnits(5);
     }
    
