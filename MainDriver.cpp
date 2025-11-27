@@ -1,12 +1,13 @@
 #include "GameEngine.h"
 #include "CommandProcessing.h"
+#include "PlayerStrategies.h"
 
 void testPlayerStrategies();
 void TestCommandProcessing();
 
 int main() {
 	testPlayerStrategies();
-	TestCommandProcessing();
+	//TestCommandProcessing();
 
 	//Assignement 2 tests
 	//GameEngine* game = new GameEngine();

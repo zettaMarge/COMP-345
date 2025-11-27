@@ -326,8 +326,10 @@ void SimulateBattle(Player* attackingPlayer, int attackingUnits, int defendingUn
 // Move a certain number of army units from one of the current player’s territories to
 // another territory that is adjacent to the source territory
 void Advance::Execute() {
-    if(target->GetOwner()->GetStrategyName() == "Neutral"){
+    std::cout << "Executing" << std::endl;
+    if(target->GetOwner()->GetStrategyName() == "Neutral") {
         std::cout << "Neutral player being attacked, switching to Aggressive strategy." << std::endl;
+        std::cout << "Change strat" << std::endl;
         target->GetOwner()->SetStrategy(new AggressivePlayerStrategy());
     }
     if (Validate()) {
