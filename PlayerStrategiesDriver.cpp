@@ -113,6 +113,7 @@ void testPlayerStrategies() {
         player->AddReinforcements(10); //giving all players 10 reinforcements for testing
     }
 
+    p5->SetReinforcements(0);
     gameEngine->InitFinishedPlayers();
     
 
