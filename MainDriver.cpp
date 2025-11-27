@@ -7,7 +7,7 @@ void TestCommandProcessing();
 
 int main() {
 	testPlayerStrategies();
-	//TestCommandProcessing();
+	TestCommandProcessing();
 
 	//Assignement 2 tests
 	//GameEngine* game = new GameEngine();
